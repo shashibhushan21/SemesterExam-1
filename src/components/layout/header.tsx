@@ -36,14 +36,11 @@ export function Header() {
 
   if (isMobile) {
     return (
-       <header className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-300",
-        isScrolled || !isHomePage ? "bg-background/80 backdrop-blur-sm shadow-md" : "bg-transparent"
-       )}>
+       <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-blue-800 via-purple-700 to-pink-600 shadow-md">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
            <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-white">
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
                 <Menu />
               </Button>
             </SheetTrigger>
@@ -59,10 +56,7 @@ export function Header() {
   }
 
   return (
-    <header className={cn(
-      "sticky top-0 z-50 w-full transition-all duration-300",
-      isHomePage && !isScrolled ? 'bg-transparent' : 'bg-gradient-to-r from-blue-800 via-purple-700 to-pink-600 shadow-lg'
-      )}>
+    <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-blue-800 via-purple-700 to-pink-600 shadow-lg">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-6">
           <Logo />
