@@ -62,7 +62,7 @@ export default function Home() {
             <CarouselContent>
               <CarouselItem>
                 <div className="flex flex-col items-center justify-center p-4">
-                  <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight animate-fade-in-down">
+                  <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight animate-fade-in-down">
                     Find Notes by Semester & Subject
                   </h1>
                   <p className="mt-4 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl animate-fade-in-up">
@@ -72,7 +72,7 @@ export default function Home() {
               </CarouselItem>
               <CarouselItem>
                  <div className="flex flex-col items-center justify-center p-4">
-                  <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight animate-fade-in-down">
+                  <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight animate-fade-in-down">
                     Explore Thousands of Notes
                   </h1>
                   <p className="mt-4 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl animate-fade-in-up">
@@ -82,7 +82,7 @@ export default function Home() {
               </CarouselItem>
               <CarouselItem>
                  <div className="flex flex-col items-center justify-center p-4">
-                  <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight animate-fade-in-down">
+                  <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight animate-fade-in-down">
                     Upload and Share
                   </h1>
                   <p className="mt-4 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl animate-fade-in-up">
