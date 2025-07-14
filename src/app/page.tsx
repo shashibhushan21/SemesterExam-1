@@ -62,7 +62,7 @@ export default function Home() {
             <CarouselContent>
               <CarouselItem>
                 <div className="flex flex-col items-center justify-center p-4">
-                  <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight animate-fade-in-down">
+                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight animate-fade-in-down">
                     Find Notes by Semester & Subject
                   </h1>
                   <p className="mt-4 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl animate-fade-in-up">
@@ -72,7 +72,7 @@ export default function Home() {
               </CarouselItem>
               <CarouselItem>
                  <div className="flex flex-col items-center justify-center p-4">
-                  <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight animate-fade-in-down">
+                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight animate-fade-in-down">
                     Explore Thousands of Notes
                   </h1>
                   <p className="mt-4 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl animate-fade-in-up">
@@ -82,7 +82,7 @@ export default function Home() {
               </CarouselItem>
               <CarouselItem>
                  <div className="flex flex-col items-center justify-center p-4">
-                  <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight animate-fade-in-down">
+                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight animate-fade-in-down">
                     Upload and Share
                   </h1>
                   <p className="mt-4 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl animate-fade-in-up">
@@ -99,7 +99,7 @@ export default function Home() {
           <div className="mt-8 p-4 bg-white/10 backdrop-blur-sm rounded-lg w-full max-w-4xl">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Select>
-                <SelectTrigger className="h-12 bg-white text-black text-base transition-colors">
+                <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
                   <SelectValue placeholder="Select University" />
                 </SelectTrigger>
                 <SelectContent>
@@ -109,7 +109,7 @@ export default function Home() {
                 </SelectContent>
               </Select>
               <Select>
-                <SelectTrigger className="h-12 bg-white text-black text-base transition-colors">
+                <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
                   <SelectValue placeholder="Select Semester" />
                 </SelectTrigger>
                 <SelectContent>
@@ -119,7 +119,7 @@ export default function Home() {
                 </SelectContent>
               </Select>
                <Select>
-                <SelectTrigger className="h-12 bg-white text-black text-base transition-colors">
+                <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
                   <SelectValue placeholder="Select Branch" />
                 </SelectTrigger>
                 <SelectContent>
