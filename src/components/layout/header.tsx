@@ -64,8 +64,9 @@ export function Header() {
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href} passHref>
                 <span className={cn(
-                  "text-lg font-medium text-white/80 transition-colors hover:text-white hover:scale-105 transform",
-                  pathname === link.href && "text-white font-bold"
+                  "relative text-lg font-medium text-white/80 transition-colors hover:text-yellow-400",
+                  "after:absolute after:left-0 after:bottom-[-4px] after:h-[2px] after:w-full after:bg-yellow-400 after:scale-x-0 after:transition-transform after:duration-300 after:ease-in-out hover:after:scale-x-100",
+                  pathname === link.href && "text-yellow-400 after:scale-x-100"
                 )}>
                   {link.label}
                 </span>
