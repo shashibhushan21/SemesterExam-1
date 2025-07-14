@@ -38,7 +38,8 @@ export function Header() {
     return (
        <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-blue-800 via-purple-700 to-pink-600 shadow-md">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-           <Sheet>
+          <Logo />
+          <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
                 <Menu />
@@ -48,8 +49,6 @@ export function Header() {
                <AppSidebar />
             </SheetContent>
           </Sheet>
-          <Logo />
-          <AuthButton />
         </div>
       </header>
     )
