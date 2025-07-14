@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
+import { Search, MoveRight } from 'lucide-react';
 import { allNotes } from '@/lib/mock-data';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
@@ -93,7 +93,7 @@ export default function Home() {
                   ))}
                 </SelectContent>
               </Select>
-              <Button size="lg" className="h-12 bg-white text-primary hover:bg-gray-100 transition-all duration-300 transform hover:scale-105">
+              <Button size="lg" className="h-12 bg-white text-primary hover:bg-gray-200 transition-all duration-300 transform hover:scale-105">
                 <Search className="mr-2 h-5 w-5" />
                 Search
               </Button>
@@ -102,8 +102,9 @@ export default function Home() {
 
           <div className="mt-8">
             <Link href="/universities">
-              <Button size="lg" className="bg-white text-primary rounded-full px-8 py-6 text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105">
+               <Button size="lg" className="group bg-white text-primary rounded-full px-8 py-6 text-lg hover:bg-gray-200 transition-all duration-300 transform hover:scale-105">
                 Explore Universities
+                <MoveRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
               </Button>
             </Link>
           </div>
