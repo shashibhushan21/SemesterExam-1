@@ -9,6 +9,7 @@ import { Menu } from 'lucide-react';
 import { Logo } from '../logo';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import React from 'react';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -21,14 +22,28 @@ const navLinks = [
 export function Header() {
   const isMobile = useIsMobile();
   const pathname = usePathname();
+  const [isScrolled, setIsScrolled] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const isHomePage = pathname === '/';
 
   if (isMobile) {
     return (
-       <header className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-sm">
+       <header className={cn(
+        "sticky top-0 z-50 w-full transition-all duration-300",
+        isScrolled || !isHomePage ? "bg-background/80 backdrop-blur-sm shadow-md" : "bg-transparent"
+       )}>
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
            <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="text-white">
                 <Menu />
               </Button>
             </SheetTrigger>
@@ -44,7 +59,10 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-transparent">
+    <header className={cn(
+      "sticky top-0 z-50 w-full transition-all duration-300",
+      isHomePage && !isScrolled ? 'bg-transparent' : 'bg-gradient-to-r from-blue-800 via-purple-700 to-pink-600 shadow-lg'
+      )}>
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-6">
           <Logo />
@@ -52,8 +70,8 @@ export function Header() {
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href} passHref>
                 <span className={cn(
-                  "text-lg font-medium text-white/80 transition-colors hover:text-white",
-                  pathname === link.href && "text-white"
+                  "text-lg font-medium text-white/80 transition-colors hover:text-white hover:scale-105 transform",
+                  pathname === link.href && "text-white font-bold"
                 )}>
                   {link.label}
                 </span>
