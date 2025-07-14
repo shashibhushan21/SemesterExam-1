@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import type { Note } from '@/lib/types';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Star } from 'lucide-react';
@@ -12,7 +12,7 @@ interface NoteCardProps {
 export function NoteCard({ note }: NoteCardProps) {
   return (
     <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-      <CardHeader className="p-0">
+      <CardHeader className="p-0 relative">
         <Image
           src={note.thumbnailUrl}
           alt={note.title}
@@ -22,11 +22,11 @@ export function NoteCard({ note }: NoteCardProps) {
           data-ai-hint="note document"
         />
       </CardHeader>
-      <CardContent className="p-4 flex-grow">
-        <Badge variant="secondary" className="mb-2">{note.subject}</Badge>
+      <CardContent className="p-4 flex-grow flex flex-col">
+        <Badge variant="secondary" className="mb-2 w-fit">{note.subject}</Badge>
         <h3 className="text-lg font-semibold line-clamp-2 font-headline">{note.title}</h3>
         <p className="text-sm text-muted-foreground mt-1">{note.university}</p>
-        <p className="text-sm text-muted-foreground mt-2 line-clamp-3">{note.summary}</p>
+        <p className="text-sm text-muted-foreground mt-2 line-clamp-3 flex-grow">{note.summary}</p>
       </CardContent>
       <CardFooter className="p-4 border-t">
         <div className="flex items-center justify-between w-full">
