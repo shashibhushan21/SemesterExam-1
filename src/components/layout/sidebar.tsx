@@ -3,12 +3,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
-import { Home, UploadCloud, Bookmark, Settings } from 'lucide-react';
+import { Home, UploadCloud, Bookmark, Settings, User } from 'lucide-react';
 
 const menuItems = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/upload', label: 'Upload Notes', icon: UploadCloud },
   { href: '/favorites', label: 'My Favorites', icon: Bookmark },
+  { href: '/profile', label: 'Profile', icon: User },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
