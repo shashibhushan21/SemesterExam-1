@@ -1,44 +1,47 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
-import { Logo } from '@/components/logo';
-import { Home, UploadCloud, Bookmark, Settings, User } from 'lucide-react';
+import { Home, Book, GraduationCap, Info, Mail } from 'lucide-react';
+import { Logo } from '../logo';
+import { cn } from '@/lib/utils';
 
 const menuItems = [
   { href: '/', label: 'Home', icon: Home },
-  { href: '/upload', label: 'Upload Notes', icon: UploadCloud },
-  { href: '/favorites', label: 'My Favorites', icon: Bookmark },
-  { href: '/profile', label: 'Profile', icon: User },
-  { href: '/settings', label: 'Settings', icon: Settings },
+  { href: '/courses', label: 'Courses', icon: Book },
+  { href: '/universities', label: 'Universities', icon: GraduationCap },
+  { href: '/about', label: 'About', icon: Info },
+  { href: '/contact', label: 'Contact', icon: Mail },
 ];
 
 export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar className="fixed left-0 top-0 h-full w-[16rem] hidden md:flex flex-col" side="left">
-      <SidebarHeader>
+    <div className="flex flex-col h-full bg-background text-foreground">
+      <header className="p-4 border-b">
         <Logo />
-      </SidebarHeader>
-      <SidebarContent className="flex-grow">
-        <SidebarMenu>
+      </header>
+      <nav className="flex-grow p-4">
+        <ul className="space-y-2">
           {menuItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
+            <li key={item.href}>
               <Link href={item.href} passHref>
-                <SidebarMenuButton
-                  isActive={pathname === item.href}
-                  tooltip={item.label}
-                  className="w-full justify-start"
+                <span
+                  className={cn(
+                    'flex items-center gap-3 rounded-md p-3 text-lg font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
+                    pathname === item.href
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground'
+                  )}
                 >
-                  <item.icon className="h-5 w-5" />
+                  <item.icon className="h-6 w-6" />
                   <span>{item.label}</span>
-                </SidebarMenuButton>
+                </span>
               </Link>
-            </SidebarMenuItem>
+            </li>
           ))}
-        </SidebarMenu>
-      </SidebarContent>
-    </Sidebar>
+        </ul>
+      </nav>
+    </div>
   );
 }

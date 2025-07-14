@@ -20,7 +20,7 @@ export function AuthButton() {
   if (!isLoggedIn) {
     return (
       <Link href="/auth" passHref>
-        <Button onClick={() => setIsLoggedIn(true)}>Login / Sign Up</Button>
+        <Button onClick={() => setIsLoggedIn(true)} variant="outline" className="text-white border-white hover:bg-white hover:text-primary">Login</Button>
       </Link>
     );
   }

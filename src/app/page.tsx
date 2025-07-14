@@ -1,71 +1,77 @@
+'use client';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { NoteCard } from '@/components/note-card';
+import { Search } from 'lucide-react';
 import { allNotes } from '@/lib/mock-data';
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+
 
 export default function Home() {
   const universities = [...new Set(allNotes.map((note) => note.university))];
+  const semesters = [...new Set(allNotes.map((note) => note.semester))];
   const subjects = [...new Set(allNotes.map((note) => note.subject))];
 
+
   return (
-    <div className="space-y-8">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl font-headline">
-          Find Your Study Material
-        </h1>
-        <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-          Access a vast library of notes from universities worldwide. Filter by university, subject, or semester to get exactly what you need.
-        </p>
-      </div>
+    <div className="relative w-full h-[calc(100vh-4rem)] overflow-hidden">
+        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-800 via-purple-700 to-pink-600 opacity-90 z-0"></div>
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
+            Find Notes by Semester & Subject
+          </h1>
+          <p className="mt-4 text-lg md:text-xl text-white/80 max-w-2xl">
+            Access organized PDFs with smart filters and fast downloads.
+          </p>
 
-      <div className="p-4 bg-card rounded-lg shadow-sm">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
-          <div className="relative lg:col-span-2">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              placeholder="Search for notes, subjects, or topics..."
-              className="pl-10 h-12"
-            />
+          <div className="mt-8 p-4 bg-white/10 backdrop-blur-sm rounded-lg w-full max-w-4xl">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+              <Select>
+                <SelectTrigger className="h-12 bg-white text-black">
+                  <SelectValue placeholder="Select University" />
+                </SelectTrigger>
+                <SelectContent>
+                  {universities.map((uni) => (
+                    <SelectItem key={uni} value={uni}>{uni}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select>
+                <SelectTrigger className="h-12 bg-white text-black">
+                  <SelectValue placeholder="Select Semester" />
+                </SelectTrigger>
+                <SelectContent>
+                  {semesters.map((sem) => (
+                    <SelectItem key={sem} value={sem}>{sem}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+               <Select>
+                <SelectTrigger className="h-12 bg-white text-black">
+                  <SelectValue placeholder="Select Branch" />
+                </SelectTrigger>
+                <SelectContent>
+                  {subjects.map((sub) => (
+                    <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button size="lg" className="h-12 bg-white text-primary hover:bg-gray-200">
+                <Search className="mr-2 h-5 w-5" />
+                Search
+              </Button>
+            </div>
           </div>
-          <Select>
-            <SelectTrigger className="h-12">
-              <SelectValue placeholder="Select University" />
-            </SelectTrigger>
-            <SelectContent>
-              {universities.map((uni) => (
-                <SelectItem key={uni} value={uni}>{uni}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select>
-            <SelectTrigger className="h-12">
-              <SelectValue placeholder="Select Subject" />
-            </SelectTrigger>
-            <SelectContent>
-              {subjects.map((sub) => (
-                <SelectItem key={sub} value={sub}>{sub}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex justify-end mt-4">
-          <Button size="lg">Search Notes</Button>
-        </div>
-      </div>
 
-      <div>
-        <h2 className="text-2xl font-semibold tracking-tight font-headline">Recently Added Notes</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-4">
-          {allNotes.map((note) => (
-            <Link href={`/notes/${note.id}`} key={note.id}>
-              <NoteCard note={note} />
+          <div className="mt-8">
+            <Link href="/universities">
+              <Button size="lg" className="bg-white text-primary rounded-full px-8 py-6 text-lg hover:bg-gray-200">
+                Explore Universities
+              </Button>
             </Link>
-          ))}
+          </div>
         </div>
-      </div>
     </div>
   );
 }
