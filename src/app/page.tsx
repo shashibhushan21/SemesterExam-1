@@ -97,7 +97,7 @@ export default function Home() {
 
 
           <div className="mt-8 p-4 bg-white/10 backdrop-blur-sm rounded-lg w-full max-w-4xl">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Select>
                 <SelectTrigger className="h-12 bg-white text-black text-base transition-colors">
                   <SelectValue placeholder="Select University" />
