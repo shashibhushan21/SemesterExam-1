@@ -61,10 +61,10 @@ export default function Home() {
           </Carousel>
 
 
-          <div className="mt-8 p-4 bg-white/10 backdrop-blur-sm rounded-lg w-full max-w-4xl transition-all duration-300 hover:shadow-2xl">
+          <div className="mt-8 p-4 bg-white/10 backdrop-blur-sm rounded-lg w-full max-w-4xl">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
               <Select>
-                <SelectTrigger className="h-12 bg-white text-black text-base hover:bg-gray-100 transition-colors">
+                <SelectTrigger className="h-12 bg-white text-black text-base transition-colors">
                   <SelectValue placeholder="Select University" />
                 </SelectTrigger>
                 <SelectContent>
@@ -74,7 +74,7 @@ export default function Home() {
                 </SelectContent>
               </Select>
               <Select>
-                <SelectTrigger className="h-12 bg-white text-black text-base hover:bg-gray-100 transition-colors">
+                <SelectTrigger className="h-12 bg-white text-black text-base transition-colors">
                   <SelectValue placeholder="Select Semester" />
                 </SelectTrigger>
                 <SelectContent>
@@ -84,7 +84,7 @@ export default function Home() {
                 </SelectContent>
               </Select>
                <Select>
-                <SelectTrigger className="h-12 bg-white text-black text-base hover:bg-gray-100 transition-colors">
+                <SelectTrigger className="h-12 bg-white text-black text-base transition-colors">
                   <SelectValue placeholder="Select Branch" />
                 </SelectTrigger>
                 <SelectContent>
@@ -93,7 +93,7 @@ export default function Home() {
                   ))}
                 </SelectContent>
               </Select>
-              <Button size="lg" className="h-12 bg-white text-primary hover:bg-gray-200 transition-all duration-300 transform hover:scale-105">
+              <Button size="lg" className="h-12 bg-white text-primary hover:bg-gray-100 transition-all duration-300 transform hover:scale-105">
                 <Search className="mr-2 h-5 w-5" />
                 Search
               </Button>
@@ -102,7 +102,7 @@ export default function Home() {
 
           <div className="mt-8">
             <Link href="/universities">
-              <Button size="lg" className="bg-white text-primary rounded-full px-8 py-6 text-lg hover:bg-gray-200 transition-all duration-300 transform hover:scale-105">
+              <Button size="lg" className="bg-white text-primary rounded-full px-8 py-6 text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105">
                 Explore Universities
               </Button>
             </Link>
