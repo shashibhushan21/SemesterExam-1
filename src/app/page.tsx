@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Search, MoveRight } from 'lucide-react';
 import { allNotes } from '@/lib/mock-data';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { UniversityCard } from '@/components/university-card';
 
@@ -146,6 +146,9 @@ export default function Home() {
       
       <section className="py-20 -mx-4 sm:-mx-6 lg:-mx-8">
         <div className="container mx-auto px-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center text-white mb-12 animate-fade-in-up">
+            Top Universities
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredUniversities.map((uni, index) => (
               <UniversityCard key={index} {...uni} />
