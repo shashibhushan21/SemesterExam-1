@@ -3,7 +3,8 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Mail, Phone, MapPin, Send, Info } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Info, Handshake } from 'lucide-react';
+import Link from 'next/link';
 
 const contactDetails = [
   {
@@ -79,6 +80,23 @@ export default function ContactPage() {
           </div>
         </CardContent>
       </Card>
+
+      <div className="mt-16 text-center">
+        <Card className="max-w-3xl mx-auto bg-slate-900/50 backdrop-blur-sm border-white/10 p-8">
+            <CardContent className="p-0">
+                <div className="flex justify-center mb-4">
+                    <Handshake className="w-12 h-12 text-primary" />
+                </div>
+                <h2 className="text-3xl font-bold text-white mb-4">Want to partner or collaborate?</h2>
+                <p className="text-white/70 mb-6 max-w-xl mx-auto">
+                    We're open to working with universities, educators, and developers who share our passion for accessible education.
+                </p>
+                <Link href="mailto:collab@semesterexam.com" className="font-semibold text-primary hover:text-primary/80 transition-colors text-lg">
+                    collab@semesterexam.com
+                </Link>
+            </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
