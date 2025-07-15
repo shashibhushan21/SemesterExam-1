@@ -170,7 +170,7 @@ export default function Home() {
               </Select>
                <Select>
                 <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
-                  <SelectValue placeholder="Select Branch" />
+                  <SelectValue placeholder="Select Subject" />
                 </SelectTrigger>
                 <SelectContent>
                   {subjects.map((sub) => (

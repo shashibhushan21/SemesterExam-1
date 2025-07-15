@@ -12,20 +12,20 @@ import Link from 'next/link';
 interface UniversityNotesClientProps {
   notes: Note[];
   semesters: string[];
-  subjects: string[];
+  branches: string[];
 }
 
-export function UniversityNotesClient({ notes, semesters, subjects }: UniversityNotesClientProps) {
+export function UniversityNotesClient({ notes, semesters, branches }: UniversityNotesClientProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSemester, setSelectedSemester] = useState('all');
-  const [selectedSubject, setSelectedSubject] = useState('all');
+  const [selectedBranch, setSelectedBranch] = useState('all');
 
   const filteredNotes = notes.filter((note) => {
     return (
       (note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         note.summary.toLowerCase().includes(searchTerm.toLowerCase())) &&
       (selectedSemester === 'all' || note.semester === selectedSemester) &&
-      (selectedSubject === 'all' || note.subject === selectedSubject)
+      (selectedBranch === 'all' || note.branch === selectedBranch)
     );
   });
   
@@ -53,13 +53,13 @@ export function UniversityNotesClient({ notes, semesters, subjects }: University
               ))}
             </SelectContent>
           </Select>
-          <Select value={selectedSubject} onValueChange={setSelectedSubject}>
+          <Select value={selectedBranch} onValueChange={setSelectedBranch}>
             <SelectTrigger className="h-12 bg-white/10 text-white border-2 border-white/20 text-base transition-colors focus:bg-white/20 focus:border-white/40">
-              <SelectValue placeholder="Select Subject" />
+              <SelectValue placeholder="Select Branch" />
             </SelectTrigger>
             <SelectContent>
-              {subjects.map((sub) => (
-                <SelectItem key={sub} value={sub}>{sub === 'all' ? 'All Subjects' : sub}</SelectItem>
+              {branches.map((branch) => (
+                <SelectItem key={branch} value={branch}>{branch === 'all' ? 'All Branches' : branch}</SelectItem>
               ))}
             </SelectContent>
           </Select>

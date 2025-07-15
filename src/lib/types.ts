@@ -11,6 +11,7 @@ export type Note = {
   rating: number;
   thumbnailUrl: string;
   content: string;
+  branch: string;
 };
 
 export type University = {

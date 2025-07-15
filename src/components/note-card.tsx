@@ -24,7 +24,10 @@ export function NoteCard({ note }: NoteCardProps) {
         />
       </CardHeader>
       <CardContent className="p-4 flex-grow flex flex-col">
-        <Badge variant="secondary" className="mb-2 w-fit">{note.subject}</Badge>
+        <div className="flex justify-between items-start">
+          <Badge variant="secondary" className="mb-2 w-fit">{note.subject}</Badge>
+          <Badge variant="outline" className="mb-2 w-fit">{note.branch}</Badge>
+        </div>
         <h3 className="text-lg font-semibold line-clamp-2 font-headline text-white">{note.title}</h3>
         <p className="text-sm text-white/70 mt-1">{note.university}</p>
       </CardContent>

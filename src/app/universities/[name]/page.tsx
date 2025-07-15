@@ -23,7 +23,7 @@ export default function UniversityDetailPage({ params }: { params: { name: strin
   );
 
   const semesters = ['all', ...new Set(universityNotes.map((note) => note.semester))];
-  const subjects = ['all', ...new Set(universityNotes.map((note) => note.subject))];
+  const branches = ['all', ...new Set(universityNotes.map((note) => note.branch))];
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8 text-white">
@@ -51,7 +51,7 @@ export default function UniversityDetailPage({ params }: { params: { name: strin
       <UniversityNotesClient
         notes={universityNotes}
         semesters={semesters}
-        subjects={subjects}
+        branches={branches}
       />
 
     </div>
