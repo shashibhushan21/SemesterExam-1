@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -16,12 +17,12 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 
-export default function NotePage({ params }: { params: { id: string } }) {
+export default function NotePage({ params: { id } }: { params: { id: string } }) {
   const [summary, setSummary] = useState('');
   const [isSummarizing, setIsSummarizing] = useState(false);
   const { toast } = useToast();
 
-  const note = allNotes.find((n) => n.id === params.id);
+  const note = allNotes.find((n) => n.id === id);
 
   if (!note) {
     notFound();
