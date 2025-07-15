@@ -2,7 +2,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { allNotes } from '@/lib/mock-data';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -62,8 +61,12 @@ export default function NotePage({ params: { id } }: { params: { id: string } })
             </div>
           </CardHeader>
           <CardContent>
-            <div className="relative w-full h-96 rounded-lg overflow-hidden border bg-secondary">
-              <Image src={note.thumbnailUrl} alt={note.title} fill className="object-contain" data-ai-hint="note document" />
+            <div className="relative w-full h-[800px] rounded-lg overflow-hidden border bg-secondary">
+              <iframe
+                src={note.pdfUrl}
+                className="w-full h-full"
+                title={note.title}
+              />
             </div>
              <p className="mt-6 text-foreground/80">{note.content}</p>
           </CardContent>
@@ -96,9 +99,11 @@ export default function NotePage({ params: { id } }: { params: { id: string } })
       <div className="lg:col-span-1 space-y-6">
         <Card>
           <CardContent className="p-6 flex flex-col items-center gap-4">
-            <Button size="lg" className="w-full">
-              <Download className="mr-2 h-5 w-5" /> Download Note
-            </Button>
+            <a href={note.pdfUrl} download target="_blank" rel="noopener noreferrer" className="w-full">
+              <Button size="lg" className="w-full">
+                <Download className="mr-2 h-5 w-5" /> Download Note
+              </Button>
+            </a>
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="outline" className="w-full">

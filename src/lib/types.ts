@@ -10,6 +10,7 @@ export type Note = {
   summary: string;
   rating: number;
   thumbnailUrl: string;
+  pdfUrl: string;
   content: string;
   branch: string;
 };

@@ -40,6 +40,7 @@ export const allNotes: Note[] = [
     summary: 'Comprehensive lecture notes covering multivariable calculus, vector analysis, and differential equations.',
     rating: 4.8,
     thumbnailUrl: 'https://placehold.co/400x300.png',
+    pdfUrl: 'https://pdfobject.com/pdf/sample.pdf',
     content: 'In mathematics, a differential equation is an equation that relates one or more unknown functions and their derivatives. In applications, the functions generally represent physical quantities, the derivatives represent their rates of change, and the differential equation defines a relationship between the two. Such relations are common; therefore, differential equations play a prominent role in many disciplines including engineering, physics, economics, and biology.',
     branch: 'Science'
   },
@@ -55,6 +56,7 @@ export const allNotes: Note[] = [
     summary: 'An introductory course on quantum mechanics, covering wave-particle duality, the Schrödinger equation, and quantum tunneling.',
     rating: 4.9,
     thumbnailUrl: 'https://placehold.co/400x300.png',
+    pdfUrl: 'https://pdfobject.com/pdf/sample.pdf',
     content: 'Quantum mechanics is a fundamental theory in physics that provides a description of the physical properties of nature at the scale of atoms and subatomic particles. It is the foundation of all quantum physics including quantum chemistry, quantum field theory, quantum technology, and quantum information science.',
     branch: 'Science'
   },
@@ -70,6 +72,7 @@ export const allNotes: Note[] = [
     summary: 'A complete guide to common data structures and algorithms, with examples in Python.',
     rating: 4.7,
     thumbnailUrl: 'https://placehold.co/400x300.png',
+    pdfUrl: 'https://pdfobject.com/pdf/sample.pdf',
     content: 'In computer science, a data structure is a data organization, management, and storage format that is usually chosen for efficient access to data. More precisely, a data structure is a collection of data values, the relationships among them, and the functions or operations that can be applied to the data.',
     branch: 'Computer Science'
   },
@@ -85,6 +88,7 @@ export const allNotes: Note[] = [
     summary: 'A summary of key organic chemistry reactions, mechanisms, and synthesis pathways.',
     rating: 4.6,
     thumbnailUrl: 'https://placehold.co/400x300.png',
+    pdfUrl: 'https://pdfobject.com/pdf/sample.pdf',
     content: 'Organic chemistry is a subdiscipline within chemistry that involves the scientific study of the structure, properties, and reactions of organic compounds and organic materials, i.e., matter in its various forms that contain carbon atoms. Study of structure determines their structural formula. Study of properties includes physical and chemical properties, and evaluation of chemical reactivity to understand their behavior.',
     branch: 'Chemistry'
   },
