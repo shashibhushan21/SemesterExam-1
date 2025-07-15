@@ -265,9 +265,9 @@ export default function Home() {
 
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <div className="bg-gradient-to-r from-pink-600 via-purple-700 to-blue-800 rounded-2xl p-12 text-center text-white shadow-lg animate-fade-in-up">
-            <h2 className="text-3xl sm:text-4xl font-bold">Join 10,000+ students using SemesterExam.com!</h2>
-            <p className="mt-4 text-lg text-white/80">Stay updated, study smarter, and score better in your exams.</p>
+          <div className="bg-gradient-to-r from-pink-600 via-purple-700 to-blue-800 rounded-2xl p-8 md:p-12 text-center text-white shadow-lg animate-fade-in-up">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">Join 10,000+ students using SemesterExam.com!</h2>
+            <p className="mt-4 text-base md:text-lg text-white/80">Stay updated, study smarter, and score better in your exams.</p>
             <div className="mt-8">
               <Link href="/auth">
                 <Button size="lg" className="bg-white text-primary hover:bg-gray-200 rounded-full px-8 py-6 text-lg transition-all duration-300 transform hover:scale-105">
