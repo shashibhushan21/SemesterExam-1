@@ -10,7 +10,7 @@ import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carouse
 import Autoplay from "embla-carousel-autoplay";
 import { UniversityCard } from '@/components/university-card';
 import { FeatureCard } from '@/components/feature-card';
-import { BookOpen, University, RefreshCw, HelpCircle, Quote } from 'lucide-react';
+import { BookOpen, University, RefreshCw, HelpCircle } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { TestimonialCard } from '@/components/testimonial-card';
 

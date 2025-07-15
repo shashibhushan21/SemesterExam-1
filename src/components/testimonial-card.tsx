@@ -1,4 +1,4 @@
-import { Smile } from 'lucide-react';
+import { Quote } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
@@ -18,7 +18,7 @@ export function TestimonialCard({ quote, author, color }: TestimonialCardProps) 
       <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
       <CardContent className="relative z-10 p-0">
         <div className="mb-4">
-          <Smile className="w-12 h-12 text-white/80 mx-auto" />
+          <Quote className="w-12 h-12 text-white/80 mx-auto" />
         </div>
         <blockquote className="text-xl font-medium">
           “{quote}”
