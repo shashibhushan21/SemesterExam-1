@@ -52,7 +52,7 @@ export function Footer() {
             <h3 className="text-lg font-semibold">Support</h3>
             <ul className="mt-4 space-y-2">
               {supportLinks.map((link) => (
-                <li key={link.href}>
+                <li key={`${link.href}-${link.label}`}>
                   <Link href={link.href} className="text-white/70 hover:text-white transition-colors">
                     {link.label}
                   </Link>
