@@ -9,7 +9,8 @@ import { allNotes } from '@/lib/mock-data';
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { UniversityCard } from '@/components/university-card';
-
+import { FeatureCard } from '@/components/feature-card';
+import { BookOpen, University, RefreshCw } from 'lucide-react';
 
 export default function Home() {
   const universities = [...new Set(allNotes.map((note) => note.university))];
@@ -49,10 +50,30 @@ export default function Home() {
     }
   ];
 
+  const features = [
+    {
+      icon: BookOpen,
+      title: 'All Semesters',
+      description: 'From 1st to 8th semester – find notes sorted by semester and subject.',
+      color: 'from-blue-500 to-purple-600',
+    },
+    {
+      icon: University,
+      title: 'University-Wise',
+      description: 'Tailored to your syllabus, based on your university’s official curriculum.',
+      color: 'from-purple-600 to-pink-600',
+    },
+    {
+      icon: RefreshCw,
+      title: 'Free & Regular Updates',
+      description: '100% free and updated often to reflect the most current content.',
+      color: 'from-pink-600 to-orange-500',
+    },
+  ];
 
   return (
     <>
-      <section className="relative w-full h-auto min-h-[calc(100vh-10rem)] flex items-center justify-center -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 py-10 md:py-0">
+      <section className="relative w-full h-auto min-h-[calc(100vh-10rem)] flex items-center justify-center -mx-8 py-10 md:py-0">
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4 w-full">
           <Carousel
             plugins={[Autoplay({ delay: 5000, stopOnInteraction: true })]}
@@ -73,10 +94,10 @@ export default function Home() {
               <CarouselItem>
                  <div className="flex flex-col items-center justify-center p-4">
                   <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-down">
-                    Explore Thousands of Notes
+                    Thousands of Notes from Top Universities
                   </h1>
                   <p className="mt-4 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl animate-fade-in-up">
-                    Contributed by students from top universities.
+                    Contributed by students just like you.
                   </p>
                 </div>
               </CarouselItem>
@@ -144,7 +165,7 @@ export default function Home() {
         </div>
       </section>
       
-      <section className="py-20 -mx-4 sm:-mx-6 lg:-mx-8">
+      <section className="py-20 -mx-8">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl sm:text-4xl font-bold text-center text-white mb-12 animate-fade-in-up">
             Top Universities
@@ -152,6 +173,22 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredUniversities.map((uni, index) => (
               <UniversityCard key={index} {...uni} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 -mx-8">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center text-white mb-4 animate-fade-in-up">
+            Why Choose ExamNotes?
+          </h2>
+          <p className="text-center text-white/80 max-w-3xl mx-auto mb-12 animate-fade-in-up">
+            Curated notes for every subject, categorized by semester and university, built to save your time and boost your exam preparation.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
+              <FeatureCard key={index} {...feature} />
             ))}
           </div>
         </div>
