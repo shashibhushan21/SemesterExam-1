@@ -6,10 +6,16 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const fromEmail = process.env.RESEND_FROM_EMAIL;
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export async function POST(req: NextRequest) {
   if (!fromEmail) {
     console.error('RESEND_FROM_EMAIL is not set in the environment variables.');
+    return NextResponse.json({ message: 'Server configuration error.' }, { status: 500 });
+  }
+
+  if (!baseUrl) {
+    console.error('NEXT_PUBLIC_BASE_URL is not set in the environment variables.');
     return NextResponse.json({ message: 'Server configuration error.' }, { status: 500 });
   }
   
@@ -35,7 +41,7 @@ export async function POST(req: NextRequest) {
     user.resetPasswordExpires = passwordResetExpires;
     await user.save();
 
-    const resetUrl = `${req.nextUrl.origin}/reset-password/${resetToken}`;
+    const resetUrl = `${baseUrl}/reset-password/${resetToken}`;
 
     try {
       await resend.emails.send({
