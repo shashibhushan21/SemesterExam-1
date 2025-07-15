@@ -99,7 +99,7 @@ export default function NotePage({ params: { id } }: { params: { id: string } })
       <div className="lg:col-span-1 space-y-6">
         <Card>
           <CardContent className="p-6 flex flex-col items-center gap-4">
-            <a href={note.pdfUrl} download target="_blank" rel="noopener noreferrer" className="w-full">
+            <a href={note.pdfUrl} download className="w-full">
               <Button size="lg" className="w-full">
                 <Download className="mr-2 h-5 w-5" /> Download Note
               </Button>
