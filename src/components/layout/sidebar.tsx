@@ -18,10 +18,7 @@ export function AppSidebar() {
 
   return (
     <div className="flex flex-col h-full bg-background text-foreground">
-      <header className="p-4 border-b">
-        <Logo />
-      </header>
-      <nav className="flex-grow p-4">
+      <nav className="flex-grow p-4 mt-4">
         <ul className="space-y-2">
           {menuItems.map((item) => (
             <li key={item.href}>

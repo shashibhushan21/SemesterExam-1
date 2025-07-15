@@ -3,13 +3,14 @@
 import Link from 'next/link';
 import { AuthButton } from '@/components/auth-button';
 import { AppSidebar } from './sidebar';
-import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet';
 import { Button } from '../ui/button';
 import { Menu } from 'lucide-react';
 import { Logo } from '../logo';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Skeleton } from '../ui/skeleton';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -21,6 +22,11 @@ const navLinks = [
 
 export function Header() {
   const pathname = usePathname();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
      <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-blue-800 via-purple-700 to-pink-600 shadow-lg">
@@ -41,22 +47,27 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="hidden md:flex items-center gap-4">
-          <AuthButton />
-        </div>
-
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-4">
+          <div className="hidden md:block">
             <AuthButton />
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
-                  <Menu />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-[300px] sm:w-[400px] bg-background p-0">
-                 <AppSidebar />
-              </SheetContent>
-            </Sheet>
+          </div>
+
+          <div className="flex items-center gap-2 md:hidden">
+              <AuthButton />
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+                    <Menu />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-[300px] sm:w-[400px] bg-background p-0">
+                  <SheetHeader className="p-4 border-b">
+                    <SheetTitle><Logo /></SheetTitle>
+                  </SheetHeader>
+                   <AppSidebar />
+                </SheetContent>
+              </Sheet>
+          </div>
         </div>
       </div>
     </header>
