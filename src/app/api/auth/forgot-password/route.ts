@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import User from '@/models/user';
 import crypto from 'crypto';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
@@ -29,30 +31,23 @@ export async function POST(req: NextRequest) {
 
     const resetUrl = `${req.nextUrl.origin}/reset-password/${resetToken}`;
 
-    // In a real app, you would send an email here.
-    // For this demo, we'll log it to the console.
-    console.log('Password Reset URL:', resetUrl);
+    try {
+      await resend.emails.send({
+        from: 'onboarding@resend.dev',
+        to: user.email,
+        subject: 'Password Reset Request',
+        html: `<p>You are receiving this email because you (or someone else) have requested the reset of the password for your account.</p>
+               <p>Please click on the following link, or paste this into your browser to complete the process:</p>
+               <a href="${resetUrl}">${resetUrl}</a>
+               <p>If you did not request this, please ignore this email and your password will remain unchanged.</p>`,
+      });
+    } catch (emailError) {
+      console.error('Email sending error:', emailError);
+      // Even if email fails, don't reveal that the user exists.
+      // But for debugging, we might want to know this failed.
+      return NextResponse.json({ message: 'Error sending password reset email.' }, { status: 500 });
+    }
 
-    // Example of how you would use nodemailer:
-    /*
-    const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_SERVER_HOST,
-      port: process.env.EMAIL_SERVER_PORT,
-      auth: {
-        user: process.env.EMAIL_SERVER_USER,
-        pass: process.env.EMAIL_SERVER_PASSWORD,
-      },
-    });
-
-    const mailOptions = {
-      from: 'no-reply@semesterexam.com',
-      to: user.email,
-      subject: 'Password Reset Request',
-      text: `You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\nPlease click on the following link, or paste this into your browser to complete the process:\n\n${resetUrl}\n\nIf you did not request this, please ignore this email and your password will remain unchanged.\n`,
-    };
-
-    await transporter.sendMail(mailOptions);
-    */
 
     return NextResponse.json({ message: 'If a user with that email exists, a password reset link has been sent.' }, { status: 200 });
 
