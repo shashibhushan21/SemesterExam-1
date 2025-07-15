@@ -165,7 +165,7 @@ export default function Home() {
         </div>
       </section>
       
-      <section className="py-20">
+      <section className="py-12">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl sm:text-4xl font-bold text-center text-white mb-12 animate-fade-in-up">
             Top Universities
@@ -178,7 +178,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-20">
+      <section className="py-12">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl sm:text-4xl font-bold text-center text-white mb-4 animate-fade-in-up">
             Why Choose ExamNotes?
