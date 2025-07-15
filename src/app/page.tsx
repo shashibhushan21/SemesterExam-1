@@ -52,8 +52,8 @@ export default function Home() {
 
   return (
     <>
-      <section className="relative w-full h-[calc(100vh-10rem)] flex items-center justify-center -mx-4 sm:-mx-6 lg:-mx-8 -mt-8">
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4">
+      <section className="relative w-full h-auto min-h-[calc(100vh-10rem)] flex items-center justify-center -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 py-10 md:py-0">
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4 w-full">
           <Carousel
             plugins={[Autoplay({ delay: 5000, stopOnInteraction: true })]}
             className="w-full max-w-5xl"
@@ -62,7 +62,7 @@ export default function Home() {
             <CarouselContent>
               <CarouselItem>
                 <div className="flex flex-col items-center justify-center p-4">
-                  <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight animate-fade-in-down">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-down">
                     Find Notes by Semester & Subject
                   </h1>
                   <p className="mt-4 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl animate-fade-in-up">
@@ -72,7 +72,7 @@ export default function Home() {
               </CarouselItem>
               <CarouselItem>
                  <div className="flex flex-col items-center justify-center p-4">
-                  <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight animate-fade-in-down">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-down">
                     Explore Thousands of Notes
                   </h1>
                   <p className="mt-4 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl animate-fade-in-up">
@@ -82,7 +82,7 @@ export default function Home() {
               </CarouselItem>
               <CarouselItem>
                  <div className="flex flex-col items-center justify-center p-4">
-                  <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight animate-fade-in-down">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-down">
                     Upload and Share
                   </h1>
                   <p className="mt-4 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl animate-fade-in-up">
