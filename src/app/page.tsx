@@ -198,11 +198,11 @@ export default function Home() {
                     ))}
                   </SelectContent>
                 </Select>
+                <Button size="lg" className="h-12 bg-white text-primary hover:bg-gray-200 transition-all duration-300 transform hover:scale-105">
+                  <Search className="mr-2 h-5 w-5" />
+                  Search
+                </Button>
               </ClientOnly>
-              <Button size="lg" className="h-12 bg-white text-primary hover:bg-gray-200 transition-all duration-300 transform hover:scale-105">
-                <Search className="mr-2 h-5 w-5" />
-                Search
-              </Button>
             </div>
           </div>
 
@@ -252,9 +252,11 @@ export default function Home() {
             What Students Say
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <TestimonialCard key={index} {...testimonial} />
-            ))}
+            <ClientOnly>
+              {testimonials.map((testimonial, index) => (
+                <TestimonialCard key={index} {...testimonial} />
+              ))}
+            </ClientOnly>
           </div>
         </div>
       </section>
