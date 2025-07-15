@@ -1,4 +1,31 @@
-import type { Note } from './types';
+import type { Note, University } from './types';
+
+export const allUniversities: University[] = [
+  {
+    name: 'Stanford University',
+    location: 'Stanford, California',
+    description: 'A private research university known for its academic strength, wealth, proximity to Silicon Valley, and ranking as one of the world\'s top universities.',
+    bannerUrl: 'https://placehold.co/1200x300.png'
+  },
+  {
+    name: 'MIT',
+    location: 'Cambridge, Massachusetts',
+    description: 'A private land-grant research university in Cambridge, Massachusetts. It is a world-renowned institution for science and technology.',
+    bannerUrl: 'https://placehold.co/1200x300.png'
+  },
+  {
+    name: 'UC Berkeley',
+    location: 'Berkeley, California',
+    description: 'A public land-grant research university in Berkeley, California. It is the state\'s first land-grant university and the first campus of the University of California system.',
+    bannerUrl: 'https://placehold.co/1200x300.png'
+  },
+  {
+    name: 'Harvard University',
+    location: 'Cambridge, Massachusetts',
+    description: 'A private Ivy League research university in Cambridge, Massachusetts. It is the oldest institution of higher learning in the United States.',
+    bannerUrl: 'https://placehold.co/1200x300.png'
+  }
+];
 
 export const allNotes: Note[] = [
   {

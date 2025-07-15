@@ -12,3 +12,10 @@ export type Note = {
   thumbnailUrl: string;
   content: string;
 };
+
+export type University = {
+  name: string;
+  location: string;
+  description: string;
+  bannerUrl: string;
+}

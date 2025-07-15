@@ -1,19 +1,26 @@
+
 'use client';
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { allNotes } from '@/lib/mock-data';
+import { allNotes, allUniversities } from '@/lib/mock-data';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search } from 'lucide-react';
+import { Search, University as UniversityIcon } from 'lucide-react';
 import { NoteCard } from '@/components/note-card';
 import { Note } from '@/lib/types';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import Image from 'next/image';
 
 export default function UniversityDetailPage() {
   const params = useParams();
   const universityName = decodeURIComponent(params.name as string);
+
+  const universityDetails = allUniversities.find(
+    (uni) => uni.name.toLowerCase() === universityName.toLowerCase()
+  );
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSemester, setSelectedSemester] = useState('all');
@@ -35,11 +42,11 @@ export default function UniversityDetailPage() {
     );
   });
   
-  if (universityNotes.length === 0) {
+  if (!universityDetails) {
     return (
       <div className="text-center py-16 text-white">
           <h1 className="text-4xl font-bold mb-4">University Not Found</h1>
-          <p className="text-xl text-white/80 mb-8">We couldn't find any notes for &quot;{universityName}&quot;.</p>
+          <p className="text-xl text-white/80 mb-8">We couldn't find any information for &quot;{universityName}&quot;.</p>
           <Link href="/universities">
             <Button>Back to Universities</Button>
           </Link>
@@ -49,12 +56,28 @@ export default function UniversityDetailPage() {
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8 text-white">
-      <div className="text-center mb-12 animate-fade-in-down">
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">{universityName}</h1>
-        <p className="mt-4 text-lg text-white/80 max-w-2xl mx-auto">
-          Explore B.Tech notes for {universityName}. Use the filters below to find what you need.
-        </p>
-      </div>
+      
+      <Card className="mb-12 bg-slate-900/50 backdrop-blur-sm border-white/10 overflow-hidden">
+        <div className="relative h-48 w-full">
+            <Image src={universityDetails.bannerUrl} alt={`${universityDetails.name} banner`} fill className="object-cover" data-ai-hint="university campus" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent" />
+        </div>
+        <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+                <div className="p-3 bg-primary/20 border border-primary/30 rounded-lg">
+                    <UniversityIcon className="w-8 h-8 text-primary" />
+                </div>
+                <div>
+                    <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{universityDetails.name}</h1>
+                    <p className="mt-1 text-white/70">{universityDetails.location}</p>
+                </div>
+            </div>
+             <p className="mt-4 text-lg text-white/80 max-w-4xl">
+                {universityDetails.description}
+            </p>
+        </CardContent>
+      </Card>
+
 
       <div className="p-4 bg-white/10 backdrop-blur-sm rounded-lg w-full max-w-4xl mx-auto mb-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
