@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogOut, User, Settings } from 'lucide-react';
+import { LogOut, User } from 'lucide-react';
 
 export function AuthButton() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -50,10 +50,6 @@ export function AuthButton() {
             <User className="mr-2 h-4 w-4" />
             <span>Profile</span>
           </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Settings className="mr-2 h-4 w-4" />
-          <span>Settings</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => setIsLoggedIn(false)}>
