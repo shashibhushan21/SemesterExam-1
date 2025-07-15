@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Download, Flag, Star, Wand2, Loader2, MessageSquareWarning, ArrowLeft } from 'lucide-react';
+import { Download, Flag, Star, Wand2, Loader2, ArrowLeft } from 'lucide-react';
 import { summarizeNotes } from '@/ai/flows/summarize-notes';
 import { useToast } from '@/hooks/use-toast';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
@@ -146,7 +146,7 @@ export default function NotePage({ params: { id } }: { params: { id: string } })
               </Avatar>
               <div>
                 <p className="font-semibold text-lg">{note.author}</p>
-                <p className="text-muted-foreground">Uploaded on {new Date(note.uploadDate).toLocaleDateString()}</p>
+                <p className="text-muted-foreground">Uploaded on {note.uploadDate}</p>
               </div>
             </CardContent>
           </Card>
