@@ -61,7 +61,7 @@ export default function NotePage({ params: { id } }: { params: { id: string } })
             </div>
           </CardHeader>
           <CardContent>
-            <div className="relative w-full h-[800px] rounded-lg overflow-hidden border bg-secondary">
+            <div className="relative w-full h-[65vh] rounded-lg overflow-hidden border bg-secondary">
               <iframe
                 src={note.pdfUrl}
                 className="w-full h-full"
