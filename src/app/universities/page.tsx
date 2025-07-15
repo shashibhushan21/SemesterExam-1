@@ -2,19 +2,13 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { allNotes } from '@/lib/mock-data';
+import { allUniversities } from '@/lib/mock-data';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
 import { UniversityCard } from '@/components/university-card';
-import { Note } from '@/lib/types';
-
-interface UniversitySummary {
-  name: string;
-  description: string;
-  initials: string;
-}
+import { University } from '@/lib/types';
 
 const getInitials = (name: string) => {
     return name
@@ -28,21 +22,6 @@ const getInitials = (name: string) => {
 export default function UniversitiesPage() {
   const [searchTerm, setSearchTerm] = useState('');
 
-  const allUniversities = useMemo(() => {
-    const universityData = allNotes.reduce((acc, note: Note) => {
-      if (!acc[note.university]) {
-        acc[note.university] = {
-          name: note.university,
-          description: `Explore notes for subjects like ${note.subject} and more.`,
-          initials: getInitials(note.university),
-        };
-      }
-      return acc;
-    }, {} as Record<string, UniversitySummary>);
-    return Object.values(universityData);
-  }, []);
-
-
   const filteredUniversities = useMemo(() => {
      if (!searchTerm) {
       return allUniversities;
@@ -50,7 +29,7 @@ export default function UniversitiesPage() {
     return allUniversities.filter((uni) =>
       uni.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [searchTerm, allUniversities]);
+  }, [searchTerm]);
 
 
   return (
@@ -76,10 +55,10 @@ export default function UniversitiesPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-        {filteredUniversities.map((uni) => (
+        {filteredUniversities.map((uni: University) => (
           <UniversityCard
             key={uni.name}
-            initials={uni.initials}
+            initials={getInitials(uni.name)}
             name={uni.name}
             description={uni.description}
           />
