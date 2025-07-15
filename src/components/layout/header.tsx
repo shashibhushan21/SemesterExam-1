@@ -2,7 +2,6 @@
 'use client';
 import Link from 'next/link';
 import { AuthButton } from '@/components/auth-button';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { AppSidebar } from './sidebar';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
 import { Button } from '../ui/button';
@@ -21,26 +20,32 @@ const navLinks = [
 ];
 
 export function Header() {
-  const [hasMounted, setHasMounted] = React.useState(false);
-  const isMobile = useIsMobile();
   const pathname = usePathname();
 
-  React.useEffect(() => {
-    setHasMounted(true);
-  }, []);
+  return (
+     <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-blue-800 via-purple-700 to-pink-600 shadow-lg">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+        <Logo />
+        
+        <nav className="hidden md:flex items-center gap-6">
+          {navLinks.map((link) => (
+            <Link key={link.href} href={link.href} passHref>
+              <span className={cn(
+                "relative text-lg font-medium text-white/80 transition-colors hover:text-white",
+                "after:absolute after:left-0 after:bottom-[-4px] after:h-[2px] after:w-full after:bg-yellow-400 after:scale-x-0 after:transition-transform after:duration-300 after:ease-in-out hover:after:scale-x-100",
+                pathname === link.href && "text-white after:scale-x-100"
+              )}>
+                {link.label}
+              </span>
+            </Link>
+          ))}
+        </nav>
 
-  const renderHeaderContent = () => {
-    if (!hasMounted) {
-       return (
-        <div className="flex items-center gap-4">
-          {/* Placeholder for server render */}
+        <div className="hidden md:flex items-center gap-4">
+          <AuthButton />
         </div>
-       );
-    }
-    
-    if (isMobile) {
-      return (
-         <div className="flex items-center gap-2">
+
+        <div className="flex items-center gap-2 md:hidden">
             <AuthButton />
             <Sheet>
               <SheetTrigger asChild>
@@ -52,39 +57,7 @@ export function Header() {
                  <AppSidebar />
               </SheetContent>
             </Sheet>
-          </div>
-      );
-    }
-
-    return (
-       <>
-        <div className="flex items-center gap-6">
-           <nav className="hidden md:flex items-center gap-6">
-            {navLinks.map((link) => (
-              <Link key={link.href} href={link.href} passHref>
-                <span className={cn(
-                  "relative text-lg font-medium text-white/80 transition-colors hover:text-white",
-                  "after:absolute after:left-0 after:bottom-[-4px] after:h-[2px] after:w-full after:bg-yellow-400 after:scale-x-0 after:transition-transform after:duration-300 after:ease-in-out hover:after:scale-x-100",
-                  pathname === link.href && "text-white after:scale-x-100"
-                )}>
-                  {link.label}
-                </span>
-              </Link>
-            ))}
-          </nav>
         </div>
-        <div className="flex items-center gap-4">
-          <AuthButton />
-        </div>
-       </>
-    );
-  }
-
-  return (
-     <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-blue-800 via-purple-700 to-pink-600 shadow-lg">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Logo />
-        {renderHeaderContent()}
       </div>
     </header>
   );
