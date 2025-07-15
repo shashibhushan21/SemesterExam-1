@@ -160,10 +160,8 @@ export default function NotePage({ params }: { params: { id: string } }) {
               </Avatar>
               <div>
                 <p className="font-semibold text-lg">{note.author}</p>
-                {formattedDate ? (
+                {formattedDate && (
                    <p className="text-muted-foreground">Uploaded on {formattedDate}</p>
-                ): (
-                   <Skeleton className="h-4 w-32 mt-1" />
                 )}
               </div>
             </CardContent>
