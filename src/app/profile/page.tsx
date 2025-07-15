@@ -42,7 +42,7 @@ export default function ProfilePage() {
       <div className="flex items-center gap-6">
         <Avatar className="h-24 w-24 border-4 border-primary">
           <AvatarImage src={mockUser.avatar} alt={mockUser.fullName} />
-          <Fallback className="text-3xl">{mockUser.fullName.charAt(0)}</Fallback>
+          <AvatarFallback className="text-3xl">{mockUser.fullName.charAt(0)}</AvatarFallback>
         </Avatar>
         <div>
           <h1 className="text-4xl font-bold font-headline">{mockUser.fullName}</h1>
