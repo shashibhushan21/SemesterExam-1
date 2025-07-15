@@ -1,3 +1,4 @@
+
 'use client';
 import Link from 'next/link';
 import { AuthButton } from '@/components/auth-button';
@@ -21,18 +22,25 @@ const navLinks = [
 
 export function Header() {
   const isMobile = useIsMobile();
+  const [hasMounted, setHasMounted] = React.useState(false);
   const pathname = usePathname();
-  const [isScrolled, setIsScrolled] = React.useState(false);
 
   React.useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    setHasMounted(true);
   }, []);
 
-  const isHomePage = pathname === '/';
+  if (!hasMounted) {
+    return (
+      <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-blue-800 via-purple-700 to-pink-600 shadow-lg">
+        <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+          <Logo />
+          <div className="flex items-center gap-4">
+             {/* Render a placeholder or nothing on the server */}
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   if (isMobile) {
     return (
