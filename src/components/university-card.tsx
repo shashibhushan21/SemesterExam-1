@@ -25,10 +25,12 @@ export function UniversityCard({ initials, name, description }: UniversityCardPr
           <CardDescription className="text-white/70 line-clamp-3">{description}</CardDescription>
         </CardContent>
         <div className="p-6 pt-0">
-          <Link href="/universities">
-            <Button className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold transition-all duration-300 transform group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-pink-500/50">
-              Explore
-              <MoveRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+          <Link href={`/universities/${encodeURIComponent(name)}`} passHref>
+            <Button asChild className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold transition-all duration-300 transform group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-pink-500/50">
+              <a>
+                Explore
+                <MoveRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </a>
             </Button>
           </Link>
         </div>
