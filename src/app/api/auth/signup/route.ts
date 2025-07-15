@@ -2,16 +2,28 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import User from '@/models/user';
 import bcrypt from 'bcryptjs';
+import { z } from 'zod';
+
+const signupSchema = z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+  password: z.string()
+    .min(6)
+    .regex(/[@#$!%*?&]/, { message: 'Password must contain at least one special character' }),
+});
 
 export async function POST(req: NextRequest) {
   try {
     await connectToDatabase();
 
-    const { name, email, password } = await req.json();
+    const body = await req.json();
+    const validation = signupSchema.safeParse(body);
 
-    if (!name || !email || !password) {
-      return NextResponse.json({ message: 'All fields are required' }, { status: 400 });
+    if (!validation.success) {
+      return NextResponse.json({ message: 'Invalid input', errors: validation.error.errors }, { status: 400 });
     }
+
+    const { name, email, password } = validation.data;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
