@@ -1,5 +1,6 @@
 
 'use client';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -13,6 +14,22 @@ import { FeatureCard } from '@/components/feature-card';
 import { BookOpen, University, RefreshCw, HelpCircle } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { TestimonialCard } from '@/components/testimonial-card';
+import { Skeleton } from '@/components/ui/skeleton';
+
+function ClientOnly({ children }: { children: React.ReactNode }) {
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) {
+    return null;
+  }
+
+  return <>{children}</>;
+}
+
 
 export default function Home() {
   const universities = [...new Set(allNotes.map((note) => note.university))];
@@ -107,77 +124,81 @@ export default function Home() {
     <>
       <section className="relative w-full h-auto min-h-[calc(100vh-10rem)] flex items-center justify-center py-10 md:py-0">
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4 w-full">
-          <Carousel
-            plugins={[Autoplay({ delay: 5000, stopOnInteraction: true })]}
-            className="w-full max-w-5xl"
-            opts={{ loop: true }}
-          >
-            <CarouselContent>
-              <CarouselItem>
-                <div className="flex flex-col items-center justify-center p-4">
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-down">
-                    Find Notes by Semester & Subject
-                  </h1>
-                  <p className="mt-4 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl animate-fade-in-up">
-                    Access organized PDFs with smart filters and fast downloads.
-                  </p>
-                </div>
-              </CarouselItem>
-              <CarouselItem>
-                 <div className="flex flex-col items-center justify-center p-4">
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-down">
-                    Thousands of Notes from Top Universities
-                  </h1>
-                  <p className="mt-4 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl animate-fade-in-up">
-                    Contributed by students just like you.
-                  </p>
-                </div>
-              </CarouselItem>
-              <CarouselItem>
-                 <div className="flex flex-col items-center justify-center p-4">
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-down">
-                    Upload and Share
-                  </h1>
-                  <p className="mt-4 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl animate-fade-in-up">
-                    Help other students by sharing your study materials.
-                  </p>
-                </div>
-              </CarouselItem>
-            </CarouselContent>
-          </Carousel>
+          <ClientOnly>
+            <Carousel
+              plugins={[Autoplay({ delay: 5000, stopOnInteraction: true })]}
+              className="w-full max-w-5xl"
+              opts={{ loop: true }}
+            >
+              <CarouselContent>
+                <CarouselItem>
+                  <div className="flex flex-col items-center justify-center p-4">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-down">
+                      Find Notes by Semester & Subject
+                    </h1>
+                    <p className="mt-4 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl animate-fade-in-up">
+                      Access organized PDFs with smart filters and fast downloads.
+                    </p>
+                  </div>
+                </CarouselItem>
+                <CarouselItem>
+                  <div className="flex flex-col items-center justify-center p-4">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-down">
+                      Thousands of Notes from Top Universities
+                    </h1>
+                    <p className="mt-4 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl animate-fade-in-up">
+                      Contributed by students just like you.
+                    </p>
+                  </div>
+                </CarouselItem>
+                <CarouselItem>
+                  <div className="flex flex-col items-center justify-center p-4">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-down">
+                      Upload and Share
+                    </h1>
+                    <p className="mt-4 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl animate-fade-in-up">
+                      Help other students by sharing your study materials.
+                    </p>
+                  </div>
+                </CarouselItem>
+              </CarouselContent>
+            </Carousel>
+          </ClientOnly>
 
           <div className="mt-8 p-4 bg-white/10 backdrop-blur-sm rounded-lg w-full max-w-4xl">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <Select>
-                <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
-                  <SelectValue placeholder="Select University" />
-                </SelectTrigger>
-                <SelectContent>
-                  {universities.map((uni) => (
-                    <SelectItem key={uni} value={uni}>{uni}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select>
-                <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
-                  <SelectValue placeholder="Select Semester" />
-                </SelectTrigger>
-                <SelectContent>
-                  {semesters.map((sem) => (
-                    <SelectItem key={sem} value={sem}>{sem}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-               <Select>
-                <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
-                  <SelectValue placeholder="Select Subject" />
-                </SelectTrigger>
-                <SelectContent>
-                  {subjects.map((sub) => (
-                    <SelectItem key={sub} value={sub}>{sub}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <ClientOnly>
+                <Select>
+                  <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
+                    <SelectValue placeholder="Select University" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {universities.map((uni) => (
+                      <SelectItem key={uni} value={uni}>{uni}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select>
+                  <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
+                    <SelectValue placeholder="Select Semester" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {semesters.map((sem) => (
+                      <SelectItem key={sem} value={sem}>{sem}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select>
+                  <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
+                    <SelectValue placeholder="Select Subject" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {subjects.map((sub) => (
+                      <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </ClientOnly>
               <Button size="lg" className="h-12 bg-white text-primary hover:bg-gray-200 transition-all duration-300 transform hover:scale-105">
                 <Search className="mr-2 h-5 w-5" />
                 Search
@@ -244,21 +265,23 @@ export default function Home() {
             Frequently Asked Questions
           </h2>
           <div className="max-w-3xl mx-auto">
-            <Accordion type="single" collapsible className="w-full space-y-4">
-              {faqs.map((faq, index) => (
-                <AccordionItem key={index} value={`item-${index}`} className="bg-gradient-to-r from-blue-800/20 via-purple-700/20 to-pink-600/20 border-white/10 rounded-xl shadow-lg transition-all duration-300 hover:bg-white/5">
-                  <AccordionTrigger className="p-6 text-lg font-semibold text-white text-left hover:no-underline">
-                    <div className="flex items-center gap-4">
-                      <HelpCircle className="w-6 h-6 text-white/80" />
-                      <span>{faq.question}</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="px-6 pb-6 text-white/80">
-                    {faq.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+            <ClientOnly>
+                <Accordion type="single" collapsible className="w-full space-y-4">
+                {faqs.map((faq, index) => (
+                    <AccordionItem key={index} value={`item-${index}`} className="bg-gradient-to-r from-blue-800/20 via-purple-700/20 to-pink-600/20 border-white/10 rounded-xl shadow-lg transition-all duration-300 hover:bg-white/5">
+                    <AccordionTrigger className="p-6 text-lg font-semibold text-white text-left hover:no-underline">
+                        <div className="flex items-center gap-4">
+                        <HelpCircle className="w-6 h-6 text-white/80" />
+                        <span>{faq.question}</span>
+                        </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-6 pb-6 text-white/80">
+                        {faq.answer}
+                    </AccordionContent>
+                    </AccordionItem>
+                ))}
+                </Accordion>
+            </ClientOnly>
           </div>
         </div>
       </section>

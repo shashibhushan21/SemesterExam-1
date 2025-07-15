@@ -1,7 +1,8 @@
 
+
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { notFound, useRouter } from 'next/navigation';
 import { allNotes } from '@/lib/mock-data';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -19,10 +20,22 @@ import { Label } from '@/components/ui/label';
 export default function NotePage({ params }: { params: { id: string } }) {
   const [summary, setSummary] = useState('');
   const [isSummarizing, setIsSummarizing] = useState(false);
+  const [formattedDate, setFormattedDate] = useState('');
+
   const { toast } = useToast();
   const router = useRouter();
 
   const note = allNotes.find((n) => n.id === params.id);
+
+  useEffect(() => {
+    if (note) {
+      setFormattedDate(new Date(note.uploadDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }));
+    }
+  }, [note]);
 
   if (!note) {
     notFound();
@@ -43,12 +56,6 @@ export default function NotePage({ params }: { params: { id: string } }) {
       setIsSummarizing(false);
     }
   };
-
-  const formattedDate = new Date(note.uploadDate).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -153,7 +160,11 @@ export default function NotePage({ params }: { params: { id: string } }) {
               </Avatar>
               <div>
                 <p className="font-semibold text-lg">{note.author}</p>
-                <p className="text-muted-foreground">Uploaded on {formattedDate}</p>
+                {formattedDate ? (
+                   <p className="text-muted-foreground">Uploaded on {formattedDate}</p>
+                ): (
+                   <Skeleton className="h-4 w-32 mt-1" />
+                )}
               </div>
             </CardContent>
           </Card>
