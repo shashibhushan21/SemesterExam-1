@@ -1,28 +1,27 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle2, Sparkles, GraduationCap } from 'lucide-react';
+import { CheckCircle2, Sparkles, GraduationCap, ArrowRight } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 interface FeatureCardProps {
   icon: LucideIcon;
   title: string;
   description: string;
-  gradient: string;
 }
 
-const FeatureCard = ({ icon: Icon, title, description, gradient }: FeatureCardProps) => (
-  <div className={`relative rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-2 bg-gradient-to-r ${gradient}`}>
-    <Card className="bg-transparent border-0 text-white h-full">
-      <CardHeader className="items-center text-center">
-        <div className="p-4 bg-white/20 rounded-full mb-4">
-          <Icon className="w-8 h-8" />
-        </div>
-        <CardTitle className="text-2xl font-bold">{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="text-center text-white/80">
-        <p>{description}</p>
-      </CardContent>
-    </Card>
-  </div>
+const FeatureCard = ({ icon: Icon, title, description }: FeatureCardProps) => (
+  <Card className="bg-slate-900/50 backdrop-blur-sm border-white/10 shadow-lg transition-all duration-300 transform hover:-translate-y-2 h-full">
+    <CardHeader className="items-center text-center">
+      <div className="p-4 bg-primary/20 rounded-full mb-4 border border-primary/30">
+        <Icon className="w-8 h-8 text-primary" />
+      </div>
+      <CardTitle className="text-2xl font-bold">{title}</CardTitle>
+    </CardHeader>
+    <CardContent className="text-center text-white/80">
+      <p>{description}</p>
+    </CardContent>
+  </Card>
 );
 
 export default function AboutPage() {
@@ -31,19 +30,16 @@ export default function AboutPage() {
       icon: CheckCircle2,
       title: "Trusted by Thousands",
       description: "Students across India rely on our notes and content.",
-      gradient: "from-blue-500 to-purple-600",
     },
     {
       icon: Sparkles,
       title: "Updated & Verified",
       description: "We keep our notes up-to-date with university curricula.",
-      gradient: "from-purple-600 to-pink-600",
     },
     {
       icon: GraduationCap,
       title: "Smart & Simple",
       description: "Easy access, beautiful UI, and effective learning tools.",
-      gradient: "from-pink-600 to-orange-500",
     },
   ];
 
@@ -65,7 +61,7 @@ export default function AboutPage() {
         ))}
       </div>
 
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto mb-20">
         <Card className="bg-slate-900/50 backdrop-blur-sm border-white/10 shadow-2xl">
           <CardHeader className="text-center">
             <CardTitle className="text-4xl font-bold">Our Mission</CardTitle>
@@ -77,6 +73,24 @@ export default function AboutPage() {
           </CardContent>
         </Card>
       </div>
+
+      <div className="text-center">
+        <Card className="bg-gradient-to-r from-pink-600 via-purple-700 to-blue-800 p-8 md:p-12 rounded-2xl shadow-lg">
+            <CardContent className="p-0">
+                <h2 className="text-3xl font-bold text-white mb-4">Have Questions?</h2>
+                <p className="text-white/80 mb-6 max-w-xl mx-auto">
+                    We're here to help! If you have any questions or need support, don't hesitate to reach out.
+                </p>
+                <Link href="/contact">
+                  <Button size="lg" className="group bg-white text-primary rounded-full px-8 py-6 text-lg hover:bg-gray-200 transition-all duration-300 transform hover:scale-105">
+                    Contact Us
+                    <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+                  </Button>
+                </Link>
+            </CardContent>
+        </Card>
+      </div>
+
     </div>
   );
 }
