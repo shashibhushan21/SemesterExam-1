@@ -21,33 +21,26 @@ const navLinks = [
 ];
 
 export function Header() {
-  const isMobile = useIsMobile();
   const [hasMounted, setHasMounted] = React.useState(false);
+  const isMobile = useIsMobile();
   const pathname = usePathname();
 
   React.useEffect(() => {
     setHasMounted(true);
   }, []);
 
-  if (!hasMounted) {
-    return (
-      <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-blue-800 via-purple-700 to-pink-600 shadow-lg">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Logo />
-          <div className="flex items-center gap-4">
-             {/* Render a placeholder or nothing on the server */}
-          </div>
+  const renderHeaderContent = () => {
+    if (!hasMounted) {
+       return (
+        <div className="flex items-center gap-4">
+          {/* Placeholder for server render */}
         </div>
-      </header>
-    );
-  }
-
-  if (isMobile) {
-    return (
-       <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-blue-800 via-purple-700 to-pink-600 shadow-md">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Logo />
-          <div className="flex items-center gap-2">
+       );
+    }
+    
+    if (isMobile) {
+      return (
+         <div className="flex items-center gap-2">
             <AuthButton />
             <Sheet>
               <SheetTrigger asChild>
@@ -60,16 +53,12 @@ export function Header() {
               </SheetContent>
             </Sheet>
           </div>
-        </div>
-      </header>
-    )
-  }
+      );
+    }
 
-  return (
-    <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-blue-800 via-purple-700 to-pink-600 shadow-lg">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+    return (
+       <>
         <div className="flex items-center gap-6">
-          <Logo />
            <nav className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href} passHref>
@@ -87,6 +76,15 @@ export function Header() {
         <div className="flex items-center gap-4">
           <AuthButton />
         </div>
+       </>
+    );
+  }
+
+  return (
+     <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-blue-800 via-purple-700 to-pink-600 shadow-lg">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+        <Logo />
+        {renderHeaderContent()}
       </div>
     </header>
   );
