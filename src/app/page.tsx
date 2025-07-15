@@ -91,7 +91,7 @@ export default function Home() {
   const faqs = [
     {
       question: "Is this platform really free?",
-      answer: "Yes, it's 100% free for all students. Our mission is to make quality education accessible to everyone."
+      answer: "Yes, it's 100% free for all students."
     },
     {
       question: "Can I upload my own notes?",
@@ -246,14 +246,14 @@ export default function Home() {
           <div className="max-w-3xl mx-auto">
             <Accordion type="single" collapsible className="w-full space-y-4">
               {faqs.map((faq, index) => (
-                <AccordionItem key={index} value={`item-${index}`} className="bg-white/10 backdrop-blur-sm border-white/20 rounded-lg transition-all duration-300 hover:bg-white/20">
+                <AccordionItem key={index} value={`item-${index}`} className="bg-gradient-to-r from-blue-800/20 via-purple-700/20 to-pink-600/20 border-white/10 rounded-xl shadow-lg transition-all duration-300 hover:bg-white/5">
                   <AccordionTrigger className="p-6 text-lg font-semibold text-white text-left hover:no-underline">
                     <div className="flex items-center gap-4">
-                      <HelpCircle className="w-6 h-6 text-primary" />
+                      <HelpCircle className="w-6 h-6 text-white/80" />
                       <span>{faq.question}</span>
                     </div>
                   </AccordionTrigger>
-                  <AccordionContent className="p-6 pt-0 text-white/80">
+                  <AccordionContent className="px-6 pb-6 text-white/80">
                     {faq.answer}
                   </AccordionContent>
                 </AccordionItem>
