@@ -73,7 +73,7 @@ export default function Home() {
 
   return (
     <>
-      <section className="relative w-full h-auto min-h-[calc(100vh-10rem)] flex items-center justify-center -mx-8 py-10 md:py-0">
+      <section className="relative w-full h-auto min-h-[calc(100vh-10rem)] flex items-center justify-center py-10 md:py-0">
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4 w-full">
           <Carousel
             plugins={[Autoplay({ delay: 5000, stopOnInteraction: true })]}
@@ -165,7 +165,7 @@ export default function Home() {
         </div>
       </section>
       
-      <section className="py-20 -mx-8">
+      <section className="py-20">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl sm:text-4xl font-bold text-center text-white mb-12 animate-fade-in-up">
             Top Universities
@@ -178,7 +178,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-20 -mx-8">
+      <section className="py-20">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl sm:text-4xl font-bold text-center text-white mb-4 animate-fade-in-up">
             Why Choose ExamNotes?
