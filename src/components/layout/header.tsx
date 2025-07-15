@@ -48,26 +48,37 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
-          <div className="hidden md:block">
-            <AuthButton />
-          </div>
-
-          <div className="flex items-center gap-2 md:hidden">
-              <AuthButton />
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
-                    <Menu />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-[300px] sm:w-[400px] bg-background p-0">
-                  <SheetHeader className="p-4 border-b">
-                    <SheetTitle><Logo /></SheetTitle>
-                  </SheetHeader>
-                   <AppSidebar />
-                </SheetContent>
-              </Sheet>
-          </div>
+           {isMounted ? (
+            <>
+              <div className="hidden md:block">
+                <AuthButton />
+              </div>
+              <div className="flex items-center gap-2 md:hidden">
+                <AuthButton />
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+                      <Menu />
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="left" className="w-[300px] sm:w-[400px] bg-background p-0">
+                    <SheetHeader className="p-4 border-b">
+                       <SheetTitle>
+                        <Logo />
+                      </SheetTitle>
+                    </SheetHeader>
+                    <AppSidebar />
+                  </SheetContent>
+                </Sheet>
+              </div>
+            </>
+          ) : (
+             <div className="flex items-center gap-4">
+                <Skeleton className="h-10 w-24 hidden md:block" />
+                <Skeleton className="h-10 w-10 md:hidden" />
+                <Skeleton className="h-10 w-10 md:hidden" />
+              </div>
+          )}
         </div>
       </div>
     </header>
