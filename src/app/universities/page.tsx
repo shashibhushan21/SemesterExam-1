@@ -2,27 +2,38 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import { allNotes } from '@/lib/mock-data';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { University, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
+import { UniversityCard } from '@/components/university-card';
 
 export default function UniversitiesPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const allUniversities = [...new Set(allNotes.map((note) => note.university))];
+  
+  const universityData = allNotes.reduce((acc, note) => {
+    if (!acc[note.university]) {
+      acc[note.university] = {
+        name: note.university,
+        description: `Explore notes for ${note.subject} and more.`, // generic description
+      };
+    }
+    return acc;
+  }, {} as Record<string, { name: string; description: string }>);
+
+  const allUniversities = Object.values(universityData);
 
   const filteredUniversities = allUniversities.filter((uni) =>
-    uni.toLowerCase().includes(searchTerm.toLowerCase())
+    uni.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const getInitials = (name: string) => {
     return name
       .split(' ')
       .map((n) => n[0])
-      .join('');
+      .join('')
+      .substring(0, 2);
   };
 
   return (
@@ -47,23 +58,18 @@ export default function UniversitiesPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-16">
-        {filteredUniversities.map((uni, index) => (
-           <div key={uni} className="group relative rounded-xl transition-all duration-500 transform hover:-translate-y-2">
-            <div className={cn(
-                "absolute -inset-0.5 rounded-xl bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 opacity-0 blur transition duration-500 group-hover:opacity-75",
-                "animate-fade-in-up"
-            )} style={{ animationDelay: `${index * 100}ms`}}></div>
-            <Card className="relative h-full flex flex-col items-center justify-center text-center bg-slate-900/80 backdrop-blur-sm text-white rounded-xl transition-all duration-300 p-8 min-h-[200px]">
-                <University className="h-10 w-10 text-white/80 mb-4" />
-                <h2 className="text-2xl font-bold text-white">{getInitials(uni)}</h2>
-                <p className="text-white/70 mt-1 text-base">{uni}</p>
-            </Card>
-           </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        {filteredUniversities.map((uni) => (
+          <UniversityCard
+            key={uni.name}
+            initials={getInitials(uni.name)}
+            name={uni.name}
+            description={uni.description}
+          />
         ))}
       </div>
       
-      {filteredUniversities.length === 0 && (
+      {filteredUniversibilities.length === 0 && (
         <div className="text-center py-16">
             <p className="text-2xl font-semibold">No universities found for &quot;{searchTerm}&quot;</p>
             <p className="text-white/70 mt-2">Try a different search term.</p>
@@ -86,4 +92,3 @@ export default function UniversitiesPage() {
     </div>
   );
 }
-
