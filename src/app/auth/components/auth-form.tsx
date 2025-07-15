@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
-import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
@@ -31,7 +30,6 @@ export function AuthForm() {
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { signUp, signIn } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -50,36 +48,18 @@ export function AuthForm() {
 
   const onLogin = async (data: LoginValues) => {
     setIsSubmitting(true);
-    try {
-      await signIn(data.email, data.password);
-      toast({ title: 'Login successful!' });
-      router.push('/profile');
-    } catch (error: any) {
-      toast({
-        title: 'Login Failed',
-        description: error.message || 'An unexpected error occurred.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    // Add your login logic here
+    console.log('Login data:', data);
+    toast({ title: 'Login functionality not implemented.' });
+    setIsSubmitting(false);
   };
   
   const onSignup = async (data: SignupValues) => {
     setIsSubmitting(true);
-    try {
-      await signUp(data.email, data.password, data.name);
-      toast({ title: 'Account created successfully!' });
-      router.push('/profile');
-    } catch (error: any) {
-      toast({
-        title: 'Sign Up Failed',
-        description: error.message || 'An unexpected error occurred.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    // Add your signup logic here
+    console.log('Signup data:', data);
+    toast({ title: 'Signup functionality not implemented.' });
+    setIsSubmitting(false);
   };
 
 

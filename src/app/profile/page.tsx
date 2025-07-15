@@ -5,10 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Mail, Phone, University, GraduationCap, Star, Shield, Zap, GitBranch, LogOut } from "lucide-react";
-import { useAuth } from "@/hooks/use-auth";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 
 const featureCards = [
   {
@@ -33,43 +29,13 @@ const featureCards = [
 
 
 export default function ProfilePage() {
-  const { user, loading, signOut } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/auth');
-    }
-  }, [user, loading, router]);
-  
-  if (loading || !user) {
-    return (
-       <div className="space-y-8">
-        <div className="flex items-center gap-6">
-          <Skeleton className="h-24 w-24 rounded-full" />
-          <div>
-            <Skeleton className="h-10 w-64 mb-2" />
-            <Skeleton className="h-6 w-48" />
-          </div>
-        </div>
-         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <Skeleton className="h-8 w-48" />
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <Skeleton className="h-6 w-full" />
-                <Skeleton className="h-6 w-full" />
-                <Skeleton className="h-6 w-full" />
-              </CardContent>
-            </Card>
-          </div>
-         </div>
-       </div>
-    );
-  }
-
+  // Placeholder user data
+  const user = {
+    displayName: "Shashi Kumar",
+    email: "shashibkumar21@example.com",
+    photoURL: "",
+    phoneNumber: "+91 98765 43210"
+  };
 
   return (
     <div className="space-y-8">
@@ -82,7 +48,7 @@ export default function ProfilePage() {
           <h1 className="text-4xl font-bold font-headline">{user.displayName || 'Anonymous User'}</h1>
           <p className="text-muted-foreground text-lg">Your personal dashboard</p>
         </div>
-         <Button variant="destructive" onClick={signOut}>
+         <Button variant="destructive">
             <LogOut className="mr-2 h-4 w-4" /> Sign Out
         </Button>
       </div>
