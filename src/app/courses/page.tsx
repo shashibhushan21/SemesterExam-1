@@ -15,7 +15,7 @@ export default function CoursesPage() {
       </div>
        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {subjects.map((subject) => (
-           <Link href="#" key={subject} className="group block">
+           <Link href="/universities" key={subject} className="group block">
             <Card className="bg-slate-900/50 backdrop-blur-sm border-white/10 h-full transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20">
               <CardHeader>
                 <CardTitle className="text-2xl font-bold">{subject}</CardTitle>
