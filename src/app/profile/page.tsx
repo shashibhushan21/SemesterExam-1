@@ -1,16 +1,16 @@
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Mail, Phone, University, GraduationCap, Star, Shield, Zap } from "lucide-react";
+import { Mail, Phone, University, GraduationCap, Star, Shield, Zap, GitBranch } from "lucide-react";
 
 const mockUser = {
   fullName: "Shashi Bhushan Kumar",
-  avatar: "https://i.pravatar.cc/150?img=32",
+  avatar: "https://i.pravatar.cc/150?img=5",
   email: "shashi@example.com",
   phone: "+91 9876543210",
-  university: "MAKAUT",
+  university: "West Bengal University of Technology",
+  branch: "Computer Science",
   semester: "6th",
 };
 
@@ -42,7 +42,7 @@ export default function ProfilePage() {
       <div className="flex items-center gap-6">
         <Avatar className="h-24 w-24 border-4 border-primary">
           <AvatarImage src={mockUser.avatar} alt={mockUser.fullName} />
-          <AvatarFallback className="text-3xl">{mockUser.fullName.charAt(0)}</AvatarFallback>
+          <Fallback className="text-3xl">{mockUser.fullName.charAt(0)}</Fallback>
         </Avatar>
         <div>
           <h1 className="text-4xl font-bold font-headline">{mockUser.fullName}</h1>
@@ -68,6 +68,10 @@ export default function ProfilePage() {
               <div className="flex items-center gap-4">
                 <University className="w-5 h-5 text-muted-foreground" />
                 <span className="text-foreground">{mockUser.university}</span>
+              </div>
+              <div className="flex items-center gap-4">
+                <GitBranch className="w-5 h-5 text-muted-foreground" />
+                <span className="text-foreground">{mockUser.branch}</span>
               </div>
                <div className="flex items-center gap-4">
                 <GraduationCap className="w-5 h-5 text-muted-foreground" />
