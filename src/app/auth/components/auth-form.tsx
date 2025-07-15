@@ -31,6 +31,7 @@ export function AuthForm() {
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState('login');
   const { toast } = useToast();
   const router = useRouter();
   const { login } = useAuth();
@@ -45,6 +46,7 @@ export function AuthForm() {
     register: registerSignup,
     handleSubmit: handleSignupSubmit,
     formState: { errors: signupErrors },
+    reset: resetSignupForm,
   } = useForm<SignupValues>({ resolver: zodResolver(signupSchema) });
 
 
@@ -53,8 +55,8 @@ export function AuthForm() {
     try {
       await login(data.email, data.password);
       toast({ title: "Login successful!", description: "Welcome back." });
-      router.push('/profile');
-      router.refresh(); // Ensures the layout re-renders with the new auth state
+      router.push('/');
+      router.refresh();
     } catch (error: any) {
       toast({ title: 'Login Failed', description: error.message || 'An unexpected error occurred.', variant: 'destructive' });
     } finally {
@@ -77,8 +79,16 @@ export function AuthForm() {
         throw new Error(result.message || 'Something went wrong');
       }
 
-      toast({ title: 'Signup successful!', description: 'You can now log in.' });
-      // Optionally, switch to the login tab
+      toast({ title: 'Signup successful!', description: 'Logging you in...' });
+      resetSignupForm();
+      
+      // Automatically log the user in
+      await login(data.email, data.password);
+      
+      toast({ title: "Login successful!", description: "Welcome!" });
+      router.push('/');
+      router.refresh();
+
     } catch (error: any) {
       toast({ title: 'Signup Failed', description: error.message || 'An unexpected error occurred.', variant: 'destructive' });
     } finally {
@@ -88,7 +98,7 @@ export function AuthForm() {
 
 
   return (
-    <Tabs defaultValue="login" className="w-full">
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="login">Login</TabsTrigger>
         <TabsTrigger value="signup">Sign Up</TabsTrigger>
