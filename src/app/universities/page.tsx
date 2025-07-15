@@ -1,40 +1,57 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { allNotes } from '@/lib/mock-data';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
 import { UniversityCard } from '@/components/university-card';
+import { Note } from '@/lib/types';
 
-export default function UniversitiesPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  
-  const universityData = allNotes.reduce((acc, note) => {
-    if (!acc[note.university]) {
-      acc[note.university] = {
-        name: note.university,
-        description: `Explore notes for ${note.subject} and more.`, // generic description
-      };
-    }
-    return acc;
-  }, {} as Record<string, { name: string; description: string }>);
+interface UniversitySummary {
+  name: string;
+  description: string;
+  initials: string;
+}
 
-  const allUniversities = Object.values(universityData);
-
-  const filteredUniversities = allUniversities.filter((uni) =>
-    uni.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const getInitials = (name: string) => {
+const getInitials = (name: string) => {
     return name
       .split(' ')
       .map((n) => n[0])
       .join('')
-      .substring(0, 2);
-  };
+      .substring(0, 2)
+      .toUpperCase();
+};
+
+export default function UniversitiesPage() {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const allUniversities = useMemo(() => {
+    const universityData = allNotes.reduce((acc, note: Note) => {
+      if (!acc[note.university]) {
+        acc[note.university] = {
+          name: note.university,
+          description: `Explore notes for subjects like ${note.subject} and more.`,
+          initials: getInitials(note.university),
+        };
+      }
+      return acc;
+    }, {} as Record<string, UniversitySummary>);
+    return Object.values(universityData);
+  }, []);
+
+
+  const filteredUniversities = useMemo(() => {
+     if (!searchTerm) {
+      return allUniversities;
+    }
+    return allUniversities.filter((uni) =>
+      uni.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm, allUniversities]);
+
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8 text-white">
@@ -62,7 +79,7 @@ export default function UniversitiesPage() {
         {filteredUniversities.map((uni) => (
           <UniversityCard
             key={uni.name}
-            initials={getInitials(uni.name)}
+            initials={uni.initials}
             name={uni.name}
             description={uni.description}
           />
