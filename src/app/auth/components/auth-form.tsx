@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/use-auth';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -32,6 +33,7 @@ export function AuthForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const { login } = useAuth();
 
   const {
     register: registerLogin,
@@ -48,18 +50,40 @@ export function AuthForm() {
 
   const onLogin = async (data: LoginValues) => {
     setIsSubmitting(true);
-    // Add your login logic here
-    console.log('Login data:', data);
-    toast({ title: 'Login functionality not implemented.' });
-    setIsSubmitting(false);
+    try {
+      await login(data.email, data.password);
+      toast({ title: "Login successful!", description: "Welcome back." });
+      router.push('/profile');
+      router.refresh(); // Ensures the layout re-renders with the new auth state
+    } catch (error: any) {
+      toast({ title: 'Login Failed', description: error.message || 'An unexpected error occurred.', variant: 'destructive' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   const onSignup = async (data: SignupValues) => {
     setIsSubmitting(true);
-    // Add your signup logic here
-    console.log('Signup data:', data);
-    toast({ title: 'Signup functionality not implemented.' });
-    setIsSubmitting(false);
+    try {
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.message || 'Something went wrong');
+      }
+
+      toast({ title: 'Signup successful!', description: 'You can now log in.' });
+      // Optionally, switch to the login tab
+    } catch (error: any) {
+      toast({ title: 'Signup Failed', description: error.message || 'An unexpected error occurred.', variant: 'destructive' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
 

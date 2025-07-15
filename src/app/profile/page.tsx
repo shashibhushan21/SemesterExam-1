@@ -4,7 +4,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Mail, Phone, University, GraduationCap, Star, Shield, Zap, GitBranch, LogOut } from "lucide-react";
+import { Mail, Phone, University, GraduationCap, Star, Shield, Zap, GitBranch, LogOut, Loader2 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useRouter } from "next/navigation";
 
 const featureCards = [
   {
@@ -27,28 +30,62 @@ const featureCards = [
   },
 ];
 
-
 export default function ProfilePage() {
-  // Placeholder user data
-  const user = {
-    displayName: "Shashi Kumar",
-    email: "shashibkumar21@example.com",
-    photoURL: "",
-    phoneNumber: "+91 98765 43210"
+  const { user, loading, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await logout();
+    router.push('/');
+    router.refresh();
   };
+
+  if (loading) {
+    return (
+       <div className="space-y-8">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+          <Skeleton className="h-24 w-24 rounded-full" />
+          <div className="flex-grow space-y-2">
+            <Skeleton className="h-10 w-1/2" />
+            <Skeleton className="h-6 w-1/3" />
+          </div>
+          <Skeleton className="h-10 w-28" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            <Skeleton className="h-64 w-full" />
+          </div>
+          <div className="lg:col-span-1 space-y-6">
+            <Skeleton className="h-36 w-full" />
+            <Skeleton className="h-36 w-full" />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    // This should be handled by middleware, but as a fallback
+    return (
+      <div className="text-center">
+        <p>You must be logged in to view this page.</p>
+        <Button onClick={() => router.push('/auth')} className="mt-4">Go to Login</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center gap-6">
         <Avatar className="h-24 w-24 border-4 border-primary">
-          <AvatarImage src={user.photoURL || undefined} alt={user.displayName || 'User'} />
-          <AvatarFallback className="text-3xl">{user.displayName?.charAt(0) || user.email?.charAt(0) || 'U'}</AvatarFallback>
+          <AvatarImage src={undefined} alt={user.name} />
+          <AvatarFallback className="text-3xl">{user.name?.charAt(0) || user.email?.charAt(0) || 'U'}</AvatarFallback>
         </Avatar>
         <div className="flex-grow">
-          <h1 className="text-4xl font-bold font-headline">{user.displayName || 'Anonymous User'}</h1>
+          <h1 className="text-4xl font-bold font-headline">{user.name || 'Anonymous User'}</h1>
           <p className="text-muted-foreground text-lg">Your personal dashboard</p>
         </div>
-         <Button variant="destructive">
+         <Button variant="destructive" onClick={handleLogout}>
             <LogOut className="mr-2 h-4 w-4" /> Sign Out
         </Button>
       </div>
@@ -66,7 +103,7 @@ export default function ProfilePage() {
               </div>
               <div className="flex items-center gap-4">
                 <Phone className="w-5 h-5 text-muted-foreground" />
-                <span className="text-foreground">{user.phoneNumber || "Not provided"}</span>
+                <span className="text-foreground">Not provided</span>
               </div>
               <div className="flex items-center gap-4">
                 <University className="w-5 h-5 text-muted-foreground" />

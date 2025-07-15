@@ -4,6 +4,7 @@ import { Header } from '@/components/layout/header';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { Footer } from '@/components/layout/footer';
+import { AuthProvider } from '@/hooks/use-auth';
 
 export const metadata: Metadata = {
   title: 'SemesterExam',
@@ -23,6 +24,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
       <body className={cn("font-body antialiased", "bg-background text-foreground")}>
+        <AuthProvider>
           <div className="relative flex min-h-screen flex-col">
             <div className="absolute inset-0 -z-10 h-full w-full bg-gradient-to-r from-blue-800 via-purple-700 to-pink-600"></div>
             <Header />
@@ -30,6 +32,7 @@ export default function RootLayout({
             <Footer />
           </div>
           <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );
