@@ -10,7 +10,9 @@ import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carouse
 import Autoplay from "embla-carousel-autoplay";
 import { UniversityCard } from '@/components/university-card';
 import { FeatureCard } from '@/components/feature-card';
-import { BookOpen, University, RefreshCw } from 'lucide-react';
+import { BookOpen, University, RefreshCw, HelpCircle, Quote } from 'lucide-react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { TestimonialCard } from '@/components/testimonial-card';
 
 export default function Home() {
   const universities = [...new Set(allNotes.map((note) => note.university))];
@@ -70,6 +72,39 @@ export default function Home() {
       color: 'from-pink-600 to-orange-500',
     },
   ];
+  
+  const testimonials = [
+    {
+      quote: "Best platform for quick exam prep!",
+      author: "B.Tech Student",
+      color: "from-blue-500 to-indigo-600",
+    },
+    {
+      quote: "Notes are clean and to the point.",
+      author: "B.Tech Student",
+      color: "from-green-500 to-teal-600",
+    },
+    {
+      quote: "It saved my semester!",
+      author: "B.Tech Student",
+      color: "from-pink-500 to-red-600",
+    },
+  ];
+
+  const faqs = [
+    {
+      question: "Is this platform really free?",
+      answer: "Yes, it's 100% free for all students. Our mission is to make quality education accessible to everyone."
+    },
+    {
+      question: "Can I upload my own notes?",
+      answer: "Absolutely! We encourage students to contribute their study materials to help the community. Just head over to the 'Upload' page."
+    },
+    {
+      question: "How often are the notes updated?",
+      answer: "Notes are updated regularly by our community of students and educators. We strive to provide the most current and relevant content."
+    }
+  ];
 
   return (
     <>
@@ -113,7 +148,6 @@ export default function Home() {
               </CarouselItem>
             </CarouselContent>
           </Carousel>
-
 
           <div className="mt-8 p-4 bg-white/10 backdrop-blur-sm rounded-lg w-full max-w-4xl">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -190,6 +224,44 @@ export default function Home() {
             {features.map((feature, index) => (
               <FeatureCard key={index} {...feature} />
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-12">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center text-white mb-12 animate-fade-in-up">
+            What Students Say
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <TestimonialCard key={index} {...testimonial} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-12">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center text-white mb-12 animate-fade-in-up">
+            Frequently Asked Questions
+          </h2>
+          <div className="max-w-3xl mx-auto">
+            <Accordion type="single" collapsible className="w-full space-y-4">
+              {faqs.map((faq, index) => (
+                <AccordionItem key={index} value={`item-${index}`} className="bg-white/10 backdrop-blur-sm border-white/20 rounded-lg transition-all duration-300 hover:bg-white/20">
+                  <AccordionTrigger className="p-6 text-lg font-semibold text-white text-left hover:no-underline">
+                    <div className="flex items-center gap-4">
+                      <HelpCircle className="w-6 h-6 text-primary" />
+                      <span>{faq.question}</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="p-6 pt-0 text-white/80">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
         </div>
       </section>
