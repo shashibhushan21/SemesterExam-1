@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -13,9 +14,21 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { LogOut, User } from 'lucide-react';
+import { Skeleton } from './ui/skeleton';
 
 export function AuthButton() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    // In a real app, you'd check for a token or session here.
+    // For now, we'll just keep the default state of false.
+  }, []);
+
+  if (!isMounted) {
+    return <Skeleton className="h-10 w-20" />;
+  }
 
   if (!isLoggedIn) {
     return (

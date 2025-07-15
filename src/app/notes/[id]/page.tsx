@@ -16,13 +16,13 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 
-export default function NotePage({ params: { id } }: { params: { id: string } }) {
+export default function NotePage({ params }: { params: { id: string } }) {
   const [summary, setSummary] = useState('');
   const [isSummarizing, setIsSummarizing] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
 
-  const note = allNotes.find((n) => n.id === id);
+  const note = allNotes.find((n) => n.id === params.id);
 
   if (!note) {
     notFound();
@@ -33,10 +33,6 @@ export default function NotePage({ params: { id } }: { params: { id: string } })
     try {
       const result = await summarizeNotes({ notesContent: note.content });
       setSummary(result.summary);
-      toast({
-        title: 'Summary Generated!',
-        description: 'The AI summary is now available.',
-      });
     } catch (error) {
       toast({
         title: 'Error',
@@ -47,6 +43,12 @@ export default function NotePage({ params: { id } }: { params: { id: string } })
       setIsSummarizing(false);
     }
   };
+
+  const formattedDate = new Date(note.uploadDate).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -91,7 +93,12 @@ export default function NotePage({ params: { id } }: { params: { id: string } })
               </Button>
             </CardHeader>
             <CardContent>
-              {summary ? (
+              {isSummarizing && !summary ? (
+                <div className="text-center text-muted-foreground py-8">
+                  <Loader2 className="mx-auto h-8 w-8 animate-spin" />
+                  <p className="mt-2">Generating summary...</p>
+                </div>
+              ) : summary ? (
                 <p className="text-foreground/90 leading-relaxed">{summary}</p>
               ) : (
                 <div className="text-center text-muted-foreground py-8">
@@ -146,7 +153,7 @@ export default function NotePage({ params: { id } }: { params: { id: string } })
               </Avatar>
               <div>
                 <p className="font-semibold text-lg">{note.author}</p>
-                <p className="text-muted-foreground">Uploaded on {note.uploadDate}</p>
+                <p className="text-muted-foreground">Uploaded on {formattedDate}</p>
               </div>
             </CardContent>
           </Card>
