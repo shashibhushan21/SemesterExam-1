@@ -1,4 +1,5 @@
 
+
 'use client';
 import Link from 'next/link';
 import { AuthButton } from '@/components/auth-button';
@@ -23,10 +24,13 @@ const navLinks = [
 export function Header() {
   const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+  
+  const closeSidebar = () => setIsSidebarOpen(false);
 
   return (
      <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-blue-800 via-purple-700 to-pink-600 shadow-lg">
@@ -55,7 +59,7 @@ export function Header() {
               </div>
               <div className="flex items-center gap-2 md:hidden">
                 <AuthButton />
-                <Sheet>
+                <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
                   <SheetTrigger asChild>
                     <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
                       <Menu />
@@ -67,7 +71,7 @@ export function Header() {
                         <Logo />
                       </SheetTitle>
                     </SheetHeader>
-                    <AppSidebar />
+                    <AppSidebar onLinkClick={closeSidebar} />
                   </SheetContent>
                 </Sheet>
               </div>

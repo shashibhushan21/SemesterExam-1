@@ -13,7 +13,11 @@ const menuItems = [
   { href: '/contact', label: 'Contact', icon: Mail },
 ];
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  onLinkClick?: () => void;
+}
+
+export function AppSidebar({ onLinkClick }: AppSidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -22,7 +26,7 @@ export function AppSidebar() {
         <ul className="space-y-2">
           {menuItems.map((item) => (
             <li key={item.href}>
-              <Link href={item.href} passHref>
+              <Link href={item.href} passHref onClick={onLinkClick}>
                 <span
                   className={cn(
                     'flex items-center gap-3 rounded-md p-3 text-lg font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
