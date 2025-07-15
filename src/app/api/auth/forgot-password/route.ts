@@ -5,8 +5,14 @@ import crypto from 'crypto';
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+const fromEmail = process.env.RESEND_FROM_EMAIL;
 
 export async function POST(req: NextRequest) {
+  if (!fromEmail) {
+    console.error('RESEND_FROM_EMAIL is not set in the environment variables.');
+    return NextResponse.json({ message: 'Server configuration error.' }, { status: 500 });
+  }
+  
   try {
     await connectToDatabase();
     const { email } = await req.json();
@@ -33,7 +39,7 @@ export async function POST(req: NextRequest) {
 
     try {
       await resend.emails.send({
-        from: 'onboarding@resend.dev',
+        from: fromEmail,
         to: user.email,
         subject: 'Password Reset Request',
         html: `<p>You are receiving this email because you (or someone else) have requested the reset of the password for your account.</p>
