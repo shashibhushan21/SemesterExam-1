@@ -5,16 +5,14 @@ import { cn } from '@/lib/utils';
 interface TestimonialCardProps {
   quote: string;
   author: string;
-  color: string;
 }
 
-export function TestimonialCard({ quote, author, color }: TestimonialCardProps) {
+export function TestimonialCard({ quote, author }: TestimonialCardProps) {
   return (
     <Card className={cn(
       "relative flex flex-col items-center justify-center text-center p-8 rounded-2xl text-white border-0 overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl",
       "bg-slate-900/50 backdrop-blur-sm"
     )}>
-      <div className={cn("absolute inset-0 opacity-50 transition-opacity duration-300 group-hover:opacity-75 bg-gradient-to-br", color)}></div>
       <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
       <CardContent className="relative z-10 p-0">
         <div className="mb-4">

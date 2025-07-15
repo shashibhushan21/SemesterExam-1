@@ -77,17 +77,14 @@ export default function Home() {
     {
       quote: "Best platform for quick exam prep!",
       author: "B.Tech Student",
-      color: "from-blue-500 to-indigo-600",
     },
     {
       quote: "Notes are clean and to the point.",
       author: "B.Tech Student",
-      color: "from-green-500 to-teal-600",
     },
     {
       quote: "It saved my semester!",
       author: "B.Tech Student",
-      color: "from-pink-500 to-red-600",
     },
   ];
 
