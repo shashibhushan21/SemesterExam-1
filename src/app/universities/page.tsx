@@ -69,7 +69,7 @@ export default function UniversitiesPage() {
         ))}
       </div>
       
-      {filteredUniversibilities.length === 0 && (
+      {filteredUniversities.length === 0 && (
         <div className="text-center py-16">
             <p className="text-2xl font-semibold">No universities found for &quot;{searchTerm}&quot;</p>
             <p className="text-white/70 mt-2">Try a different search term.</p>
