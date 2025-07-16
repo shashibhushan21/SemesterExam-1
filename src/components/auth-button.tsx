@@ -16,7 +16,7 @@ export function AuthButton() {
   const handleLogout = async () => {
     await logout();
     router.push('/');
-    router.refresh();
+    router.refresh(); // This is crucial to re-fetch server components and re-validate state
   };
 
   if (loading) {

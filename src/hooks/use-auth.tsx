@@ -35,9 +35,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const data = await res.json();
         setUser(data.user);
       } else {
+        // Not authenticated or error, clear user
         setUser(null);
       }
     } catch (error) {
+      // Network error, etc.
       setUser(null);
     } finally {
       setLoading(false);
@@ -50,29 +52,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     setLoading(true);
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-    
-    const data = await res.json();
+    try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        
+        const data = await res.json();
 
-    if (!res.ok) {
-      setLoading(false);
-      throw new Error(data.message || 'Login failed');
+        if (!res.ok) {
+          throw new Error(data.message || 'Login failed');
+        }
+        
+        setUser(data.user);
+    } finally {
+        setLoading(false);
     }
-    
-    setUser(data.user);
-    setLoading(false);
   };
 
   const logout = async () => {
     try {
         await fetch('/api/auth/logout', { method: 'POST' });
     } catch (error) {
-        console.error('Logout failed', error)
+        console.error('Logout failed on server:', error)
     } finally {
+        // ALWAYS clear user state on the client
         setUser(null);
         setLoading(false);
     }

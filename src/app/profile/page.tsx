@@ -9,10 +9,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { EditProfileDialog } from "./components/edit-profile-dialog";
 import { ChangePasswordDialog } from "./components/change-password-dialog";
+import { useEffect } from "react";
 
 export default function ProfilePage() {
   const { user, loading, logout, updateUser } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    // Redirect if not logged in after checking
+    if (!loading && !user) {
+      router.push('/auth');
+    }
+  }, [user, loading, router]);
+
 
   const handleLogout = async () => {
     await logout();
@@ -25,6 +34,7 @@ export default function ProfilePage() {
   };
 
   if (loading || !user) {
+    // Show a skeleton loader while verifying auth state
     return (
        <div className="space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center gap-6">
