@@ -1,3 +1,4 @@
+
 'use server';
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
@@ -46,7 +47,7 @@ export async function POST(req: NextRequest) {
     });
     
     const userResponse = { 
-        id: user._id, 
+        id: user._id.toString(), // CRITICAL FIX: Convert ObjectId to string for the JSON response
         email: user.email, 
         name: user.name,
         avatar: user.avatar,
