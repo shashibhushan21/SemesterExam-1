@@ -41,14 +41,13 @@ export async function POST(req: NextRequest) {
       id: user._id.toString(),
       email: user.email,
       name: user.name,
+      avatar: user.avatar || null,
+      phone: user.phone || null,
+      college: user.college || null,
+      branch: user.branch || null,
+      semester: user.semester || null,
     };
     
-    if (user.avatar) tokenPayload.avatar = user.avatar;
-    if (user.phone) tokenPayload.phone = user.phone;
-    if (user.college) tokenPayload.college = user.college;
-    if (user.branch) tokenPayload.branch = user.branch;
-    if (user.semester) tokenPayload.semester = user.semester;
-
     const token = jwt.sign(tokenPayload, process.env.JWT_SECRET!, {
       expiresIn: '1d',
     });
