@@ -18,7 +18,7 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  updateUser: (data: User) => void;
+  updateUser: (data: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -35,11 +35,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const data = await res.json();
         setUser(data.user);
       } else {
-        // Not authenticated or error, clear user
         setUser(null);
       }
     } catch (error) {
-      // Network error, etc.
       setUser(null);
     } finally {
       setLoading(false);
@@ -77,14 +75,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
         console.error('Logout failed on server:', error)
     } finally {
-        // ALWAYS clear user state on the client
         setUser(null);
         setLoading(false);
     }
   };
 
-  const updateUser = (data: User) => {
-    setUser(data);
+  const updateUser = (data: Partial<User>) => {
+    setUser(prevUser => (prevUser ? { ...prevUser, ...data } : null));
   };
   
   const value = { user, loading, login, logout, updateUser };

@@ -58,7 +58,7 @@ export function AuthForm() {
     try {
       await login(data.email, data.password);
       toast({ title: "Login successful!", description: "Welcome back." });
-      router.push('/');
+      router.push('/profile');
       router.refresh();
     } catch (error: any) {
       toast({ title: 'Login Failed', description: error.message || 'An unexpected error occurred.', variant: 'destructive' });
@@ -85,11 +85,10 @@ export function AuthForm() {
       toast({ title: 'Signup successful!', description: 'Logging you in...' });
       resetSignupForm();
       
-      // Automatically log the user in
       await login(data.email, data.password);
       
       toast({ title: "Login successful!", description: "Welcome!" });
-      router.push('/');
+      router.push('/profile');
       router.refresh();
 
     } catch (error: any) {

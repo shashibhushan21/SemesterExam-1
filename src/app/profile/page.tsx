@@ -16,7 +16,6 @@ export default function ProfilePage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirect if not logged in after checking
     if (!loading && !user) {
       router.push('/auth');
     }
@@ -29,12 +28,11 @@ export default function ProfilePage() {
     router.refresh();
   };
   
-  const onProfileUpdate = (updatedUser: any) => {
+  const handleProfileUpdate = (updatedUser: any) => {
     updateUser(updatedUser);
   };
 
   if (loading || !user) {
-    // Show a skeleton loader while verifying auth state
     return (
        <div className="space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center gap-6">
@@ -82,7 +80,7 @@ export default function ProfilePage() {
            <Card className="transition-all duration-300 hover:shadow-xl">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="font-headline">Your Information</CardTitle>
-                <EditProfileDialog user={user} onProfileUpdate={onProfileUpdate}>
+                <EditProfileDialog user={user} onProfileUpdate={handleProfileUpdate}>
                     <Button variant="outline"><Edit className="mr-2 h-4 w-4" /> Edit Profile</Button>
                 </EditProfileDialog>
             </CardHeader>
