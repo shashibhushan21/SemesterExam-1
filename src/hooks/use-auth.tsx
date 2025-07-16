@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
@@ -18,7 +19,7 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
-  updateUser: (data: Partial<User> | null) => void;
+  updateUser: (data: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -61,7 +62,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw new Error(data.message || 'Login failed');
     }
     
-    // After successful login, set the user state
     setUser(data.user);
     return data.user;
   };
@@ -76,12 +76,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const updateUser = (data: Partial<User> | null) => {
-    if (data === null) {
-      setUser(null);
-    } else {
-      setUser(prevUser => (prevUser ? { ...prevUser, ...data } : data as User));
-    }
+  const updateUser = (data: Partial<User>) => {
+    setUser(prevUser => (prevUser ? { ...prevUser, ...data } : data as User));
   };
   
   const value = { user, loading, login, logout, updateUser };
