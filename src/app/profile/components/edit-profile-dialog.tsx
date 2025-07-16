@@ -123,7 +123,22 @@ export function EditProfileDialog({ user, children, onProfileUpdate }: EditProfi
               <AvatarImage src={avatarPreview} />
               <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
             </Avatar>
-            <Input id="avatar" type="file" {...register('avatar')} className="hidden" ref={fileInputRef} onChange={handleAvatarChange} />
+            <Controller
+              control={control}
+              name="avatar"
+              render={({ field }) => (
+                <Input
+                  id="avatar"
+                  type="file"
+                  className="hidden"
+                  ref={fileInputRef}
+                  onChange={(e) => {
+                    field.onChange(e.target.files);
+                    handleAvatarChange(e);
+                  }}
+                />
+              )}
+            />
             <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
               <Upload className="mr-2 h-4 w-4" /> Change Photo
             </Button>
