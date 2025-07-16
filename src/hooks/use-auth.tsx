@@ -1,7 +1,6 @@
 'use client';
 
 import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 
 interface User {
   id: string;
@@ -19,7 +18,7 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  fetchUser: (data?: User) => Promise<void>;
+  updateUser: (data: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,11 +27,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchUser = useCallback(async (data?: User) => {
-    if (data) {
-      setUser(data);
-      return;
-    }
+  const fetchUser = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch('/api/auth/me');
@@ -68,7 +63,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw new Error(data.message || 'Login failed');
     }
     
-    await fetchUser(data.user); // Pass user data directly
+    setUser(data.user);
     setLoading(false);
   };
 
@@ -82,8 +77,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
     }
   };
+
+  const updateUser = (data: User) => {
+    setUser(data);
+  };
   
-  const value = { user, loading, login, logout, fetchUser };
+  const value = { user, loading, login, logout, updateUser };
 
   return (
     <AuthContext.Provider value={value}>

@@ -11,7 +11,7 @@ import { EditProfileDialog } from "./components/edit-profile-dialog";
 import { ChangePasswordDialog } from "./components/change-password-dialog";
 
 export default function ProfilePage() {
-  const { user, loading, logout, fetchUser } = useAuth();
+  const { user, loading, logout, updateUser } = useAuth();
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -21,7 +21,7 @@ export default function ProfilePage() {
   };
   
   const onProfileUpdate = (updatedUser: any) => {
-    fetchUser(updatedUser); // Directly update the user state with the new data
+    updateUser(updatedUser);
   };
 
   if (loading || !user) {
