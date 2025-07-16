@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       throw new Error('JWT_SECRET is not configured on the server.');
     }
 
-    const tokenPayload: { [key: string]: any } = {
+    const tokenPayload = {
       id: user._id.toString(),
       email: user.email,
       name: user.name,
