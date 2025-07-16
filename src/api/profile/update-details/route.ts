@@ -38,17 +38,17 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
-    // Re-sign the token with new info
-    const newTokenPayload = {
+    const newTokenPayload: { [key: string]: any } = {
       id: updatedUser._id,
       email: updatedUser.email,
       name: updatedUser.name,
-      avatar: updatedUser.avatar,
-      phone: updatedUser.phone,
-      college: updatedUser.college,
-      branch: updatedUser.branch,
-      semester: updatedUser.semester,
     };
+
+    if (updatedUser.avatar) newTokenPayload.avatar = updatedUser.avatar;
+    if (updatedUser.phone) newTokenPayload.phone = updatedUser.phone;
+    if (updatedUser.college) newTokenPayload.college = updatedUser.college;
+    if (updatedUser.branch) newTokenPayload.branch = updatedUser.branch;
+    if (updatedUser.semester) newTokenPayload.semester = updatedUser.semester;
 
     const newToken = jwt.sign(newTokenPayload, process.env.JWT_SECRET!, {
       expiresIn: '1d',
