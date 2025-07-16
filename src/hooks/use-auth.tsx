@@ -76,7 +76,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.error('Logout failed on server:', error)
     } finally {
         setUser(null);
-        setLoading(false);
     }
   };
 
