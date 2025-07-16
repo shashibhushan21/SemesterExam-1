@@ -37,7 +37,7 @@ export function AuthForm() {
   const [activeTab, setActiveTab] = useState('login');
   const { toast } = useToast();
   const router = useRouter();
-  const { login, updateUser } = useAuth();
+  const { login } = useAuth();
 
   const {
     register: registerLogin,
@@ -56,8 +56,7 @@ export function AuthForm() {
   const onLogin = async (data: LoginValues) => {
     setIsSubmitting(true);
     try {
-      const loggedInUser = await login(data.email, data.password);
-      updateUser(loggedInUser); // Explicitly update state
+      await login(data.email, data.password);
       toast({ title: "Login successful!", description: "Welcome back." });
       router.push('/profile');
       router.refresh();
@@ -86,8 +85,7 @@ export function AuthForm() {
       toast({ title: 'Signup successful!', description: 'Logging you in...' });
       resetSignupForm();
       
-      const loggedInUser = await login(data.email, data.password);
-      updateUser(loggedInUser);
+      await login(data.email, data.password);
       
       toast({ title: "Login successful!", description: "Welcome!" });
       router.push('/profile');

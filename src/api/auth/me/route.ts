@@ -5,13 +5,6 @@ import User from '@/models/user';
 
 interface DecodedToken {
   id: string;
-  name: string;
-  email: string;
-  avatar?: string;
-  phone?: string;
-  college?: string;
-  branch?: string;
-  semester?: string;
 }
 
 export async function GET(req: NextRequest) {
@@ -24,7 +17,6 @@ export async function GET(req: NextRequest) {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
     
-    // The user data is in the token, but we can re-validate against the DB if needed
     await connectToDatabase();
     const user = await User.findById(decoded.id).lean();
 

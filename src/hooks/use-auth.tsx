@@ -61,6 +61,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw new Error(data.message || 'Login failed');
     }
     
+    // After successful login, set the user state
+    setUser(data.user);
     return data.user;
   };
 
