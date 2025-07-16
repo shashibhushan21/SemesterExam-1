@@ -15,13 +15,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });
     }
 
-    const user = await User.findOne({ email }).select('+password').lean();
+    const user = await User.findOne({ email }).select('+password');
 
-    if (!user || !user.password) {
+    // 1. Check if user exists first to prevent crash
+    if (!user) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
-
-    const isPasswordCorrect = await bcryptjs.compare(password, user.password);
+    
+    // 2. Now that we know user exists, safely compare passwords
+    const isPasswordCorrect = await bcryptjs.compare(password, user.password!);
 
     if (!isPasswordCorrect) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
