@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import User from '@/models/user';
-import bcrypt from 'bcryptjs';
+import bcryptjs from 'bcryptjs';
 import { z } from 'zod';
 
 const signupSchema = z.object({
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'User with this email already exists' }, { status: 409 });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await bcryptjs.hash(password, 12);
 
     const newUser = new User({
       name,
