@@ -7,52 +7,63 @@ import jwt from 'jsonwebtoken';
 export async function POST(req: NextRequest) {
   try {
     await connectToDatabase();
-
     const { email, password } = await req.json();
+
+    console.log('[DEBUG] Received:', email);
 
     if (!email || !password) {
       return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select('+password');
+    console.log('[DEBUG] User found:', !!user);
 
-    if (!user) {
+    if (!user || !user.password) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    console.log('[DEBUG] Password match:', isPasswordCorrect);
 
     if (!isPasswordCorrect) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
+    if (!process.env.JWT_SECRET) {
+      throw new Error('JWT_SECRET not defined');
+    }
+
     const tokenPayload = {
-      id: user._id,
+      id: user._id.toString(),
       email: user.email,
       name: user.name,
     };
 
-    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET!, {
-      expiresIn: '1d',
-    });
+    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, { expiresIn: '1d' });
 
-    const response = NextResponse.json({
+    const response = NextResponse.json(
+      {
         message: 'Login successful',
-        user: { email: user.email, name: user.name },
-    }, { status: 200 });
+        user: {
+          email: user.email,
+          name: user.name,
+        },
+      },
+      { status: 200 }
+    );
 
     response.cookies.set('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV !== 'development',
-        sameSite: 'strict',
-        maxAge: 60 * 60 * 24, // 1 day
-        path: '/',
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== 'development',
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 24, // 1 day
+      path: '/',
     });
 
     return response;
 
-  } catch (error) {
-    console.error('Login error:', error);
+  } catch (error: any) {
+    console.error('[LOGIN ERROR]', error.message || error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }
