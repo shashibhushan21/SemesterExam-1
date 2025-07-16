@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Upload } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useAuth } from '@/hooks/use-auth';
 
 const profileSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -31,6 +32,7 @@ interface EditProfileDialogProps {
 
 export function EditProfileDialog({ user, children, onProfileUpdate }: EditProfileDialogProps) {
   const { toast } = useToast();
+  const { updateUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(user.avatar || '');
@@ -61,9 +63,9 @@ export function EditProfileDialog({ user, children, onProfileUpdate }: EditProfi
   const onSubmit = async (data: ProfileFormValues) => {
     setIsSubmitting(true);
     try {
-      // First, upload avatar if it has changed
       let avatarUrl = user.avatar;
       const avatarFile = data.avatar?.[0];
+
       if (avatarFile) {
         const formData = new FormData();
         formData.append('file', avatarFile);
@@ -74,9 +76,9 @@ export function EditProfileDialog({ user, children, onProfileUpdate }: EditProfi
         const uploadResult = await uploadRes.json();
         if (!uploadRes.ok) throw new Error(uploadResult.message || 'Avatar upload failed');
         avatarUrl = uploadResult.avatarUrl;
+        updateUser({...user, avatar: avatarUrl});
       }
 
-      // Then, update the rest of the details
       const detailsToUpdate = { ...data, avatar: avatarUrl };
       const res = await fetch('/api/profile/update-details', {
         method: 'POST',
