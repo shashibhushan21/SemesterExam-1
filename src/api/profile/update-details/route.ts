@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     }
 
     const newTokenPayload: { [key: string]: any } = {
-      id: updatedUser._id,
+      id: updatedUser._id.toString(),
       email: updatedUser.email,
       name: updatedUser.name,
     };
@@ -54,18 +54,20 @@ export async function POST(req: NextRequest) {
       expiresIn: '1d',
     });
 
+    const userResponse = { 
+      id: updatedUser._id.toString(), 
+      email: updatedUser.email, 
+      name: updatedUser.name, 
+      phone: updatedUser.phone || null,
+      college: updatedUser.college || null,
+      branch: updatedUser.branch || null,
+      semester: updatedUser.semester || null,
+      avatar: updatedUser.avatar || null
+    };
+
     const response = NextResponse.json({
         message: 'Profile updated successfully',
-        user: { 
-            id: updatedUser._id, 
-            email: updatedUser.email, 
-            name: updatedUser.name, 
-            phone: updatedUser.phone,
-            college: updatedUser.college,
-            branch: updatedUser.branch,
-            semester: updatedUser.semester,
-            avatar: updatedUser.avatar
-        },
+        user: userResponse,
     }, { status: 200 });
 
     response.cookies.set('token', newToken, {

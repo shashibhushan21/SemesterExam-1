@@ -91,7 +91,7 @@ export function EditProfileDialog({ user, children, onProfileUpdate }: EditProfi
         title: 'Profile Updated!',
         description: 'Your information has been saved.',
       });
-      onProfileUpdate(result.user); // Pass the updated user data back to the parent
+      onProfileUpdate(result.user);
       setOpen(false);
 
     } catch (error: any) {
