@@ -4,6 +4,10 @@ import { connectToDatabase } from '@/lib/db';
 import User from '@/models/user';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+const fromEmail = process.env.RESEND_FROM_EMAIL;
 
 export async function POST(req: NextRequest) {
   try {
@@ -68,6 +72,23 @@ export async function POST(req: NextRequest) {
         maxAge: 60 * 60 * 24, // 1 day
         path: '/',
     });
+    
+    // Send login notification email
+    if (fromEmail) {
+        try {
+            await resend.emails.send({
+                from: fromEmail,
+                to: user.email,
+                subject: 'Successful Login to ExamNotes',
+                html: `<p>Hi ${user.name},</p><p>We detected a new login to your ExamNotes account. If this was you, you can safely ignore this email.</p><p>If you did not initiate this login, please change your password immediately.</p><p>The ExamNotes Team</p>`,
+            });
+        } catch (emailError) {
+            console.error('Login notification email sending error:', emailError);
+             // Do not block login if email fails, just log the error.
+        }
+    } else {
+        console.error('RESEND_FROM_EMAIL is not configured. Skipping login notification email.');
+    }
 
     return response;
 
