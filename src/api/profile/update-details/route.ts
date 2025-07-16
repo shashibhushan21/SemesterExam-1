@@ -1,3 +1,4 @@
+
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import User from '@/models/user';
@@ -42,13 +43,12 @@ export async function POST(req: NextRequest) {
       id: updatedUser._id.toString(),
       email: updatedUser.email,
       name: updatedUser.name,
+      avatar: updatedUser.avatar || null,
+      phone: updatedUser.phone || null,
+      college: updatedUser.college || null,
+      branch: updatedUser.branch || null,
+      semester: updatedUser.semester || null,
     };
-
-    if (updatedUser.avatar) newTokenPayload.avatar = updatedUser.avatar;
-    if (updatedUser.phone) newTokenPayload.phone = updatedUser.phone;
-    if (updatedUser.college) newTokenPayload.college = updatedUser.college;
-    if (updatedUser.branch) newTokenPayload.branch = updatedUser.branch;
-    if (updatedUser.semester) newTokenPayload.semester = updatedUser.semester;
 
     const newToken = jwt.sign(newTokenPayload, process.env.JWT_SECRET!, {
       expiresIn: '1d',
