@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
       name: user.name,
     };
     
+    // Safely add optional fields to the payload
     if (user.avatar) tokenPayload.avatar = user.avatar;
     if (user.phone) tokenPayload.phone = user.phone;
     if (user.college) tokenPayload.college = user.college;
