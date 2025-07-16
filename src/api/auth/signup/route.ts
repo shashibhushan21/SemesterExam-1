@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
             // Do not block signup if email fails, just log the error.
         }
     } else {
-        console.error('RESEND_FROM_EMAIL is not configured. Skipping welcome email.');
+        console.warn('RESEND_FROM_EMAIL is not configured. Skipping welcome email.');
     }
 
     return NextResponse.json({ message: 'User created successfully' }, { status: 201 });

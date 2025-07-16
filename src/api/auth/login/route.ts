@@ -1,4 +1,5 @@
 'use server';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import User from '@/models/user';
@@ -22,17 +23,25 @@ export async function POST(req: NextRequest) {
     const user = await User.findOne({ email }).select('+password');
 
     if (!user) {
+      console.log('[LOGIN] User not found for email:', email);
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
     
     if (!user.password) {
-      return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
+      console.log('[LOGIN] User found, but password not stored in DB for user:', user._id);
+      return NextResponse.json({ message: 'Invalid credentials - no password' }, { status: 401 });
     }
 
     const isPasswordCorrect = await bcryptjs.compare(password, user.password);
 
     if (!isPasswordCorrect) {
+      console.log('[LOGIN] Password comparison failed for user:', user._id);
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
+    }
+
+    if (!process.env.JWT_SECRET) {
+      console.error('[LOGIN] JWT_SECRET is not defined in .env file');
+      throw new Error('JWT_SECRET is not configured on the server.');
     }
 
     const tokenPayload: { [key: string]: any } = {
@@ -89,13 +98,13 @@ export async function POST(req: NextRequest) {
              // Do not block login if email fails, just log the error.
         }
     } else {
-        console.error('RESEND_FROM_EMAIL is not configured. Skipping login notification email.');
+        console.warn('RESEND_FROM_EMAIL is not configured. Skipping login notification email.');
     }
 
     return response;
 
-  } catch (error) {
-    console.error('Login error:', error);
+  } catch (error: any) {
+    console.error('[LOGIN] CATCH BLOCK: Internal Server Error:', error.message || error, error.stack);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }
