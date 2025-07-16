@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
-import { LayoutDashboard, LogOut } from 'lucide-react';
+import { LayoutDashboard, LogOut, Upload } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 
 export function AuthButton() {
@@ -28,8 +28,8 @@ export function AuthButton() {
        <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={undefined} alt={user.name} />
+            <Avatar className="h-10 w-10 border-2 border-primary/50">
+              <AvatarImage src={user.avatar} alt={user.name} />
               <AvatarFallback>{user.name?.charAt(0) || user.email?.charAt(0)}</AvatarFallback>
             </Avatar>
           </Button>
@@ -49,7 +49,7 @@ export function AuthButton() {
             <span>Profile</span>
           </DropdownMenuItem>
            <DropdownMenuItem onClick={() => router.push('/upload')}>
-            <LayoutDashboard className="mr-2 h-4 w-4" />
+            <Upload className="mr-2 h-4 w-4" />
             <span>Upload Notes</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />

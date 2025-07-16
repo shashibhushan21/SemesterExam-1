@@ -1,13 +1,17 @@
 'use client';
 
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Skeleton } from '@/components/ui/skeleton';
 
 interface User {
   id: string;
   name: string;
   email: string;
+  avatar?: string;
+  phone?: string;
+  college?: string;
+  branch?: string;
+  semester?: string;
 }
 
 interface AuthContextType {
@@ -15,6 +19,7 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  fetchUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,26 +28,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const checkUser = async () => {
-      try {
-        const res = await fetch('/api/auth/me');
-        if (res.ok) {
-          const data = await res.json();
-          setUser(data.user);
-        } else {
-          setUser(null);
-        }
-      } catch (error) {
+  const fetchUser = useCallback(async () => {
+    try {
+      const res = await fetch('/api/auth/me');
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data.user);
+      } else {
         setUser(null);
-      } finally {
-        setLoading(false);
       }
-    };
-    checkUser();
+    } catch (error) {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
   const login = async (email: string, password: string) => {
+    setLoading(true);
     const res = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -52,23 +59,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const data = await res.json();
 
     if (!res.ok) {
+      setLoading(false);
       throw new Error(data.message || 'Login failed');
     }
     
-    setUser(data.user);
+    await fetchUser(); // Refetch user data to get all details
   };
 
   const logout = async () => {
+    setLoading(true);
     try {
         await fetch('/api/auth/logout', { method: 'POST' });
     } catch (error) {
         console.error('Logout failed', error)
     } finally {
         setUser(null);
+        setLoading(false);
     }
   };
   
-  const value = { user, loading, login, logout };
+  const value = { user, loading, login, logout, fetchUser };
 
   return (
     <AuthContext.Provider value={value}>

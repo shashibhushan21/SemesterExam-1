@@ -2,36 +2,16 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Mail, Phone, University, GraduationCap, Star, Shield, Zap, GitBranch, LogOut, Loader2 } from "lucide-react";
+import { Mail, Phone, University, GitBranch, GraduationCap, Shield, LogOut, Loader2, Edit, KeyRound } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
-
-const featureCards = [
-  {
-    icon: Star,
-    title: "Premium Access",
-    description: "Unlock exclusive notes, summaries, and more.",
-    cta: "Upgrade Now",
-  },
-  {
-    icon: Shield,
-    title: "Account Security",
-    description: "Manage your password and secure your account.",
-    cta: "Manage Settings",
-  },
-  {
-    icon: Zap,
-    title: "Boost Productivity",
-    description: "Get AI-powered tools to accelerate your learning.",
-    cta: "Explore Tools",
-  },
-];
+import { EditProfileDialog } from "./components/edit-profile-dialog";
+import { ChangePasswordDialog } from "./components/change-password-dialog";
 
 export default function ProfilePage() {
-  const { user, loading, logout } = useAuth();
+  const { user, loading, logout, fetchUser } = useAuth();
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -39,8 +19,12 @@ export default function ProfilePage() {
     router.push('/');
     router.refresh();
   };
+  
+  const onProfileUpdate = () => {
+    fetchUser();
+  };
 
-  if (loading) {
+  if (loading || !user) {
     return (
        <div className="space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center gap-6">
@@ -51,34 +35,27 @@ export default function ProfilePage() {
           </div>
           <Skeleton className="h-10 w-28" />
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <Skeleton className="h-64 w-full" />
-          </div>
-          <div className="lg:col-span-1 space-y-6">
-            <Skeleton className="h-36 w-full" />
-            <Skeleton className="h-36 w-full" />
-          </div>
-        </div>
+        <Card>
+            <CardHeader>
+                <Skeleton className="h-8 w-1/3" />
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <Skeleton className="h-6 w-full" />
+                <Skeleton className="h-6 w-full" />
+                <Skeleton className="h-6 w-full" />
+                <Skeleton className="h-6 w-full" />
+                <Skeleton className="h-6 w-full" />
+            </CardContent>
+        </Card>
       </div>
     )
-  }
-
-  if (!user) {
-    // This should be handled by middleware, but as a fallback
-    return (
-      <div className="text-center">
-        <p>You must be logged in to view this page.</p>
-        <Button onClick={() => router.push('/auth')} className="mt-4">Go to Login</Button>
-      </div>
-    );
   }
 
   return (
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center gap-6">
         <Avatar className="h-24 w-24 border-4 border-primary">
-          <AvatarImage src={undefined} alt={user.name} />
+          <AvatarImage src={user.avatar} alt={user.name} />
           <AvatarFallback className="text-3xl">{user.name?.charAt(0) || user.email?.charAt(0) || 'U'}</AvatarFallback>
         </Avatar>
         <div className="flex-grow">
@@ -92,49 +69,49 @@ export default function ProfilePage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-           <Card className="transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
-            <CardHeader>
+           <Card className="transition-all duration-300 hover:shadow-xl">
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="font-headline">Your Information</CardTitle>
+                <EditProfileDialog user={user} onProfileUpdate={onProfileUpdate}>
+                    <Button variant="outline"><Edit className="mr-2 h-4 w-4" /> Edit Profile</Button>
+                </EditProfileDialog>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 text-lg">
               <div className="flex items-center gap-4">
                 <Mail className="w-5 h-5 text-muted-foreground" />
-                <span className="text-foreground">{user.email}</span>
+                <span>{user.email}</span>
               </div>
               <div className="flex items-center gap-4">
                 <Phone className="w-5 h-5 text-muted-foreground" />
-                <span className="text-foreground">Not provided</span>
+                <span>{user.phone || "Not provided"}</span>
               </div>
               <div className="flex items-center gap-4">
                 <University className="w-5 h-5 text-muted-foreground" />
-                <span className="text-foreground">West Bengal University of Technology</span>
+                <span>{user.college || "Not provided"}</span>
               </div>
               <div className="flex items-center gap-4">
                 <GitBranch className="w-5 h-5 text-muted-foreground" />
-                <span className="text-foreground">Computer Science</span>
+                <span>{user.branch || "Not provided"}</span>
               </div>
                <div className="flex items-center gap-4">
                 <GraduationCap className="w-5 h-5 text-muted-foreground" />
-                <Badge variant="secondary">6th Semester</Badge>
+                <span>{user.semester || "Not provided"}</span>
               </div>
             </CardContent>
           </Card>
         </div>
         <div className="lg:col-span-1 space-y-6">
-           {featureCards.map((feature, index) => (
-            <Card key={index} className="transition-all duration-300 hover:shadow-xl hover:scale-105">
-              <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
-                <div className="p-2 bg-accent/50 rounded-full">
-                  <feature.icon className="w-6 h-6 text-accent-foreground" />
-                </div>
-                <CardTitle className="font-headline text-xl">{feature.title}</CardTitle>
+            <Card className="transition-all duration-300 hover:shadow-xl">
+              <CardHeader>
+                <CardTitle className="font-headline text-xl">Account Security</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">{feature.description}</p>
-                <Button variant="outline" className="w-full">{feature.cta}</Button>
+                <p className="text-muted-foreground mb-4">Manage your password and secure your account.</p>
+                 <ChangePasswordDialog>
+                    <Button variant="outline" className="w-full"><KeyRound className="mr-2 h-4 w-4" /> Change Password</Button>
+                </ChangePasswordDialog>
               </CardContent>
             </Card>
-          ))}
         </div>
       </div>
     </div>
