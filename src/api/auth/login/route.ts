@@ -1,4 +1,3 @@
-
 'use server';
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
@@ -29,32 +28,30 @@ export async function POST(req: NextRequest) {
     }
 
     const tokenPayload: { [key: string]: any } = {
-      id: user._id.toString(), // Convert ObjectId to string
+      id: user._id.toString(),
       email: user.email,
       name: user.name,
     };
     
-    // Safely add optional fields to the payload
     if (user.avatar) tokenPayload.avatar = user.avatar;
     if (user.phone) tokenPayload.phone = user.phone;
     if (user.college) tokenPayload.college = user.college;
     if (user.branch) tokenPayload.branch = user.branch;
     if (user.semester) tokenPayload.semester = user.semester;
 
-
     const token = jwt.sign(tokenPayload, process.env.JWT_SECRET!, {
       expiresIn: '1d',
     });
     
     const userResponse = { 
-        id: user._id.toString(), // CRITICAL FIX: Convert ObjectId to string for the JSON response
+        id: user._id.toString(),
         email: user.email, 
         name: user.name,
-        avatar: user.avatar,
-        phone: user.phone,
-        college: user.college,
-        branch: user.branch,
-        semester: user.semester,
+        avatar: user.avatar || null,
+        phone: user.phone || null,
+        college: user.college || null,
+        branch: user.branch || null,
+        semester: user.semester || null,
     };
 
     const response = NextResponse.json({
