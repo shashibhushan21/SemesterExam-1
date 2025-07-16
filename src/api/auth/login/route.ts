@@ -26,8 +26,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
     
-    // 2. Now that we know user exists, safely compare passwords
-    const isPasswordCorrect = await bcryptjs.compare(password, user.password!);
+    // 2. IMPORTANT: Check if password exists on the user object before comparing
+    if (!user.password) {
+      return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
+    }
+
+    // 3. Now that we know user and user.password exist, safely compare passwords
+    const isPasswordCorrect = await bcryptjs.compare(password, user.password);
 
     if (!isPasswordCorrect) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
