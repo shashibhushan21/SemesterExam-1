@@ -14,9 +14,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select('+password');
 
-    if (!user) {
+    if (!user || !user.password) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       email: user.email,
       name: user.name,
     };
-
+    
     if (user.avatar) tokenPayload.avatar = user.avatar;
     if (user.phone) tokenPayload.phone = user.phone;
     if (user.college) tokenPayload.college = user.college;
