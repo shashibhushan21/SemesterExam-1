@@ -60,7 +60,7 @@ export function AuthForm() {
       await login(data.email, data.password);
       toast({ title: "Login successful!", description: "Welcome back." });
       router.push('/profile');
-      router.refresh();
+      router.refresh(); // Crucial for re-fetching server components and updating state
     } catch (error: any) {
       toast({ title: 'Login Failed', description: error.message || 'An unexpected error occurred.', variant: 'destructive' });
     } finally {
@@ -90,7 +90,7 @@ export function AuthForm() {
       
       toast({ title: "Login successful!", description: "Welcome!" });
       router.push('/profile');
-      router.refresh();
+      router.refresh(); // Crucial for re-fetching server components and updating state
 
     } catch (error: any) {
       toast({ title: 'Signup Failed', description: error.message || 'An unexpected error occurred.', variant: 'destructive' });
