@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import User from '@/models/user';
 import crypto from 'crypto';
-import bcrypt from 'bcryptjs';
+import bcryptjs from 'bcryptjs';
 import { z } from 'zod';
 
 const resetPasswordSchema = z.object({
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Password reset token is invalid or has expired.' }, { status: 400 });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await bcryptjs.hash(password, 12);
     user.password = hashedPassword;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;

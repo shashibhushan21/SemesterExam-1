@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import User from '@/models/user';
-import bcrypt from 'bcryptjs';
+import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 
@@ -34,16 +34,16 @@ export async function POST(req: NextRequest) {
     const { currentPassword, newPassword } = validation.data;
     
     const user = await User.findById(userId).select('+password');
-    if (!user) {
+    if (!user || !user.password) {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
-    const isPasswordCorrect = await bcrypt.compare(currentPassword, user.password!);
+    const isPasswordCorrect = await bcryptjs.compare(currentPassword, user.password);
     if (!isPasswordCorrect) {
       return NextResponse.json({ message: 'Incorrect current password' }, { status: 400 });
     }
     
-    const hashedNewPassword = await bcrypt.hash(newPassword, 12);
+    const hashedNewPassword = await bcryptjs.hash(newPassword, 12);
     user.password = hashedNewPassword;
     await user.save();
 
