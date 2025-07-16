@@ -16,11 +16,11 @@ export async function POST(req: NextRequest) {
 
     const user = await User.findOne({ email }).select('+password');
 
-    if (!user) {
+    if (!user || !user.password) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
-    const isPasswordCorrect = await bcrypt.compare(password, user.password!);
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
     if (!isPasswordCorrect) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
