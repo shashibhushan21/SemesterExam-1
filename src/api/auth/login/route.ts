@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     }
 
     const tokenPayload: { [key: string]: any } = {
-      id: user._id,
+      id: user._id.toString(), // Convert ObjectId to string
       email: user.email,
       name: user.name,
     };
