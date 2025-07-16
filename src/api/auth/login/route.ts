@@ -40,19 +40,21 @@ export async function POST(req: NextRequest) {
     const token = jwt.sign(tokenPayload, process.env.JWT_SECRET!, {
       expiresIn: '1d',
     });
+    
+    const userResponse = { 
+        id: user._id, 
+        email: user.email, 
+        name: user.name,
+        avatar: user.avatar,
+        phone: user.phone,
+        college: user.college,
+        branch: user.branch,
+        semester: user.semester,
+    };
 
     const response = NextResponse.json({
         message: 'Login successful',
-        user: { 
-          id: user._id, 
-          email: user.email, 
-          name: user.name,
-          avatar: user.avatar,
-          phone: user.phone,
-          college: user.college,
-          branch: user.branch,
-          semester: user.semester,
-        },
+        user: userResponse,
     }, { status: 200 });
 
     response.cookies.set('token', token, {

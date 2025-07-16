@@ -20,8 +20,8 @@ export default function ProfilePage() {
     router.refresh();
   };
   
-  const onProfileUpdate = () => {
-    fetchUser();
+  const onProfileUpdate = (updatedUser: any) => {
+    fetchUser(updatedUser); // Directly update the user state with the new data
   };
 
   if (loading || !user) {

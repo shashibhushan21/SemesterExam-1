@@ -26,7 +26,7 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 interface EditProfileDialogProps {
     user: any;
     children: React.ReactNode;
-    onProfileUpdate: () => void;
+    onProfileUpdate: (updatedUser: any) => void;
 }
 
 export function EditProfileDialog({ user, children, onProfileUpdate }: EditProfileDialogProps) {
@@ -91,7 +91,7 @@ export function EditProfileDialog({ user, children, onProfileUpdate }: EditProfi
         title: 'Profile Updated!',
         description: 'Your information has been saved.',
       });
-      onProfileUpdate(); // Callback to refresh user data in parent
+      onProfileUpdate(result.user); // Pass the updated user data back to the parent
       setOpen(false);
 
     } catch (error: any) {

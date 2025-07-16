@@ -19,7 +19,7 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  fetchUser: () => Promise<void>;
+  fetchUser: (data?: User) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,7 +28,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchUser = useCallback(async () => {
+  const fetchUser = useCallback(async (data?: User) => {
+    if (data) {
+      setUser(data);
+      return;
+    }
+    setLoading(true);
     try {
       const res = await fetch('/api/auth/me');
       if (res.ok) {
@@ -63,7 +68,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw new Error(data.message || 'Login failed');
     }
     
-    await fetchUser(); // Refetch user data to get all details
+    await fetchUser(data.user); // Pass user data directly
+    setLoading(false);
   };
 
   const logout = async () => {
