@@ -22,10 +22,6 @@ export async function POST(req: NextRequest) {
     if (!user) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
-    
-    if (!user.password || typeof user.password !== 'string') {
-      return NextResponse.json({ message: 'Invalid credentials - no password' }, { status: 401 });
-    }
 
     const isPasswordCorrect = await bcryptjs.compare(password, user.password);
 

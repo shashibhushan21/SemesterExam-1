@@ -41,6 +41,7 @@ export async function GET(req: NextRequest) {
 
   } catch (error) {
     console.error("Error in /api/auth/me:", error);
+    // If token is invalid or expired, it's an authentication failure.
     return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
   }
 }
