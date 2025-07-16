@@ -16,7 +16,7 @@ export interface IUser extends Document {
 const UserSchema: Schema = new Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String, required: true, select: false },
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date },
   avatar: { type: String },
@@ -25,16 +25,6 @@ const UserSchema: Schema = new Schema({
   branch: { type: String },
   semester: { type: String },
 }, { timestamps: true });
-
-// Pre-save hook to ensure password is not returned by default in find queries
-UserSchema.pre(/^find/, function(next) {
-  // `this` refers to the query
-  if ((this as any).options.select && (this as any).options.select.includes('+password')) {
-    return next();
-  }
-  (this as any).select('-password');
-  next();
-});
 
 const User: Model<IUser> = models.User || mongoose.model<IUser>('User', UserSchema);
 
