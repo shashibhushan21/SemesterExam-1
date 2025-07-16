@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import User from '@/models/user';
-import bcrypt from 'bcryptjs';
+import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 export async function POST(req: NextRequest) {
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    const isPasswordCorrect = await bcryptjs.compare(password, user.password);
 
     if (!isPasswordCorrect) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
