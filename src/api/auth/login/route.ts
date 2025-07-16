@@ -20,15 +20,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });
     }
 
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email });
 
     if (!user) {
       console.log('[LOGIN] User not found for email:', email);
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
     
-    if (!user.password) {
-      console.log('[LOGIN] User found, but password not stored in DB for user:', user._id);
+    if (!user.password || typeof user.password !== 'string') {
+      console.log('[LOGIN] User found, but password not stored in DB or is invalid for user:', user._id);
       return NextResponse.json({ message: 'Invalid credentials - no password' }, { status: 401 });
     }
 
