@@ -9,12 +9,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Download, Flag, Star, Wand2, Loader2, ArrowLeft } from 'lucide-react';
+import { Download, Flag, Star, Wand2, Loader2, ArrowLeft, Lock } from 'lucide-react';
 import { summarizeNotes } from '@/ai/flows/summarize-notes';
 import { useToast } from '@/hooks/use-toast';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { useAuth } from '@/hooks/use-auth';
 
 export function NoteClientPage({ note }: { note: Note }) {
   const [summary, setSummary] = useState('');
@@ -23,6 +24,7 @@ export function NoteClientPage({ note }: { note: Note }) {
 
   const { toast } = useToast();
   const router = useRouter();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (note) {
@@ -47,6 +49,19 @@ export function NoteClientPage({ note }: { note: Note }) {
       });
     } finally {
       setIsSummarizing(false);
+    }
+  };
+
+  const handleDownload = () => {
+    if (!user) {
+      toast({
+        title: 'Authentication Required',
+        description: 'You need to be logged in to download notes.',
+        variant: 'destructive',
+      });
+      router.push('/auth');
+    } else {
+      // The `<a>` tag will handle the download
     }
   };
 
@@ -101,8 +116,12 @@ export function NoteClientPage({ note }: { note: Note }) {
               ) : summary ? (
                 <p className="text-foreground/90 leading-relaxed">{summary}</p>
               ) : (
-                <div className="text-center text-muted-foreground py-8">
-                  <p>Click the button above to generate a summary of this note using AI.</p>
+                 <div className="text-center text-muted-foreground py-8">
+                    {note.summary ? (
+                        <p>{note.summary}</p>
+                    ) : (
+                        <p>Click the button above to generate a summary of this note using AI.</p>
+                    )}
                 </div>
               )}
             </CardContent>
@@ -112,11 +131,17 @@ export function NoteClientPage({ note }: { note: Note }) {
         <div className="lg:col-span-1 space-y-6">
           <Card>
             <CardContent className="p-6 flex flex-col items-center gap-4">
-              <a href={note.pdfUrl} download className="w-full">
-                <Button size="lg" className="w-full">
-                  <Download className="mr-2 h-5 w-5" /> Download Note
-                </Button>
-              </a>
+               {user ? (
+                 <a href={note.pdfUrl} download className="w-full">
+                    <Button size="lg" className="w-full">
+                      <Download className="mr-2 h-5 w-5" /> Download Note
+                    </Button>
+                  </a>
+               ) : (
+                  <Button size="lg" className="w-full" onClick={handleDownload}>
+                    <Lock className="mr-2 h-5 w-5" /> Login to Download
+                  </Button>
+               )}
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="outline" className="w-full">
