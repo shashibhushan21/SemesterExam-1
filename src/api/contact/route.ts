@@ -33,9 +33,9 @@ export async function POST(req: NextRequest) {
     // Send email notification
     const resendApiKey = process.env.RESEND_API_KEY;
     const fromEmail = process.env.RESEND_FROM_EMAIL;
-    const adminEmail = process.env.ADMIN_EMAIL || fromEmail; 
+    const adminEmail = "semesterexaminfo@gmail.com"; 
 
-    if (resendApiKey && fromEmail && adminEmail) {
+    if (resendApiKey && fromEmail) {
       try {
         const resend = new Resend(resendApiKey);
         await resend.emails.send({
@@ -55,10 +55,10 @@ export async function POST(req: NextRequest) {
         });
       } catch (emailError) {
         console.error('Failed to send contact notification email:', emailError);
-        // Don't block the user response if email fails, just log it.
+        // Don't block the user response if email fails, just log it. The main goal (saving to DB) succeeded.
       }
     } else {
-        console.warn('Resend or Admin email not configured. Skipping email notification.');
+        console.warn('Resend API Key or From Email not configured. Skipping email notification.');
     }
 
     return NextResponse.json({ message: 'Message received successfully!' }, { status: 201 });
