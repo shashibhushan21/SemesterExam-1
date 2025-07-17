@@ -3,7 +3,7 @@
 
 import type { Note } from '@/lib/types';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -25,6 +25,7 @@ export function NoteClientPage({ note }: { note: Note }) {
 
   const { toast } = useToast();
   const router = useRouter();
+  const pathname = usePathname();
   const { user } = useAuth();
 
   useEffect(() => {
@@ -60,7 +61,7 @@ export function NoteClientPage({ note }: { note: Note }) {
             description: `You need to be logged in to ${action} this note.`,
             variant: 'destructive',
         });
-        router.push('/auth');
+        router.push(`/auth?redirect=${pathname}`);
     }
   };
   

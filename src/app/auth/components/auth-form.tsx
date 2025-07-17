@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import Link from 'next/link';
 
@@ -38,6 +38,8 @@ export function AuthForm() {
   const [activeTab, setActiveTab] = useState('login');
   const { toast } = useToast();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get('redirect');
   const { login } = useAuth();
 
   const {
@@ -59,8 +61,8 @@ export function AuthForm() {
     try {
       await login(data.email, data.password);
       toast({ title: "Login successful!", description: "Welcome back." });
-      router.push('/profile');
-      router.refresh(); // Crucial for re-fetching server components and updating state
+      router.push(redirectUrl || '/profile');
+      router.refresh();
     } catch (error: any) {
       toast({ title: 'Login Failed', description: error.message || 'An unexpected error occurred.', variant: 'destructive' });
     } finally {
@@ -86,12 +88,11 @@ export function AuthForm() {
       toast({ title: 'Signup successful!', description: 'Logging you in...' });
       resetSignupForm();
       
-      // After signup, log the user in to get the full profile data
       await login(data.email, data.password);
       
       toast({ title: "Login successful!", description: "Welcome!" });
-      router.push('/profile');
-      router.refresh(); // Crucial for re-fetching server components and updating state
+      router.push(redirectUrl || '/profile');
+      router.refresh(); 
 
     } catch (error: any) {
       toast({ title: 'Signup Failed', description: error.message || 'An unexpected error occurred.', variant: 'destructive' });
