@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Search, MoveRight } from 'lucide-react';
 import { allNotes, allUniversities } from '@/lib/mock-data';
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
@@ -16,6 +16,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { TestimonialCard } from '@/components/testimonial-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/hooks/use-auth';
+import { cn } from '@/lib/utils';
 
 const getInitials = (name: string) => {
     return name
@@ -194,11 +195,15 @@ export default function Home() {
           </div>
 
           <div className="mt-8">
-            <Link href="/universities">
-               <Button size="lg" className="group bg-white text-primary rounded-full px-8 py-6 text-lg hover:bg-gray-200 transition-all duration-300 transform hover:scale-105">
-                Explore Universities
-                <MoveRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-              </Button>
+             <Link
+              href="/universities"
+              className={cn(
+                buttonVariants({ size: 'lg' }),
+                'group bg-white text-primary rounded-full px-8 py-6 text-lg hover:bg-gray-200 transition-all duration-300 transform hover:scale-105'
+              )}
+            >
+              Explore Universities
+              <MoveRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </div>
         </div>
@@ -300,16 +305,18 @@ export default function Home() {
               {loading ? (
                  <Skeleton className="h-16 w-48 mx-auto rounded-full" />
               ) : user ? (
-                 <Link href="/courses">
-                    <Button size="lg" className="bg-white text-primary hover:bg-gray-200 rounded-full px-8 py-6 text-lg transition-all duration-300 transform hover:scale-105">
+                 <Link href="/courses" className={cn(
+                    buttonVariants({ size: 'lg' }),
+                    'bg-white text-primary hover:bg-gray-200 rounded-full px-8 py-6 text-lg transition-all duration-300 transform hover:scale-105'
+                  )}>
                     Explore Courses
-                    </Button>
                 </Link>
               ) : (
-                <Link href="/auth">
-                    <Button size="lg" className="bg-white text-primary hover:bg-gray-200 rounded-full px-8 py-6 text-lg transition-all duration-300 transform hover:scale-105">
+                <Link href="/auth" className={cn(
+                    buttonVariants({ size: 'lg' }),
+                    'bg-white text-primary hover:bg-gray-200 rounded-full px-8 py-6 text-lg transition-all duration-300 transform hover:scale-105'
+                  )}>
                     Get Started Now
-                    </Button>
                 </Link>
               )}
             </div>
