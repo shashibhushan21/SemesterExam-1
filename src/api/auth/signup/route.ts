@@ -4,7 +4,6 @@ import { connectToDatabase } from '@/lib/db';
 import User from '@/models/user';
 import bcryptjs from 'bcryptjs';
 import { z } from 'zod';
-import { Resend } from 'resend';
 
 // Schema validation using zod
 const signupSchema = z.object({
@@ -14,11 +13,6 @@ const signupSchema = z.object({
     .min(6)
     .regex(/[@#$!%*?&]/, { message: 'Password must contain at least one special character' }),
 });
-
-const resendApiKey = process.env.RESEND_API_KEY;
-const fromEmail = process.env.RESEND_FROM_EMAIL;
-
-const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 export async function POST(req: NextRequest) {
   try {
@@ -57,29 +51,6 @@ export async function POST(req: NextRequest) {
     });
 
     await newUser.save();
-
-    // Send welcome email
-    if (resend && fromEmail) {
-      try {
-        const result = await resend.emails.send({
-          from: fromEmail,
-          to: email,
-          subject: 'Welcome to ExamNotes!',
-          html: `
-            <p>Hi ${name},</p>
-            <p>Thank you for signing up for <strong>ExamNotes</strong>. We're excited to have you!</p>
-            <p>Good luck with your studies!</p>
-            <p>– The ExamNotes Team</p>
-          `,
-        });
-
-        console.log('✅ Email sent:', JSON.stringify(result, null, 2));
-      } catch (emailError) {
-        console.error('❌ Email sending failed:', JSON.stringify(emailError, null, 2));
-      }
-    } else {
-      console.warn('⚠️ Missing RESEND_API_KEY or RESEND_FROM_EMAIL. Email not sent.');
-    }
 
     return NextResponse.json({ message: 'User created successfully' }, { status: 201 });
 
