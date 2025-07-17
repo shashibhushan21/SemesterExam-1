@@ -25,7 +25,7 @@ export function NoteClientPage({ note }: { note: Note }) {
 
   const { toast } = useToast();
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (note) {
@@ -53,14 +53,21 @@ export function NoteClientPage({ note }: { note: Note }) {
     }
   };
 
-  const handleProtectedAction = () => {
-    toast({
-      title: 'Authentication Required',
-      description: 'You need to be logged in to perform this action.',
-      variant: 'destructive',
-    });
-    router.push('/auth');
+  const handleProtectedAction = (action: 'download' | 'report' | 'summarize') => {
+    if (!user) {
+        toast({
+            title: 'Authentication Required',
+            description: `You need to be logged in to ${action} this note.`,
+            variant: 'destructive',
+        });
+        router.push('/auth');
+    }
   };
+  
+  // For logged-out users, we use a viewer that disables downloads.
+  // For logged-in users, we give the direct PDF link.
+  const pdfPreviewUrl = `https://docs.google.com/gview?url=${note.pdfUrl}&embedded=true`;
+  const pdfUrl = user ? note.pdfUrl : pdfPreviewUrl;
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -82,26 +89,12 @@ export function NoteClientPage({ note }: { note: Note }) {
             </CardHeader>
             <CardContent>
               <div className="relative w-full h-[65vh] rounded-lg overflow-hidden border bg-secondary">
-                 {user ? (
-                    <iframe
-                        src={note.pdfUrl}
-                        className="w-full h-full"
-                        title={note.title}
-                        allowFullScreen
-                    />
-                 ) : (
-                    <div className="relative w-full h-full flex items-center justify-center">
-                        <Image src={note.thumbnailUrl} alt={note.title} fill className="object-contain" data-ai-hint="note document" />
-                        <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-center p-4">
-                            <Lock className="h-12 w-12 text-white mb-4" />
-                            <h3 className="text-xl font-bold text-white">Login to View Full Note</h3>
-                            <p className="text-white/80 mt-2 mb-6">Create a free account or log in to access and download this note.</p>
-                            <Button size="lg" onClick={() => router.push('/auth')} className="transform transition-transform hover:scale-105">
-                                Login or Sign Up
-                            </Button>
-                        </div>
-                    </div>
-                 )}
+                 <iframe
+                    src={pdfUrl}
+                    className="w-full h-full"
+                    title={note.title}
+                    allowFullScreen
+                />
               </div>
                <p className="mt-6 text-foreground/80">{note.content}</p>
             </CardContent>
@@ -110,7 +103,7 @@ export function NoteClientPage({ note }: { note: Note }) {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-2xl font-bold font-headline">AI Summary</CardTitle>
-              <Button onClick={user ? handleSummarize : handleProtectedAction} disabled={isSummarizing}>
+              <Button onClick={() => user ? handleSummarize() : handleProtectedAction('summarize')} disabled={isSummarizing}>
                 {isSummarizing ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
@@ -150,13 +143,13 @@ export function NoteClientPage({ note }: { note: Note }) {
                     </Button>
                   </a>
                ) : (
-                  <Button size="lg" className="w-full" onClick={handleProtectedAction}>
+                  <Button size="lg" className="w-full" onClick={() => handleProtectedAction('download')}>
                     <Lock className="mr-2 h-5 w-5" /> Login to Download
                   </Button>
                )}
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="outline" className="w-full" onClick={user ? undefined : handleProtectedAction} disabled={!user}>
+                   <Button variant="outline" className="w-full" onClick={user ? undefined : () => handleProtectedAction('report')} disabled={!user && false}>
                     <Flag className="mr-2 h-5 w-5" /> Report Note
                   </Button>
                 </AlertDialogTrigger>
