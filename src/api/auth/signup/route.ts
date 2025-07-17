@@ -1,3 +1,4 @@
+
 'use server';
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
@@ -56,7 +57,7 @@ export async function POST(req: NextRequest) {
                 html: `<p>Hi ${name},</p><p>Thank you for signing up for ExamNotes. We're excited to have you on board!</p><p>Happy studying!</p><p>The ExamNotes Team</p>`,
             });
         } catch (emailError) {
-            console.error('Welcome email sending error:', emailError);
+            console.error('Welcome email sending error:', JSON.stringify(emailError, null, 2));
             // Do not block signup if email fails, just log the error.
         }
     } else {
