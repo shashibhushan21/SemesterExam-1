@@ -11,6 +11,7 @@ export interface IUser extends Document {
   college?: string;
   branch?: string;
   semester?: string;
+  role: 'user' | 'admin';
 }
 
 const UserSchema: Schema = new Schema({
@@ -24,6 +25,7 @@ const UserSchema: Schema = new Schema({
   college: { type: String },
   branch: { type: String },
   semester: { type: String },
+  role: { type: String, enum: ['user', 'admin'], default: 'user' },
 }, { timestamps: true });
 
 const User: Model<IUser> = models.User || mongoose.model<IUser>('User', UserSchema);

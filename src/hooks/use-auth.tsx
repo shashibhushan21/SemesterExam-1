@@ -12,6 +12,7 @@ interface User {
   college?: string;
   branch?: string;
   semester?: string;
+  role: 'user' | 'admin';
 }
 
 interface AuthContextType {
@@ -62,7 +63,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw new Error(data.message || 'Login failed');
     }
     
-    // Set the complete user object into the state
     setUser(data.user);
     return data.user;
   };

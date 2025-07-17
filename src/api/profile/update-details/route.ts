@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
       college: updatedUser.college || null,
       branch: updatedUser.branch || null,
       semester: updatedUser.semester || null,
+      role: updatedUser.role || 'user',
     };
 
     const newToken = jwt.sign(newTokenPayload, process.env.JWT_SECRET!, {
@@ -62,7 +63,8 @@ export async function POST(req: NextRequest) {
       college: updatedUser.college || null,
       branch: updatedUser.branch || null,
       semester: updatedUser.semester || null,
-      avatar: updatedUser.avatar || null
+      avatar: updatedUser.avatar || null,
+      role: updatedUser.role || 'user',
     };
 
     const response = NextResponse.json({

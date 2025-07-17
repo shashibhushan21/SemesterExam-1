@@ -33,7 +33,6 @@ export async function POST(req: NextRequest) {
       throw new Error('JWT_SECRET is not configured on the server.');
     }
 
-    // Create a complete user object for the token and response
     const userPayload = {
       id: user._id.toString(),
       email: user.email,
@@ -43,6 +42,7 @@ export async function POST(req: NextRequest) {
       college: user.college || null,
       branch: user.branch || null,
       semester: user.semester || null,
+      role: user.role || 'user',
     };
     
     const token = jwt.sign(userPayload, process.env.JWT_SECRET!, {

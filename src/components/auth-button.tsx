@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -48,10 +49,12 @@ export function AuthButton() {
             <LayoutDashboard className="mr-2 h-4 w-4" />
             <span>Profile</span>
           </DropdownMenuItem>
-           <DropdownMenuItem onClick={() => router.push('/upload')}>
-            <Upload className="mr-2 h-4 w-4" />
-            <span>Upload Notes</span>
-          </DropdownMenuItem>
+           {user.role === 'admin' && (
+            <DropdownMenuItem onClick={() => router.push('/upload')}>
+              <Upload className="mr-2 h-4 w-4" />
+              <span>Upload Notes</span>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleLogout}>
              <LogOut className="mr-2 h-4 w-4" />

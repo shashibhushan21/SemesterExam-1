@@ -25,7 +25,6 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
-    // Ensure _id is a string and handle optional fields
     const userResponse = {
       id: user._id.toString(),
       name: user.name,
@@ -35,13 +34,13 @@ export async function GET(req: NextRequest) {
       college: user.college || null,
       branch: user.branch || null,
       semester: user.semester || null,
+      role: user.role || 'user',
     };
     
     return NextResponse.json({ user: userResponse }, { status: 200 });
 
   } catch (error) {
     console.error("Error in /api/auth/me:", error);
-    // If token is invalid or expired, it's an authentication failure.
     return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
   }
 }
