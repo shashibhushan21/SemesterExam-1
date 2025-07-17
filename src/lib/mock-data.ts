@@ -104,4 +104,20 @@ export const allNotes: Note[] = [
     content: 'Organic chemistry is a subdiscipline within chemistry that involves the scientific study of the structure, properties, and reactions of organic compounds and organic materials, i.e., matter in its various forms that contain carbon atoms. Study of structure determines their structural formula. Study of properties includes physical and chemical properties, and evaluation of chemical reactivity to understand their behavior.',
     branch: 'Chemistry'
   },
+  {
+    id: '5',
+    title: 'General Engineering Syllabus (All Universities)',
+    university: 'All Universities',
+    subject: 'General',
+    semester: 'All Semesters',
+    author: 'ExamNotes Team',
+    authorAvatar: 'https://placehold.co/100x100.png',
+    uploadDate: '2024-05-20',
+    summary: 'A comprehensive, generalized syllabus for first-year engineering students, applicable across multiple universities.',
+    rating: 4.5,
+    thumbnailUrl: 'https://placehold.co/400x300.png',
+    pdfUrl: 'https://pdfobject.com/pdf/sample.pdf',
+    content: 'This document provides a generalized overview of the typical first-year engineering curriculum. It covers fundamental subjects like Mathematics, Physics, Chemistry, and basic programming concepts. This syllabus is intended as a guide and may not perfectly match the curriculum of your specific university.',
+    branch: 'All Branches'
+  }
 ];
