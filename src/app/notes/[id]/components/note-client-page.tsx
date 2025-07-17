@@ -22,11 +22,10 @@ export function NoteClientPage({ note }: { note: Note }) {
   const [summary, setSummary] = useState('');
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [formattedDate, setFormattedDate] = useState('');
-  const [isPreviewing, setIsPreviewing] = useState(false);
 
   const { toast } = useToast();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   useEffect(() => {
     if (note) {
@@ -55,14 +54,12 @@ export function NoteClientPage({ note }: { note: Note }) {
   };
 
   const handleProtectedAction = () => {
-    if (!user) {
-      toast({
-        title: 'Authentication Required',
-        description: 'You need to be logged in to perform this action.',
-        variant: 'destructive',
-      });
-      router.push('/auth');
-    }
+    toast({
+      title: 'Authentication Required',
+      description: 'You need to be logged in to perform this action.',
+      variant: 'destructive',
+    });
+    router.push('/auth');
   };
 
   return (
@@ -85,7 +82,7 @@ export function NoteClientPage({ note }: { note: Note }) {
             </CardHeader>
             <CardContent>
               <div className="relative w-full h-[65vh] rounded-lg overflow-hidden border bg-secondary">
-                 {isPreviewing ? (
+                 {user ? (
                     <iframe
                         src={note.pdfUrl}
                         className="w-full h-full"
@@ -95,10 +92,12 @@ export function NoteClientPage({ note }: { note: Note }) {
                  ) : (
                     <div className="relative w-full h-full flex items-center justify-center">
                         <Image src={note.thumbnailUrl} alt={note.title} fill className="object-contain" data-ai-hint="note document" />
-                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                            <Button size="lg" onClick={() => setIsPreviewing(true)} className="transform transition-transform hover:scale-105">
-                                <PreviewIcon className="mr-2 h-5 w-5" />
-                                Click to Preview
+                        <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-center p-4">
+                            <Lock className="h-12 w-12 text-white mb-4" />
+                            <h3 className="text-xl font-bold text-white">Login to View Full Note</h3>
+                            <p className="text-white/80 mt-2 mb-6">Create a free account or log in to access and download this note.</p>
+                            <Button size="lg" onClick={() => router.push('/auth')} className="transform transition-transform hover:scale-105">
+                                Login or Sign Up
                             </Button>
                         </div>
                     </div>
