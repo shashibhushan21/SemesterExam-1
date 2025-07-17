@@ -16,6 +16,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
+import Image from 'next/image';
 
 export function NoteClientPage({ note }: { note: Note }) {
   const [summary, setSummary] = useState('');
@@ -24,7 +25,7 @@ export function NoteClientPage({ note }: { note: Note }) {
 
   const { toast } = useToast();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   useEffect(() => {
     if (note) {
@@ -52,16 +53,14 @@ export function NoteClientPage({ note }: { note: Note }) {
     }
   };
 
-  const handleDownload = () => {
+  const handleProtectedAction = () => {
     if (!user) {
       toast({
         title: 'Authentication Required',
-        description: 'You need to be logged in to download notes.',
+        description: 'You need to be logged in to perform this action.',
         variant: 'destructive',
       });
       router.push('/auth');
-    } else {
-      // The `<a>` tag will handle the download
     }
   };
 
@@ -85,11 +84,35 @@ export function NoteClientPage({ note }: { note: Note }) {
             </CardHeader>
             <CardContent>
               <div className="relative w-full h-[65vh] rounded-lg overflow-hidden border bg-secondary">
-                <iframe
-                  src={note.pdfUrl}
-                  className="w-full h-full"
-                  title={note.title}
-                />
+                {loading ? (
+                    <div className="w-full h-full flex items-center justify-center">
+                        <Loader2 className="h-8 w-8 animate-spin" />
+                    </div>
+                ) : user ? (
+                    <iframe
+                    src={`${note.pdfUrl}#toolbar=1`}
+                    className="w-full h-full"
+                    title={note.title}
+                    />
+                ) : (
+                    <div className="relative w-full h-full flex items-center justify-center bg-slate-900">
+                        <Image
+                            src={note.thumbnailUrl}
+                            alt="Note preview"
+                            fill
+                            className="object-cover opacity-20 blur-sm"
+                            data-ai-hint="note document"
+                        />
+                        <div className="relative z-10 text-center p-4 bg-background/50 backdrop-blur-sm rounded-lg">
+                            <Lock className="mx-auto h-12 w-12 text-primary mb-4" />
+                            <h3 className="text-2xl font-bold mb-2">Login to View Note</h3>
+                            <p className="text-muted-foreground mb-6">This content is available for logged-in users only.</p>
+                            <Button size="lg" onClick={() => router.push('/auth')}>
+                                Login or Sign Up
+                            </Button>
+                        </div>
+                    </div>
+                )}
               </div>
                <p className="mt-6 text-foreground/80">{note.content}</p>
             </CardContent>
@@ -98,7 +121,7 @@ export function NoteClientPage({ note }: { note: Note }) {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-2xl font-bold font-headline">AI Summary</CardTitle>
-              <Button onClick={handleSummarize} disabled={isSummarizing}>
+              <Button onClick={user ? handleSummarize : handleProtectedAction} disabled={isSummarizing}>
                 {isSummarizing ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
@@ -138,13 +161,13 @@ export function NoteClientPage({ note }: { note: Note }) {
                     </Button>
                   </a>
                ) : (
-                  <Button size="lg" className="w-full" onClick={handleDownload}>
+                  <Button size="lg" className="w-full" onClick={handleProtectedAction}>
                     <Lock className="mr-2 h-5 w-5" /> Login to Download
                   </Button>
                )}
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline" className="w-full" onClick={user ? undefined : handleProtectedAction} disabled={!user}>
                     <Flag className="mr-2 h-5 w-5" /> Report Note
                   </Button>
                 </AlertDialogTrigger>
