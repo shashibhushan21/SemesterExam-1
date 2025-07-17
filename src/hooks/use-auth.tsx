@@ -62,6 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw new Error(data.message || 'Login failed');
     }
     
+    // Set the complete user object into the state
     setUser(data.user);
     return data.user;
   };

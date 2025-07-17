@@ -86,6 +86,7 @@ export function AuthForm() {
       toast({ title: 'Signup successful!', description: 'Logging you in...' });
       resetSignupForm();
       
+      // After signup, log the user in to get the full profile data
       await login(data.email, data.password);
       
       toast({ title: "Login successful!", description: "Welcome!" });

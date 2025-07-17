@@ -33,7 +33,8 @@ export async function POST(req: NextRequest) {
       throw new Error('JWT_SECRET is not configured on the server.');
     }
 
-    const tokenPayload = {
+    // Create a complete user object for the token and response
+    const userPayload = {
       id: user._id.toString(),
       email: user.email,
       name: user.name,
@@ -44,24 +45,13 @@ export async function POST(req: NextRequest) {
       semester: user.semester || null,
     };
     
-    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET!, {
+    const token = jwt.sign(userPayload, process.env.JWT_SECRET!, {
       expiresIn: '1d',
     });
     
-    const userResponse = { 
-        id: user._id.toString(),
-        email: user.email, 
-        name: user.name,
-        avatar: user.avatar || null,
-        phone: user.phone || null,
-        college: user.college || null,
-        branch: user.branch || null,
-        semester: user.semester || null,
-    };
-
     const response = NextResponse.json({
         message: 'Login successful',
-        user: userResponse,
+        user: userPayload,
     }, { status: 200 });
 
     response.cookies.set('token', token, {
