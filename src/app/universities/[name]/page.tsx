@@ -28,7 +28,7 @@ export default function UniversityDetailPage({ params }: { params: { name: strin
   const branches = ['all', ...new Set(universityNotes.map((note) => note.branch))];
 
   return (
-    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8 text-white">
+    <div className="text-white">
       <div className="flex items-center gap-4 mb-8">
             <Link href="/universities" passHref>
                 <Button variant="outline" className="group transition-all duration-300 hover:bg-accent/80 hover:text-accent-foreground hover:shadow-lg hover:-translate-y-1">
