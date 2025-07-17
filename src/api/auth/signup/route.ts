@@ -1,3 +1,4 @@
+
 'use server';
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
@@ -52,6 +53,10 @@ export async function POST(req: NextRequest) {
     const resendApiKey = process.env.RESEND_API_KEY;
     const fromEmail = process.env.RESEND_FROM_EMAIL;
 
+    // Debugging: Check if environment variables are loaded
+    console.log('📦 RESEND_API_KEY loaded:', !!resendApiKey);
+    console.log('📦 RESEND_FROM_EMAIL loaded:', fromEmail);
+
     if (resendApiKey && fromEmail) {
       try {
         const resend = new Resend(resendApiKey);
@@ -73,7 +78,7 @@ export async function POST(req: NextRequest) {
         console.error('❌ Failed to send welcome email:', JSON.stringify(emailErr, null, 2));
       }
     } else {
-      console.warn('❗ RESEND API Key or FROM email not configured');
+      console.warn('❗ RESEND API Key or FROM email not configured. Skipping welcome email.');
     }
 
     return NextResponse.json({ message: 'User created successfully' }, { status: 201 });
