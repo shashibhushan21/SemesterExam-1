@@ -9,14 +9,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Download, Flag, Star, Wand2, Loader2, ArrowLeft, Lock, Eye as PreviewIcon } from 'lucide-react';
+import { Download, Flag, Star, Wand2, Loader2, ArrowLeft, Lock } from 'lucide-react';
 import { summarizeNotes } from '@/ai/flows/summarize-notes';
 import { useToast } from '@/hooks/use-toast';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
-import Image from 'next/image';
+import { PdfViewer } from './pdf-viewer';
 
 export function NoteClientPage({ note }: { note: Note }) {
   const [summary, setSummary] = useState('');
@@ -64,11 +64,6 @@ export function NoteClientPage({ note }: { note: Note }) {
     }
   };
   
-  // For logged-out users, we use a viewer that disables downloads.
-  // For logged-in users, we give the direct PDF link.
-  const pdfPreviewUrl = `https://docs.google.com/gview?url=${note.pdfUrl}&embedded=true`;
-  const pdfUrl = user ? note.pdfUrl : pdfPreviewUrl;
-
   return (
     <div className="max-w-6xl mx-auto">
        <Button variant="outline" onClick={() => router.back()} className="mb-8 group transition-all duration-300 hover:bg-accent/80 hover:text-accent-foreground hover:shadow-lg hover:-translate-y-1">
@@ -88,14 +83,9 @@ export function NoteClientPage({ note }: { note: Note }) {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="relative w-full h-[65vh] rounded-lg overflow-hidden border bg-secondary">
-                 <iframe
-                    src={pdfUrl}
-                    className="w-full h-full"
-                    title={note.title}
-                    allowFullScreen
-                />
-              </div>
+               <div className="relative w-full h-[75vh] rounded-lg overflow-hidden border bg-secondary">
+                  <PdfViewer url={note.pdfUrl} />
+               </div>
                <p className="mt-6 text-foreground/80">{note.content}</p>
             </CardContent>
           </Card>
