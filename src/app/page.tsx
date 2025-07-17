@@ -17,20 +17,6 @@ import { TestimonialCard } from '@/components/testimonial-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/hooks/use-auth';
 
-function ClientOnly({ children }: { children: React.ReactNode }) {
-  const [hasMounted, setHasMounted] = useState(false);
-
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
-
-  if (!hasMounted) {
-    return null;
-  }
-
-  return <>{children}</>;
-}
-
 const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -42,7 +28,7 @@ const getInitials = (name: string) => {
 
 
 export default function Home() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const universities = [...new Set(allNotes.map((note) => note.university))];
   const semesters = [...new Set(allNotes.map((note) => note.semester))];
   const subjects = [...new Set(allNotes.map((note) => note.subject))];
@@ -102,7 +88,7 @@ export default function Home() {
     <>
       <section className="relative w-full h-auto min-h-[calc(100vh-10rem)] flex items-center justify-center py-10 md:py-0">
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4 w-full">
-          <ClientOnly>
+          
             <Carousel
               plugins={[Autoplay({ delay: 5000, stopOnInteraction: true })]}
               className="w-full max-w-5xl"
@@ -141,11 +127,11 @@ export default function Home() {
                 </CarouselItem>
               </CarouselContent>
             </Carousel>
-          </ClientOnly>
+          
 
           <div className="mt-8 p-4 bg-white/10 backdrop-blur-sm rounded-lg w-full max-w-4xl">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <ClientOnly>
+              
                 <Select>
                   <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
                     <SelectValue placeholder="Select University" />
@@ -180,7 +166,7 @@ export default function Home() {
                   <Search className="mr-2 h-5 w-5" />
                   Search
                 </Button>
-              </ClientOnly>
+              
             </div>
           </div>
 
@@ -230,11 +216,11 @@ export default function Home() {
             What Students Say
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <ClientOnly>
+            
               {testimonials.map((testimonial, index) => (
                 <TestimonialCard key={index} {...testimonial} />
               ))}
-            </ClientOnly>
+            
           </div>
         </div>
       </section>
@@ -245,7 +231,7 @@ export default function Home() {
             Frequently Asked Questions
           </h2>
           <div className="max-w-3xl mx-auto">
-            <ClientOnly>
+            
                 <Accordion type="single" collapsible className="w-full space-y-4">
                 {faqs.map((faq, index) => (
                     <AccordionItem key={index} value={`item-${index}`} className="bg-gradient-to-r from-blue-800/20 via-purple-700/20 to-pink-600/20 border-white/10 rounded-xl shadow-lg transition-all duration-300 hover:bg-white/5">
@@ -261,7 +247,7 @@ export default function Home() {
                     </AccordionItem>
                 ))}
                 </Accordion>
-            </ClientOnly>
+            
           </div>
         </div>
       </section>
@@ -272,7 +258,9 @@ export default function Home() {
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">Join 10,000+ students using SemesterExam.com!</h2>
             <p className="mt-4 text-base md:text-lg text-white/80">Stay updated, study smarter, and score better in your exams.</p>
             <div className="mt-8">
-              {user ? (
+              {loading ? (
+                 <Skeleton className="h-16 w-48 mx-auto rounded-full" />
+              ) : user ? (
                  <Link href="/courses">
                     <Button size="lg" className="bg-white text-primary hover:bg-gray-200 rounded-full px-8 py-6 text-lg transition-all duration-300 transform hover:scale-105">
                     Explore Courses
