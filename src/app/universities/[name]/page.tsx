@@ -4,8 +4,10 @@ import { notFound } from 'next/navigation';
 import { UniversityNotesClient } from './components/university-notes-client';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
-import { University as UniversityIcon } from 'lucide-react';
+import { University as UniversityIcon, ArrowLeft } from 'lucide-react';
 import { Note, University } from '@/lib/types';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 export default function UniversityDetailPage({ params }: { params: { name: string } }) {
   const universityName = decodeURIComponent(params.name);
@@ -27,6 +29,14 @@ export default function UniversityDetailPage({ params }: { params: { name: strin
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8 text-white">
+      <div className="flex items-center gap-4 mb-8">
+            <Link href="/universities" passHref>
+                <Button variant="outline" className="group transition-all duration-300 hover:bg-accent/80 hover:text-accent-foreground hover:shadow-lg hover:-translate-y-1">
+                    <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
+                    Back to All Universities
+                </Button>
+            </Link>
+        </div>
       <Card className="mb-12 bg-slate-900/50 backdrop-blur-sm border-white/10 overflow-hidden">
         <div className="relative h-48 w-full">
             <Image src={universityDetails.bannerUrl} alt={`${universityDetails.name} banner`} fill className="object-cover" data-ai-hint="university campus" />
