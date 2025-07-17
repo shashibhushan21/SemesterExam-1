@@ -15,6 +15,7 @@ import { BookOpen, University, RefreshCw, HelpCircle } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { TestimonialCard } from '@/components/testimonial-card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAuth } from '@/hooks/use-auth';
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
   const [hasMounted, setHasMounted] = useState(false);
@@ -41,6 +42,7 @@ const getInitials = (name: string) => {
 
 
 export default function Home() {
+  const { user } = useAuth();
   const universities = [...new Set(allNotes.map((note) => note.university))];
   const semesters = [...new Set(allNotes.map((note) => note.semester))];
   const subjects = [...new Set(allNotes.map((note) => note.subject))];
@@ -270,11 +272,19 @@ export default function Home() {
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">Join 10,000+ students using SemesterExam.com!</h2>
             <p className="mt-4 text-base md:text-lg text-white/80">Stay updated, study smarter, and score better in your exams.</p>
             <div className="mt-8">
-              <Link href="/auth">
-                <Button size="lg" className="bg-white text-primary hover:bg-gray-200 rounded-full px-8 py-6 text-lg transition-all duration-300 transform hover:scale-105">
-                  Get Started Now
-                </Button>
-              </Link>
+              {user ? (
+                 <Link href="/courses">
+                    <Button size="lg" className="bg-white text-primary hover:bg-gray-200 rounded-full px-8 py-6 text-lg transition-all duration-300 transform hover:scale-105">
+                    Explore Courses
+                    </Button>
+                </Link>
+              ) : (
+                <Link href="/auth">
+                    <Button size="lg" className="bg-white text-primary hover:bg-gray-200 rounded-full px-8 py-6 text-lg transition-all duration-300 transform hover:scale-105">
+                    Get Started Now
+                    </Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>
