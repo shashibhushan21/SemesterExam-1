@@ -85,9 +85,10 @@ export function NoteClientPage({ note }: { note: Note }) {
             <CardContent>
               <div className="relative w-full h-[65vh] rounded-lg overflow-hidden border bg-secondary">
                  <iframe
-                    src={`${note.pdfUrl}#toolbar=0`}
+                    src={note.pdfUrl}
                     className="w-full h-full"
                     title={note.title}
+                    allowFullScreen
                  />
               </div>
                <p className="mt-6 text-foreground/80">{note.content}</p>
