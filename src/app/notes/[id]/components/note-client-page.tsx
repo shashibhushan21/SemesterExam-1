@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Download, Flag, Star, Wand2, Loader2, ArrowLeft, Lock } from 'lucide-react';
+import { Download, Flag, Star, Wand2, Loader2, ArrowLeft, Lock, University } from 'lucide-react';
 import { summarizeNotes } from '@/ai/flows/summarize-notes';
 import { useToast } from '@/hooks/use-toast';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
@@ -17,6 +17,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
 import { PdfViewer } from './pdf-viewer';
+import Link from 'next/link';
 
 export function NoteClientPage({ note }: { note: Note }) {
   const [summary, setSummary] = useState('');
@@ -67,10 +68,12 @@ export function NoteClientPage({ note }: { note: Note }) {
   
   return (
     <div className="max-w-6xl mx-auto">
-       <Button variant="outline" onClick={() => router.back()} className="mb-8 group transition-all duration-300 hover:bg-accent/80 hover:text-accent-foreground hover:shadow-lg hover:-translate-y-1">
-          <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-          Back to notes
-        </Button>
+        <Link href={`/universities/${encodeURIComponent(note.university)}`} passHref>
+            <Button variant="outline" className="mb-8 group transition-all duration-300 hover:bg-accent/80 hover:text-accent-foreground hover:shadow-lg hover:-translate-y-1">
+                <University className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
+                Back to University
+            </Button>
+        </Link>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           <Card>
