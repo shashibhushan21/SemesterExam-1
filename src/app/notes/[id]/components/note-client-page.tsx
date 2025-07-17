@@ -68,12 +68,18 @@ export function NoteClientPage({ note }: { note: Note }) {
   
   return (
     <div className="max-w-6xl mx-auto">
-        <Link href={`/universities/${encodeURIComponent(note.university)}`} passHref>
-            <Button variant="outline" className="mb-8 group transition-all duration-300 hover:bg-accent/80 hover:text-accent-foreground hover:shadow-lg hover:-translate-y-1">
-                <University className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-                Back to University
+        <div className="flex items-center gap-4 mb-8">
+            <Button variant="outline" onClick={() => router.back()} className="group transition-all duration-300 hover:bg-accent/80 hover:text-accent-foreground hover:shadow-lg hover:-translate-y-1">
+                <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
+                Back to Notes
             </Button>
-        </Link>
+            <Link href={`/universities/${encodeURIComponent(note.university)}`} passHref>
+                <Button variant="outline" className="group transition-all duration-300 hover:bg-accent/80 hover:text-accent-foreground hover:shadow-lg hover:-translate-y-1">
+                    <University className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
+                    Back to University
+                </Button>
+            </Link>
+        </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           <Card>
