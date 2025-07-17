@@ -2,27 +2,39 @@ import type { Note, University } from './types';
 
 export const allUniversities: University[] = [
   {
-    name: 'Stanford University',
-    location: 'Stanford, California',
-    description: 'A private research university known for its academic strength, wealth, proximity to Silicon Valley, and ranking as one of the world\'s top universities.',
+    name: 'West Bengal University of Technology',
+    location: 'West Bengal, India',
+    description: 'MAKAUT offers a comprehensive range of technical and professional courses, with a strong emphasis on quality education and research.',
     bannerUrl: 'https://placehold.co/1200x300.png'
   },
   {
-    name: 'MIT',
-    location: 'Cambridge, Massachusetts',
-    description: 'A private land-grant research university in Cambridge, Massachusetts. It is a world-renowned institution for science and technology.',
+    name: 'Dr. A.P.J. Abdul Kalam Technical University',
+    location: 'Uttar Pradesh, India',
+    description: 'AKTU is one of the largest technical universities in India, with over 800 affiliated institutions spread across the state.',
     bannerUrl: 'https://placehold.co/1200x300.png'
   },
   {
-    name: 'UC Berkeley',
-    location: 'Berkeley, California',
-    description: 'A public land-grant research university in Berkeley, California. It is the state\'s first land-grant university and the first campus of the University of California system.',
+    name: 'Visvesvaraya Technological University',
+    location: 'Karnataka, India',
+    description: 'VTU offers advanced technical education and promotes innovation through its extensive research facilities and academic structure.',
     bannerUrl: 'https://placehold.co/1200x300.png'
   },
   {
-    name: 'Harvard University',
-    location: 'Cambridge, Massachusetts',
-    description: 'A private Ivy League research university in Cambridge, Massachusetts. It is the oldest institution of higher learning in the United States.',
+    name: 'Biju Patnaik University of Technology',
+    location: 'Odisha, India',
+    description: 'BPUT governs the technical education system in Odisha and ensures standard academic performance across all its colleges.',
+    bannerUrl: 'https://placehold.co/1200x300.png'
+  },
+  {
+    name: 'Bihar Engineering University',
+    location: 'Bihar, India',
+    description: 'BEU coordinates engineering education in Bihar and is responsible for overseeing academic quality and new curriculum development.',
+    bannerUrl: 'https://placehold.co/1200x300.png'
+  },
+  {
+    name: 'XYZ University',
+    location: 'Anytown, USA',
+    description: 'XYZ University is known for its innovative approach to education and research, offering a wide range of undergraduate and postgraduate programs.',
     bannerUrl: 'https://placehold.co/1200x300.png'
   }
 ];

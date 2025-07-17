@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Search, MoveRight } from 'lucide-react';
-import { allNotes } from '@/lib/mock-data';
+import { allNotes, allUniversities } from '@/lib/mock-data';
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { UniversityCard } from '@/components/university-card';
@@ -30,44 +30,20 @@ function ClientOnly({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .substring(0, 2)
+      .toUpperCase();
+};
+
 
 export default function Home() {
   const universities = [...new Set(allNotes.map((note) => note.university))];
   const semesters = [...new Set(allNotes.map((note) => note.semester))];
   const subjects = [...new Set(allNotes.map((note) => note.subject))];
-
-  const featuredUniversities = [
-    {
-      initials: 'MA',
-      name: 'West Bengal University of Technology',
-      description: 'MAKAUT offers a comprehensive range of technical and professional courses, with a strong emphasis on quality education and research.',
-    },
-    {
-      initials: 'AK',
-      name: 'Dr. A.P.J. Abdul Kalam Technical University',
-      description: 'AKTU is one of the largest technical universities in India, with over 800 affiliated institutions spread across the state.',
-    },
-    {
-      initials: 'VT',
-      name: 'Visvesvaraya Technological University',
-      description: 'VTU offers advanced technical education and promotes innovation through its extensive research facilities and academic structure.',
-    },
-    {
-      initials: 'BP',
-      name: 'Biju Patnaik University of Technology',
-      description: 'BPUT governs the technical education system in Odisha and ensures standard academic performance across all its colleges.',
-    },
-    {
-      initials: 'BE',
-      name: 'Bihar Engineering University',
-      description: 'BEU coordinates engineering education in Bihar and is responsible for overseeing academic quality and new curriculum development.',
-    },
-    {
-      initials: 'XY',
-      name: 'XYZ University',
-      description: 'XYZ University is known for its innovative approach to education and research, offering a wide range of undergraduate and postgraduate programs.',
-    }
-  ];
 
   const features = [
     {
@@ -223,8 +199,8 @@ export default function Home() {
             Top Universities
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredUniversities.map((uni, index) => (
-              <UniversityCard key={index} {...uni} />
+            {allUniversities.map((uni, index) => (
+              <UniversityCard key={index} {...uni} initials={getInitials(uni.name)} />
             ))}
           </div>
         </div>
