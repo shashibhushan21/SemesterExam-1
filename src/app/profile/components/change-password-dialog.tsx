@@ -88,7 +88,9 @@ export function ChangePasswordDialog({ children }: ChangePasswordDialogProps) {
             <Label htmlFor="currentPassword">Current Password</Label>
             <div className="relative">
               <Input id="currentPassword" type={showCurrentPassword ? 'text' : 'password'} {...register('currentPassword')} />
-              <button type="button" onClick={() => setShowCurrentPassword(p => !p)} className="absolute inset-y-0 right-0 flex items-center pr-3"><EyeOff className="h-5 w-5 text-muted-foreground" /></button>
+              <button type="button" onClick={() => setShowCurrentPassword(p => !p)} className="absolute inset-y-0 right-0 flex items-center pr-3">
+                {showCurrentPassword ? <Eye className="h-5 w-5 text-muted-foreground" /> : <EyeOff className="h-5 w-5 text-muted-foreground" />}
+              </button>
             </div>
             {errors.currentPassword && <p className="text-sm text-destructive">{errors.currentPassword.message}</p>}
           </div>
@@ -96,7 +98,9 @@ export function ChangePasswordDialog({ children }: ChangePasswordDialogProps) {
             <Label htmlFor="newPassword">New Password</Label>
              <div className="relative">
               <Input id="newPassword" type={showNewPassword ? 'text' : 'password'} {...register('newPassword')} />
-              <button type="button" onClick={() => setShowNewPassword(p => !p)} className="absolute inset-y-0 right-0 flex items-center pr-3"><EyeOff className="h-5 w-5 text-muted-foreground" /></button>
+              <button type="button" onClick={() => setShowNewPassword(p => !p)} className="absolute inset-y-0 right-0 flex items-center pr-3">
+                 {showNewPassword ? <Eye className="h-5 w-5 text-muted-foreground" /> : <EyeOff className="h-5 w-5 text-muted-foreground" />}
+              </button>
             </div>
             {errors.newPassword && <p className="text-sm text-destructive">{errors.newPassword.message}</p>}
           </div>
@@ -104,7 +108,9 @@ export function ChangePasswordDialog({ children }: ChangePasswordDialogProps) {
             <Label htmlFor="confirmPassword">Confirm New Password</Label>
              <div className="relative">
               <Input id="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} {...register('confirmPassword')} />
-              <button type="button" onClick={() => setShowConfirmPassword(p => !p)} className="absolute inset-y-0 right-0 flex items-center pr-3"><EyeOff className="h-5 w-5 text-muted-foreground" /></button>
+              <button type="button" onClick={() => setShowConfirmPassword(p => !p)} className="absolute inset-y-0 right-0 flex items-center pr-3">
+                 {showConfirmPassword ? <Eye className="h-5 w-5 text-muted-foreground" /> : <EyeOff className="h-5 w-5 text-muted-foreground" />}
+              </button>
             </div>
             {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>}
           </div>
