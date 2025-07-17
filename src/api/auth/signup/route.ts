@@ -6,9 +6,6 @@ import bcryptjs from 'bcryptjs';
 import { z } from 'zod';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const fromEmail = process.env.RESEND_FROM_EMAIL;
-
 const signupSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
@@ -46,8 +43,12 @@ export async function POST(req: NextRequest) {
     await newUser.save();
     
     // Send welcome email
-    if (fromEmail) {
+    const resendApiKey = process.env.RESEND_API_KEY;
+    const fromEmail = process.env.RESEND_FROM_EMAIL;
+
+    if (resendApiKey && fromEmail) {
         try {
+            const resend = new Resend(resendApiKey);
             await resend.emails.send({
                 from: fromEmail,
                 to: email,
@@ -59,7 +60,7 @@ export async function POST(req: NextRequest) {
             // Do not block signup if email fails, just log the error.
         }
     } else {
-        console.warn('RESEND_FROM_EMAIL is not configured. Skipping welcome email.');
+        console.warn('Resend API key or From Email is not configured. Skipping welcome email.');
     }
 
     return NextResponse.json({ message: 'User created successfully' }, { status: 201 });
