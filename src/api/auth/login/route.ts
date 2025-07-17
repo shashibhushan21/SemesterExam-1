@@ -6,7 +6,6 @@ import { connectToDatabase } from '@/lib/db';
 import User from '@/models/user';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { Resend } from 'resend';
 
 export async function POST(req: NextRequest) {
   try {
@@ -49,28 +48,6 @@ export async function POST(req: NextRequest) {
     const token = jwt.sign(userPayload, process.env.JWT_SECRET!, {
       expiresIn: '1d',
     });
-    
-    // Send login confirmation email before creating the response
-    const resendApiKey = process.env.RESEND_API_KEY;
-    const fromEmail = process.env.RESEND_FROM_EMAIL;
-
-    if (resendApiKey && fromEmail) {
-        try {
-            const resend = new Resend(resendApiKey);
-            await resend.emails.send({
-                from: fromEmail,
-                to: user.email,
-                subject: 'Successful Login to ExamNotes',
-                html: `<p>Hi ${user.name},</p><p>This is a confirmation that you have successfully logged into your ExamNotes account.</p><p>If you did not initiate this login, please change your password immediately.</p><p>The ExamNotes Team</p>`,
-            });
-            console.log('✅ Login confirmation email sent to:', user.email);
-        } catch (emailError) {
-            console.error('❌ Login confirmation email failed:', JSON.stringify(emailError, null, 2));
-            // Do not block login if email fails, just log it.
-        }
-    } else {
-        console.warn('⚠️ Resend is not configured. Skipping login confirmation email.');
-    }
 
     const response = NextResponse.json({
         message: 'Login successful',

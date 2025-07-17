@@ -31,6 +31,19 @@ const signupSchema = z.object({
 type LoginValues = z.infer<typeof loginSchema>;
 type SignupValues = z.infer<typeof signupSchema>;
 
+async function sendLoginConfirmationEmail(name: string, email: string) {
+    try {
+        await fetch('/api/emails/send-login-confirmation', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email }),
+        });
+    } catch (error) {
+        // Log this error but don't block the user
+        console.error('Failed to trigger login confirmation email:', error);
+    }
+}
+
 export function AuthForm() {
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showSignupPassword, setShowSignupPassword] = useState(false);
@@ -59,8 +72,12 @@ export function AuthForm() {
   const onLogin = async (data: LoginValues) => {
     setIsSubmitting(true);
     try {
-      await login(data.email, data.password);
+      const loggedInUser = await login(data.email, data.password);
       toast({ title: "Login successful!", description: "Welcome back." });
+      
+      // Trigger email without waiting for it
+      sendLoginConfirmationEmail(loggedInUser.name, loggedInUser.email);
+      
       router.push(redirectUrl || '/profile');
       router.refresh();
     } catch (error: any) {
@@ -88,9 +105,13 @@ export function AuthForm() {
       toast({ title: 'Signup successful!', description: 'Logging you in...' });
       resetSignupForm();
       
-      await login(data.email, data.password);
+      const loggedInUser = await login(data.email, data.password);
       
       toast({ title: "Login successful!", description: "Welcome!" });
+
+      // Trigger email without waiting for it
+      sendLoginConfirmationEmail(loggedInUser.name, loggedInUser.email);
+
       router.push(redirectUrl || '/profile');
       router.refresh(); 
 
