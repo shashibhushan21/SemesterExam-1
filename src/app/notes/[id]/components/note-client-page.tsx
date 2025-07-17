@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Download, Flag, Star, Wand2, Loader2, ArrowLeft, Lock } from 'lucide-react';
+import { Download, Flag, Star, Wand2, Loader2, ArrowLeft, Lock, Eye as PreviewIcon } from 'lucide-react';
 import { summarizeNotes } from '@/ai/flows/summarize-notes';
 import { useToast } from '@/hooks/use-toast';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
@@ -22,6 +22,7 @@ export function NoteClientPage({ note }: { note: Note }) {
   const [summary, setSummary] = useState('');
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [formattedDate, setFormattedDate] = useState('');
+  const [isPreviewing, setIsPreviewing] = useState(false);
 
   const { toast } = useToast();
   const router = useRouter();
@@ -84,12 +85,24 @@ export function NoteClientPage({ note }: { note: Note }) {
             </CardHeader>
             <CardContent>
               <div className="relative w-full h-[65vh] rounded-lg overflow-hidden border bg-secondary">
-                 <iframe
-                    src={note.pdfUrl}
-                    className="w-full h-full"
-                    title={note.title}
-                    allowFullScreen
-                 />
+                 {isPreviewing ? (
+                    <iframe
+                        src={note.pdfUrl}
+                        className="w-full h-full"
+                        title={note.title}
+                        allowFullScreen
+                    />
+                 ) : (
+                    <div className="relative w-full h-full flex items-center justify-center">
+                        <Image src={note.thumbnailUrl} alt={note.title} fill className="object-contain" data-ai-hint="note document" />
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                            <Button size="lg" onClick={() => setIsPreviewing(true)} className="transform transition-transform hover:scale-105">
+                                <PreviewIcon className="mr-2 h-5 w-5" />
+                                Click to Preview
+                            </Button>
+                        </div>
+                    </div>
+                 )}
               </div>
                <p className="mt-6 text-foreground/80">{note.content}</p>
             </CardContent>
