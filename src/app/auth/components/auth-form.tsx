@@ -31,18 +31,6 @@ const signupSchema = z.object({
 type LoginValues = z.infer<typeof loginSchema>;
 type SignupValues = z.infer<typeof signupSchema>;
 
-async function sendLoginConfirmationEmail(name: string, email: string) {
-    try {
-        await fetch('/api/emails/send-login-confirmation', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email }),
-        });
-    } catch (error) {
-        // Log this error but don't block the user
-        console.error('Failed to trigger login confirmation email:', error);
-    }
-}
 
 export function AuthForm() {
   const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -72,11 +60,8 @@ export function AuthForm() {
   const onLogin = async (data: LoginValues) => {
     setIsSubmitting(true);
     try {
-      const loggedInUser = await login(data.email, data.password);
+      await login(data.email, data.password);
       toast({ title: "Login successful!", description: "Welcome back." });
-      
-      // Trigger email without waiting for it
-      sendLoginConfirmationEmail(loggedInUser.name, loggedInUser.email);
       
       router.push(redirectUrl || '/profile');
       router.refresh();
@@ -102,18 +87,9 @@ export function AuthForm() {
         throw new Error(result.message || 'Something went wrong');
       }
 
-      toast({ title: 'Signup successful!', description: 'Logging you in...' });
+      toast({ title: 'Signup successful!', description: 'Your account has been created. Please log in.' });
       resetSignupForm();
-      
-      const loggedInUser = await login(data.email, data.password);
-      
-      toast({ title: "Login successful!", description: "Welcome!" });
-
-      // Trigger email without waiting for it
-      sendLoginConfirmationEmail(loggedInUser.name, loggedInUser.email);
-
-      router.push(redirectUrl || '/profile');
-      router.refresh(); 
+      setActiveTab('login');
 
     } catch (error: any) {
       toast({ title: 'Signup Failed', description: error.message || 'An unexpected error occurred.', variant: 'destructive' });

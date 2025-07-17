@@ -4,8 +4,8 @@ import { connectToDatabase } from '@/lib/db';
 import User from '@/models/user';
 import bcryptjs from 'bcryptjs';
 import { z } from 'zod';
+import { Resend } from 'resend';
 
-// Schema validation using zod
 const signupSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
@@ -16,7 +16,6 @@ const signupSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    // Connect to MongoDB
     await connectToDatabase();
 
     const body = await req.json();
@@ -31,7 +30,6 @@ export async function POST(req: NextRequest) {
 
     const { name, email, password } = validation.data;
 
-    // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json(
@@ -40,10 +38,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Hash password
     const hashedPassword = await bcryptjs.hash(password, 12);
 
-    // Create and save user
     const newUser = new User({
       name,
       email,
@@ -51,6 +47,33 @@ export async function POST(req: NextRequest) {
     });
 
     await newUser.save();
+
+    // Send welcome email
+    const resendApiKey = process.env.RESEND_API_KEY;
+    const fromEmail = process.env.RESEND_FROM_EMAIL;
+
+    if (resendApiKey && fromEmail) {
+      try {
+        const resend = new Resend(resendApiKey);
+        await resend.emails.send({
+          from: fromEmail,
+          to: email,
+          subject: 'Welcome to ExamNotes!',
+          html: `
+            <p>Hi ${name},</p>
+            <p>Thanks for signing up for <strong>ExamNotes</strong> 🎓</p>
+            <p>You can now access short notes, previews, and more!</p>
+            <p>Good luck in your studies!</p>
+            <p>– The ExamNotes Team</p>
+          `,
+        });
+        console.log('✅ Welcome email sent to', email);
+      } catch (emailErr) {
+        console.error('❌ Failed to send welcome email:', JSON.stringify(emailErr, null, 2));
+      }
+    } else {
+      console.warn('❗ RESEND API Key or FROM email not configured');
+    }
 
     return NextResponse.json({ message: 'User created successfully' }, { status: 201 });
 
