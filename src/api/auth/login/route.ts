@@ -8,10 +8,6 @@ import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Resend } from 'resend';
 
-const resendApiKey = process.env.RESEND_API_KEY;
-const fromEmail = process.env.RESEND_FROM_EMAIL;
-const resend = resendApiKey ? new Resend(resendApiKey) : null;
-
 export async function POST(req: NextRequest) {
   try {
     await connectToDatabase();
@@ -55,8 +51,12 @@ export async function POST(req: NextRequest) {
     });
     
     // Send login confirmation email before creating the response
-    if (resend && fromEmail) {
+    const resendApiKey = process.env.RESEND_API_KEY;
+    const fromEmail = process.env.RESEND_FROM_EMAIL;
+
+    if (resendApiKey && fromEmail) {
         try {
+            const resend = new Resend(resendApiKey);
             await resend.emails.send({
                 from: fromEmail,
                 to: user.email,
