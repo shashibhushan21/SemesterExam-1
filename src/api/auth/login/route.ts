@@ -54,20 +54,7 @@ export async function POST(req: NextRequest) {
       expiresIn: '1d',
     });
     
-    const response = NextResponse.json({
-        message: 'Login successful',
-        user: userPayload,
-    }, { status: 200 });
-
-    response.cookies.set('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV !== 'development',
-        sameSite: 'strict',
-        maxAge: 60 * 60 * 24, // 1 day
-        path: '/',
-    });
-    
-    // Send login confirmation email
+    // Send login confirmation email before creating the response
     if (resend && fromEmail) {
         try {
             await resend.emails.send({
@@ -84,6 +71,19 @@ export async function POST(req: NextRequest) {
     } else {
         console.warn('⚠️ Resend is not configured. Skipping login confirmation email.');
     }
+
+    const response = NextResponse.json({
+        message: 'Login successful',
+        user: userPayload,
+    }, { status: 200 });
+
+    response.cookies.set('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== 'development',
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 24, // 1 day
+        path: '/',
+    });
 
     return response;
 
