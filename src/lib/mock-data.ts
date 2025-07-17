@@ -119,5 +119,21 @@ export const allNotes: Note[] = [
     pdfUrl: 'https://pdfobject.com/pdf/sample.pdf',
     content: 'This document provides a generalized overview of the typical first-year engineering curriculum. It covers fundamental subjects like Mathematics, Physics, Chemistry, and basic programming concepts. This syllabus is intended as a guide and may not perfectly match the curriculum of your specific university.',
     branch: 'All Branches'
+  },
+  {
+    id: '6',
+    title: 'Theory of Automata & Formal Languages',
+    university: 'Dr. A.P.J. Abdul Kalam Technical University',
+    subject: 'Computer Science',
+    semester: '5th Semester',
+    author: 'AKTU Student',
+    authorAvatar: 'https://placehold.co/100x100.png',
+    uploadDate: '2024-06-10',
+    summary: 'Notes on automata theory, regular expressions, context-free grammars, and Turing machines for AKTU students.',
+    rating: 4.8,
+    thumbnailUrl: 'https://placehold.co/400x300.png',
+    pdfUrl: 'https://pdfobject.com/pdf/sample.pdf',
+    content: 'This course introduces the fundamental concepts of automata theory and formal languages including grammar, finite automaton, regular expression, formal language, pushdown automaton, and Turing machine. Not only do they form basic models of computation, they are also the foundation of many branches of computer science, e.g. compilers, software engineering, concurrent systems, etc.',
+    branch: 'CSE'
   }
 ];
