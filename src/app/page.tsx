@@ -29,6 +29,12 @@ const getInitials = (name: string) => {
 
 export default function Home() {
   const { user, loading } = useAuth();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const universities = [...new Set(allNotes.map((note) => note.university))];
   const semesters = [...new Set(allNotes.map((note) => note.semester))];
   const subjects = [...new Set(allNotes.map((note) => note.subject))];
@@ -89,6 +95,7 @@ export default function Home() {
       <section className="relative w-full h-auto min-h-[calc(100vh-10rem)] flex items-center justify-center py-10 md:py-0">
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4 w-full">
           
+           {isMounted ? (
             <Carousel
               plugins={[Autoplay({ delay: 5000, stopOnInteraction: true })]}
               className="w-full max-w-5xl"
@@ -127,45 +134,61 @@ export default function Home() {
                 </CarouselItem>
               </CarouselContent>
             </Carousel>
+          ) : (
+            <div className="w-full max-w-5xl p-4">
+                <Skeleton className="h-[120px] w-full" />
+            </div>
+          )}
           
 
           <div className="mt-8 p-4 bg-white/10 backdrop-blur-sm rounded-lg w-full max-w-4xl">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               
-                <Select>
-                  <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
-                    <SelectValue placeholder="Select University" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {universities.map((uni) => (
-                      <SelectItem key={uni} value={uni}>{uni}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select>
-                  <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
-                    <SelectValue placeholder="Select Semester" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {semesters.map((sem) => (
-                      <SelectItem key={sem} value={sem}>{sem}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select>
-                  <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
-                    <SelectValue placeholder="Select Subject" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {subjects.map((sub) => (
-                      <SelectItem key={sub} value={sub}>{sub}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Button size="lg" className="h-12 bg-white text-primary hover:bg-gray-200 transition-all duration-300 transform hover:scale-105">
-                  <Search className="mr-2 h-5 w-5" />
-                  Search
-                </Button>
+              {isMounted ? (
+                <>
+                  <Select>
+                    <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
+                      <SelectValue placeholder="Select University" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {universities.map((uni) => (
+                        <SelectItem key={uni} value={uni}>{uni}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select>
+                    <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
+                      <SelectValue placeholder="Select Semester" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {semesters.map((sem) => (
+                        <SelectItem key={sem} value={sem}>{sem}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select>
+                    <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
+                      <SelectValue placeholder="Select Subject" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {subjects.map((sub) => (
+                        <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button size="lg" className="h-12 bg-white text-primary hover:bg-gray-200 transition-all duration-300 transform hover:scale-105">
+                    <Search className="mr-2 h-5 w-5" />
+                    Search
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-12 w-full" />
+                </>
+              )}
               
             </div>
           </div>
@@ -217,9 +240,17 @@ export default function Home() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             
-              {testimonials.map((testimonial, index) => (
+            {isMounted ? (
+              testimonials.map((testimonial, index) => (
                 <TestimonialCard key={index} {...testimonial} />
-              ))}
+              ))
+            ) : (
+                <>
+                    <Skeleton className="h-48 w-full rounded-2xl" />
+                    <Skeleton className="h-48 w-full rounded-2xl" />
+                    <Skeleton className="h-48 w-full rounded-2xl" />
+                </>
+            )}
             
           </div>
         </div>
@@ -232,6 +263,7 @@ export default function Home() {
           </h2>
           <div className="max-w-3xl mx-auto">
             
+             {isMounted ? (
                 <Accordion type="single" collapsible className="w-full space-y-4">
                 {faqs.map((faq, index) => (
                     <AccordionItem key={index} value={`item-${index}`} className="bg-gradient-to-r from-blue-800/20 via-purple-700/20 to-pink-600/20 border-white/10 rounded-xl shadow-lg transition-all duration-300 hover:bg-white/5">
@@ -247,6 +279,13 @@ export default function Home() {
                     </AccordionItem>
                 ))}
                 </Accordion>
+             ) : (
+                <div className="space-y-4">
+                    <Skeleton className="h-20 w-full rounded-xl" />
+                    <Skeleton className="h-20 w-full rounded-xl" />
+                    <Skeleton className="h-20 w-full rounded-xl" />
+                </div>
+             )}
             
           </div>
         </div>
