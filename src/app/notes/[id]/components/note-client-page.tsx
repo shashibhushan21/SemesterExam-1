@@ -25,7 +25,7 @@ export function NoteClientPage({ note }: { note: Note }) {
 
   const { toast } = useToast();
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (note) {
@@ -84,35 +84,11 @@ export function NoteClientPage({ note }: { note: Note }) {
             </CardHeader>
             <CardContent>
               <div className="relative w-full h-[65vh] rounded-lg overflow-hidden border bg-secondary">
-                {loading ? (
-                    <div className="w-full h-full flex items-center justify-center">
-                        <Loader2 className="h-8 w-8 animate-spin" />
-                    </div>
-                ) : user ? (
-                    <iframe
-                    src={`${note.pdfUrl}#toolbar=1`}
+                 <iframe
+                    src={`${note.pdfUrl}#toolbar=0`}
                     className="w-full h-full"
                     title={note.title}
-                    />
-                ) : (
-                    <div className="relative w-full h-full flex items-center justify-center bg-slate-900">
-                        <Image
-                            src={note.thumbnailUrl}
-                            alt="Note preview"
-                            fill
-                            className="object-cover opacity-20 blur-sm"
-                            data-ai-hint="note document"
-                        />
-                        <div className="relative z-10 text-center p-4 bg-background/50 backdrop-blur-sm rounded-lg">
-                            <Lock className="mx-auto h-12 w-12 text-primary mb-4" />
-                            <h3 className="text-2xl font-bold mb-2">Login to View Note</h3>
-                            <p className="text-muted-foreground mb-6">This content is available for logged-in users only.</p>
-                            <Button size="lg" onClick={() => router.push('/auth')}>
-                                Login or Sign Up
-                            </Button>
-                        </div>
-                    </div>
-                )}
+                 />
               </div>
                <p className="mt-6 text-foreground/80">{note.content}</p>
             </CardContent>
