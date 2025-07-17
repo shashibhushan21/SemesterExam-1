@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     if (resendApiKey && fromEmail) {
       try {
         const resend = new Resend(resendApiKey);
-        await resend.emails.send({
+        const result = await resend.emails.send({
           from: fromEmail,
           to: email,
           subject: 'Welcome to ExamNotes!',
@@ -67,6 +67,7 @@ export async function POST(req: NextRequest) {
             <p>– The ExamNotes Team</p>
           `,
         });
+        console.log('EMAIL RESULT:', result);
         console.log('✅ Welcome email sent to', email);
       } catch (emailErr) {
         console.error('❌ Failed to send welcome email:', JSON.stringify(emailErr, null, 2));
