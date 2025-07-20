@@ -14,27 +14,36 @@ const contactSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  try {
-    await connectToDatabase();
+  // Step 1: Check for all required environment variables at the beginning.
+  const resendApiKey = process.env.RESEND_API_KEY;
+  const fromEmail = process.env.RESEND_FROM_EMAIL;
+  const adminEmail = "semesterexaminfo@gmail.com"; 
 
+  if (!process.env.MONGO_URI) {
+     console.error('❌ MONGO_URI is not defined in .env');
+     return NextResponse.json({ message: 'Server configuration error' }, { status: 500 });
+  }
+
+  try {
+    // Step 2: Parse and validate the incoming request body.
     const body = await req.json();
     const validation = contactSchema.safeParse(body);
 
     if (!validation.success) {
+      console.log('❌ Invalid input:', validation.error.errors);
       return NextResponse.json({ message: 'Invalid input', errors: validation.error.errors }, { status: 400 });
     }
-
     const { name, email, subject, message } = validation.data;
 
-    // Step 1: Save the contact message to the database (Primary Goal)
+    // Step 3: Connect to the database.
+    await connectToDatabase();
+    
+    // Step 4: Save the contact message to the database (Primary Goal).
     const newContactMessage = new Contact({ name, email, subject, message });
     await newContactMessage.save();
+    console.log(`✅ Contact message saved to DB for: ${email}`);
 
-    // Step 2: Attempt to send an email notification (Secondary Goal)
-    const resendApiKey = process.env.RESEND_API_KEY;
-    const fromEmail = process.env.RESEND_FROM_EMAIL;
-    const adminEmail = "semesterexaminfo@gmail.com"; 
-
+    // Step 5: Attempt to send an email notification (Secondary Goal).
     if (resendApiKey && fromEmail) {
       try {
         const resend = new Resend(resendApiKey);
@@ -55,19 +64,18 @@ export async function POST(req: NextRequest) {
         });
         console.log(`✅ Contact form email notification sent for: ${email}`);
       } catch (emailError) {
-        // Log the email error but don't crash the request.
-        // The user's message is already saved in the database.
+        // Log the email error but don't crash the request since the data is already saved.
         console.error('❌ Failed to send contact notification email:', JSON.stringify(emailError, null, 2));
       }
     } else {
-        console.warn('❗ Resend API Key or FROM email not configured. Skipping email notification.');
+        console.warn('❗ RESEND_API_KEY or RESEND_FROM_EMAIL not configured. Skipping email notification.');
     }
 
     // Always return a success response if the database save was successful.
     return NextResponse.json({ message: 'Message received successfully!' }, { status: 201 });
 
   } catch (error) {
-    console.error('❌ Contact form submission error:', error);
+    console.error('❌ Unhandled error in /api/contact:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }
