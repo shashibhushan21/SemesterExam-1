@@ -26,11 +26,11 @@ export async function POST(req: NextRequest) {
 
     const { name, email, subject, message } = validation.data;
 
-    // Save to database
+    // 1. Save to database
     const newContactMessage = new Contact({ name, email, subject, message });
     await newContactMessage.save();
 
-    // Send email notification
+    // 2. Send email notification
     const resendApiKey = process.env.RESEND_API_KEY;
     const fromEmail = process.env.RESEND_FROM_EMAIL;
     const adminEmail = "semesterexaminfo@gmail.com"; 
@@ -53,14 +53,17 @@ export async function POST(req: NextRequest) {
             <p>${message.replace(/\n/g, '<br>')}</p>
           `,
         });
+        console.log(`Contact form submission from ${email} sent to ${adminEmail}`);
       } catch (emailError) {
-        console.error('Failed to send contact notification email:', emailError);
-        // Don't block the user response if email fails, just log it. The main goal (saving to DB) succeeded.
+        // Log the error but don't prevent the user from getting a success message,
+        // since the main goal (saving to DB) was successful.
+        console.error('Failed to send contact notification email:', JSON.stringify(emailError, null, 2));
       }
     } else {
         console.warn('Resend API Key or From Email not configured. Skipping email notification.');
     }
 
+    // Always return success if DB save was successful
     return NextResponse.json({ message: 'Message received successfully!' }, { status: 201 });
 
   } catch (error) {
