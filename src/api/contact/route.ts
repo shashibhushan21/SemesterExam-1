@@ -7,10 +7,10 @@ import { z } from 'zod';
 import { Resend } from 'resend';
 
 const contactSchema = z.object({
-  name: z.string().min(2),
-  email: z.string().email(),
-  subject: z.string().min(5),
-  message: z.string().min(10),
+  name: z.string().min(2, 'Name is required'),
+  email: z.string().email('Invalid email address'),
+  subject: z.string().min(5, 'Subject must be at least 5 characters'),
+  message: z.string().min(10, 'Message must be at least 10 characters'),
 });
 
 export async function POST(req: NextRequest) {
@@ -26,11 +26,11 @@ export async function POST(req: NextRequest) {
 
     const { name, email, subject, message } = validation.data;
 
-    // 1. Save to database
+    // Step 1: Save the contact message to the database (Primary Goal)
     const newContactMessage = new Contact({ name, email, subject, message });
     await newContactMessage.save();
 
-    // 2. Send email notification
+    // Step 2: Attempt to send an email notification (Secondary Goal)
     const resendApiKey = process.env.RESEND_API_KEY;
     const fromEmail = process.env.RESEND_FROM_EMAIL;
     const adminEmail = "semesterexaminfo@gmail.com"; 
@@ -53,21 +53,21 @@ export async function POST(req: NextRequest) {
             <p>${message.replace(/\n/g, '<br>')}</p>
           `,
         });
-        console.log(`Contact form submission from ${email} sent to ${adminEmail}`);
+        console.log(`✅ Contact form email notification sent for: ${email}`);
       } catch (emailError) {
-        // Log the error but don't prevent the user from getting a success message,
-        // since the main goal (saving to DB) was successful.
-        console.error('Failed to send contact notification email:', JSON.stringify(emailError, null, 2));
+        // Log the email error but don't crash the request.
+        // The user's message is already saved in the database.
+        console.error('❌ Failed to send contact notification email:', JSON.stringify(emailError, null, 2));
       }
     } else {
-        console.warn('Resend API Key or From Email not configured. Skipping email notification.');
+        console.warn('❗ Resend API Key or FROM email not configured. Skipping email notification.');
     }
 
-    // Always return success if DB save was successful
+    // Always return a success response if the database save was successful.
     return NextResponse.json({ message: 'Message received successfully!' }, { status: 201 });
 
   } catch (error) {
-    console.error('Contact form submission error:', error);
+    console.error('❌ Contact form submission error:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }
