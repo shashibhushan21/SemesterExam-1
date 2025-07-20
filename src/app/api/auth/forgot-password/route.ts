@@ -13,6 +13,7 @@ export async function POST(req: NextRequest) {
 
     if (!resendApiKey || !fromEmail || !baseUrl) {
       console.error('Server configuration error: Missing RESEND_API_KEY, RESEND_FROM_EMAIL, or NEXT_PUBLIC_BASE_URL');
+      // Return a generic error to the user but log the specific issue.
       return NextResponse.json({ message: 'Server is not configured for sending emails.' }, { status: 500 });
     }
   
@@ -54,14 +55,16 @@ export async function POST(req: NextRequest) {
       console.log(`Password reset email sent to: ${user.email}`);
     } catch (emailError) {
       console.error('❌ Failed to send password reset email:', JSON.stringify(emailError, null, 2));
-      // Do not reveal the error to the client to prevent information leaks.
-      // The token is saved, so they can try again or contact support.
+      // Do not reveal the email sending error to the client to prevent information leaks.
+      // The token is saved, so they can still use the link if it was generated, or contact support.
     }
 
+    // Always return a success-like message to prevent user enumeration.
     return NextResponse.json({ message: 'If an account with that email exists, a password reset link has been sent.' }, { status: 200 });
 
   } catch (error) {
-    console.error('❌ Forgot Password Error:', error);
+    console.error('❌ Forgot Password API Error:', error);
+    // Return a generic error to prevent leaking implementation details.
     return NextResponse.json({ message: 'An internal error occurred.' }, { status: 500 });
   }
 }
