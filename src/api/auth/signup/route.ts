@@ -49,11 +49,9 @@ export async function POST(req: NextRequest) {
 
     await newUser.save();
 
-    // Step 2: Attempt to send a welcome email (Secondary, non-critical action)
     const resendApiKey = process.env.RESEND_API_KEY;
     const fromEmail = process.env.RESEND_FROM_EMAIL;
     
-    // Debugging logs to verify env variables
     console.log('📦 RESEND_API_KEY loaded:', !!resendApiKey);
     console.log('📦 RESEND_FROM_EMAIL loaded:', fromEmail);
 
@@ -75,15 +73,12 @@ export async function POST(req: NextRequest) {
         console.log('✅ Welcome email sent to', email);
         console.log('EMAIL RESULT:', result);
       } catch (emailErr) {
-        // Log the email error but do not fail the entire request.
-        // The user has been successfully created.
         console.error('❌ Failed to send welcome email:', JSON.stringify(emailErr, null, 2));
       }
     } else {
       console.warn('❗ RESEND API Key or FROM email not configured. Skipping welcome email.');
     }
     
-    // Always return a success response if the user was created.
     return NextResponse.json({ message: 'User created successfully' }, { status: 201 });
 
   } catch (error) {
