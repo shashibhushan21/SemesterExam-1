@@ -75,6 +75,8 @@ export async function POST(req: NextRequest) {
         console.log('EMAIL RESULT:', result);
         console.log('✅ Welcome email sent to', email);
       } catch (emailErr) {
+        // Log the email error but don't fail the entire request
+        // The user has been successfully created.
         console.error('❌ Failed to send welcome email:', JSON.stringify(emailErr, null, 2));
       }
     } else {
