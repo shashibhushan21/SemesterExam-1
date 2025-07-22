@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Mail, Phone, MapPin, Send, Info, Handshake, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name is required'),
@@ -41,6 +42,11 @@ const contactDetails = [
 export default function ContactPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const {
     register,
@@ -113,34 +119,46 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="name" className="text-white/80">Your Name</Label>
-                  <Input id="name" placeholder="Your Name" {...register('name')} className="bg-white/10 border-white/20 text-white placeholder:text-white/60" />
-                  {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+            {isMounted ? (
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-white/80">Your Name</Label>
+                    <Input id="name" placeholder="Your Name" {...register('name')} className="bg-white/10 border-white/20 text-white placeholder:text-white/60" />
+                    {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-white/80">Your Email</Label>
+                    <Input id="email" type="email" placeholder="Your Email" {...register('email')} className="bg-white/10 border-white/20 text-white placeholder:text-white/60" />
+                    {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+                  </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-white/80">Your Email</Label>
-                  <Input id="email" type="email" placeholder="Your Email" {...register('email')} className="bg-white/10 border-white/20 text-white placeholder:text-white/60" />
-                  {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+                  <Label htmlFor="subject" className="text-white/80">Subject</Label>
+                  <Input id="subject" placeholder="Subject" {...register('subject')} className="bg-white/10 border-white/20 text-white placeholder:text-white/60" />
+                  {errors.subject && <p className="text-sm text-destructive">{errors.subject.message}</p>}
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="subject" className="text-white/80">Subject</Label>
-                <Input id="subject" placeholder="Subject" {...register('subject')} className="bg-white/10 border-white/20 text-white placeholder:text-white/60" />
-                {errors.subject && <p className="text-sm text-destructive">{errors.subject.message}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="message" className="text-white/80">Your Message</Label>
-                <Textarea id="message" placeholder="Your Message" rows={5} {...register('message')} className="bg-white/10 border-white/20 text-white placeholder:text-white/60" />
-                {errors.message && <p className="text-sm text-destructive">{errors.message.message}</p>}
-              </div>
-              <Button type="submit" size="lg" disabled={isSubmitting} className="w-full bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-pink-500/50">
-                {isSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Send className="mr-2 h-5 w-5" />}
-                {isSubmitting ? 'Sending...' : 'Send Message'}
-              </Button>
-            </form>
+                <div className="space-y-2">
+                  <Label htmlFor="message" className="text-white/80">Your Message</Label>
+                  <Textarea id="message" placeholder="Your Message" rows={5} {...register('message')} className="bg-white/10 border-white/20 text-white placeholder:text-white/60" />
+                  {errors.message && <p className="text-sm text-destructive">{errors.message.message}</p>}
+                </div>
+                <Button type="submit" size="lg" disabled={isSubmitting} className="w-full bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-pink-500/50">
+                  {isSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Send className="mr-2 h-5 w-5" />}
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                </Button>
+              </form>
+            ) : (
+               <div className="space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                  </div>
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-24 w-full" />
+                  <Skeleton className="h-12 w-full" />
+                </div>
+            )}
           </div>
         </CardContent>
       </Card>
