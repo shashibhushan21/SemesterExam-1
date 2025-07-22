@@ -1,10 +1,20 @@
+
+'use client';
+
 import Link from 'next/link';
 import { Logo } from '../logo';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Facebook, Instagram, Mail, Send, Twitter } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export function Footer() {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const quickLinks = [
     { href: '/', label: 'Home' },
     { href: '/universities', label: 'Universities' },
@@ -63,12 +73,14 @@ export function Footer() {
           <div>
             <h3 className="text-lg font-semibold">Subscribe</h3>
             <p className="mt-4 text-white/70">Get updates on new notes and upcoming exams.</p>
-            <form className="mt-4 flex gap-2">
-              <Input type="email" placeholder="Your email" className="bg-white/10 border-white/20 text-white placeholder:text-white/50" />
-              <Button type="submit" size="icon" className="bg-pink-600 hover:bg-pink-700 flex-shrink-0">
-                <Send className="h-4 w-4" />
-              </Button>
-            </form>
+            {isMounted && (
+              <form className="mt-4 flex gap-2">
+                <Input type="email" placeholder="Your email" className="bg-white/10 border-white/20 text-white placeholder:text-white/50" />
+                <Button type="submit" size="icon" className="bg-pink-600 hover:bg-pink-700 flex-shrink-0">
+                  <Send className="h-4 w-4" />
+                </Button>
+              </form>
+            )}
             <div className="flex mt-4 space-x-4">
               {socialLinks.map((social, index) => (
                 <Link key={index} href={social.href} className="text-white/70 hover:text-white transition-colors">
