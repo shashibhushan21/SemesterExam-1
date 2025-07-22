@@ -13,9 +13,6 @@ const contactSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  // Step 1: Check for all required environment variables at the beginning.
-  const resendApiKey = process.env.RESEND_API_KEY;
-  const fromEmail = process.env.RESEND_FROM_EMAIL;
   const adminEmail = "semesterexaminfo@gmail.com"; 
 
   if (!process.env.MONGO_URI) {
@@ -24,7 +21,6 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // Step 2: Parse and validate the incoming request body.
     const body = await req.json();
     const validation = contactSchema.safeParse(body);
 
@@ -34,15 +30,14 @@ export async function POST(req: NextRequest) {
     }
     const { name, email, subject, message } = validation.data;
 
-    // Step 3: Connect to the database.
     await connectToDatabase();
     
-    // Step 4: Save the contact message to the database (Primary Goal).
     const newContactMessage = new Contact({ name, email, subject, message });
     await newContactMessage.save();
     console.log(`✅ Contact message saved to DB for: ${email}`);
 
-    // Step 5: Attempt to send an email notification (Secondary Goal).
+    const resendApiKey = process.env.RESEND_API_KEY;
+    const fromEmail = process.env.RESEND_FROM_EMAIL;
     if (resendApiKey && fromEmail) {
       try {
         const resend = new Resend(resendApiKey);
@@ -63,14 +58,12 @@ export async function POST(req: NextRequest) {
         });
         console.log(`✅ Contact form email notification sent for: ${email}`);
       } catch (emailError) {
-        // Log the email error but don't crash the request since the data is already saved.
         console.error('❌ Failed to send contact notification email:', JSON.stringify(emailError, null, 2));
       }
     } else {
         console.warn('❗ RESEND_API_KEY or RESEND_FROM_EMAIL not configured. Skipping email notification.');
     }
 
-    // Always return a success response if the database save was successful.
     return NextResponse.json({ message: 'Message received successfully!' }, { status: 201 });
 
   } catch (error) {
