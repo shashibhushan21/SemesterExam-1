@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
-import { LayoutDashboard, LogOut, Upload } from 'lucide-react';
+import { LayoutDashboard, LogOut, Upload, ShieldCheck } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 
 export function AuthButton() {
@@ -50,10 +50,16 @@ export function AuthButton() {
             <span>Profile</span>
           </DropdownMenuItem>
            {user.role === 'admin' && (
-            <DropdownMenuItem onClick={() => router.push('/upload')}>
-              <Upload className="mr-2 h-4 w-4" />
-              <span>Upload Notes</span>
-            </DropdownMenuItem>
+            <>
+              <DropdownMenuItem onClick={() => router.push('/upload')}>
+                <Upload className="mr-2 h-4 w-4" />
+                <span>Upload Notes</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/admin')}>
+                <ShieldCheck className="mr-2 h-4 w-4" />
+                <span>Admin Panel</span>
+              </DropdownMenuItem>
+            </>
           )}
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleLogout}>
