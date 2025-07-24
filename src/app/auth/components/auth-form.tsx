@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
@@ -33,8 +33,7 @@ type SignupValues = z.infer<typeof signupSchema>;
 
 
 export function AuthForm() {
-  const [showLoginPassword, setShowLoginPassword] = useState(false);
-  const [showSignupPassword, setShowSignupPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState('login');
   const { toast } = useToast();
@@ -48,6 +47,12 @@ export function AuthForm() {
     handleSubmit: handleLoginSubmit,
     formState: { errors: loginErrors },
   } = useForm<LoginValues>({ resolver: zodResolver(loginSchema) });
+  
+  const {
+    register: registerAdminLogin,
+    handleSubmit: handleAdminLoginSubmit,
+    formState: { errors: adminLoginErrors },
+  } = useForm<LoginValues>({ resolver: zodResolver(loginSchema) });
 
   const {
     register: registerSignup,
@@ -60,10 +65,11 @@ export function AuthForm() {
   const onLogin = async (data: LoginValues) => {
     setIsSubmitting(true);
     try {
-      await login(data.email, data.password);
+      const user = await login(data.email, data.password);
       toast({ title: "Login successful!", description: "Welcome back." });
       
-      router.push(redirectUrl || '/profile');
+      const destination = user.role === 'admin' ? '/admin' : (redirectUrl || '/profile');
+      router.push(destination);
       router.refresh();
     } catch (error: any) {
       toast({ title: 'Login Failed', description: error.message || 'An unexpected error occurred.', variant: 'destructive' });
@@ -101,10 +107,12 @@ export function AuthForm() {
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
+      <TabsList className="grid w-full grid-cols-3">
         <TabsTrigger value="login">Login</TabsTrigger>
         <TabsTrigger value="signup">Sign Up</TabsTrigger>
+        <TabsTrigger value="admin">Admin</TabsTrigger>
       </TabsList>
+
       <TabsContent value="login">
         <form onSubmit={handleLoginSubmit(onLogin)} className="space-y-4 mt-4">
           <div className="space-y-2">
@@ -122,16 +130,16 @@ export function AuthForm() {
             <div className="relative">
               <Input
                 id="login-password"
-                type={showLoginPassword ? 'text' : 'password'}
+                type={showPassword ? 'text' : 'password'}
                 className="pr-10"
                 {...registerLogin('password')}
               />
               <button
                 type="button"
-                onClick={() => setShowLoginPassword((prev) => !prev)}
+                onClick={() => setShowPassword((prev) => !prev)}
                 className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
               >
-                {showLoginPassword ? (
+                {showPassword ? (
                   <EyeOff className="h-5 w-5" />
                 ) : (
                   <Eye className="h-5 w-5" />
@@ -146,6 +154,7 @@ export function AuthForm() {
           </Button>
         </form>
       </TabsContent>
+
       <TabsContent value="signup">
         <form onSubmit={handleSignupSubmit(onSignup)} className="space-y-4 mt-4">
            <div className="space-y-2">
@@ -163,16 +172,16 @@ export function AuthForm() {
             <div className="relative">
               <Input
                 id="signup-password"
-                type={showSignupPassword ? 'text' : 'password'}
+                type={showPassword ? 'text' : 'password'}
                 className="pr-10"
                 {...registerSignup('password')}
               />
               <button
                 type="button"
-                onClick={() => setShowSignupPassword((prev) => !prev)}
+                onClick={() => setShowPassword((prev) => !prev)}
                 className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
               >
-                {showSignupPassword ? (
+                {showPassword ? (
                   <EyeOff className="h-5 w-5" />
                 ) : (
                   <Eye className="h-5 w-5" />
@@ -187,6 +196,45 @@ export function AuthForm() {
           </Button>
         </form>
       </TabsContent>
+      
+      <TabsContent value="admin">
+         <form onSubmit={handleAdminLoginSubmit(onLogin)} className="space-y-4 mt-4">
+          <div className="space-y-2">
+            <Label htmlFor="admin-email">Admin Email</Label>
+            <Input id="admin-email" type="email" placeholder="admin@example.com" {...registerAdminLogin('email')} />
+            {adminLoginErrors.email && <p className="text-sm text-destructive">{adminLoginErrors.email.message}</p>}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="admin-password">Admin Password</Label>
+            <div className="relative">
+              <Input
+                id="admin-password"
+                type={showPassword ? 'text' : 'password'}
+                className="pr-10"
+                {...registerAdminLogin('password')}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+            {adminLoginErrors.password && <p className="text-sm text-destructive">{adminLoginErrors.password.message}</p>}
+          </div>
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+             <Shield className="mr-2 h-4 w-4" />
+            Login as Admin
+          </Button>
+        </form>
+      </TabsContent>
+
     </Tabs>
   );
 }
