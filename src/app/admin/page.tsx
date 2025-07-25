@@ -7,12 +7,14 @@ import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Shield, Users, FileText, BarChart } from 'lucide-react';
+import { Shield, Users, FileText, BarChart, Edit, KeyRound } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { EditProfileDialog } from '../profile/components/edit-profile-dialog';
+import { ChangePasswordDialog } from '../profile/components/change-password-dialog';
 
 export default function AdminPage() {
-  const { user, loading } = useAuth();
+  const { user, loading, updateUser } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -20,6 +22,10 @@ export default function AdminPage() {
       router.push('/');
     }
   }, [user, loading, router]);
+  
+  const handleProfileUpdate = (updatedUser: any) => {
+    updateUser(updatedUser);
+  };
 
   if (loading || !user) {
     return (
@@ -50,9 +56,19 @@ export default function AdminPage() {
 
   return (
     <div className="space-y-6">
-       <div className="mb-8">
-        <h1 className="text-4xl font-bold font-headline">Admin Dashboard</h1>
-        <p className="text-muted-foreground text-lg">Welcome, {user.name}. Manage your application here.</p>
+       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-4xl font-bold font-headline">Admin Dashboard</h1>
+          <p className="text-muted-foreground text-lg">Welcome, {user.name}. Manage your application here.</p>
+        </div>
+        <div className="flex gap-2">
+           <EditProfileDialog user={user} onProfileUpdate={handleProfileUpdate}>
+              <Button variant="outline"><Edit className="mr-2 h-4 w-4" /> Edit Profile</Button>
+           </EditProfileDialog>
+           <ChangePasswordDialog>
+               <Button variant="outline"><KeyRound className="mr-2 h-4 w-4" /> Change Password</Button>
+           </ChangePasswordDialog>
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
