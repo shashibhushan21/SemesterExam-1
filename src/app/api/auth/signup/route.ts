@@ -1,8 +1,11 @@
+
+'use server';
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import User from '@/models/user';
-import bcrypt from 'bcryptjs';
+import bcryptjs from 'bcryptjs';
 import { z } from 'zod';
+import { Resend } from 'resend';
 
 const signupSchema = z.object({
   name: z.string().min(2),
@@ -20,30 +23,72 @@ export async function POST(req: NextRequest) {
     const validation = signupSchema.safeParse(body);
 
     if (!validation.success) {
-      return NextResponse.json({ message: 'Invalid input', errors: validation.error.errors }, { status: 400 });
+      return NextResponse.json(
+        { message: 'Invalid input', errors: validation.error.errors },
+        { status: 400 }
+      );
     }
 
     const { name, email, password } = validation.data;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return NextResponse.json({ message: 'User with this email already exists' }, { status: 409 });
+      return NextResponse.json(
+        { message: 'User with this email already exists' },
+        { status: 409 }
+      );
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+    // Check if this is the first user. If so, make them an admin.
+    const userCount = await User.countDocuments();
+    const role = userCount === 0 ? 'admin' : 'user';
+
+    const hashedPassword = await bcryptjs.hash(password, 12);
 
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
+      role, // Set the role here
     });
 
     await newUser.save();
 
+    const resendApiKey = process.env.RESEND_API_KEY;
+    const fromEmail = process.env.RESEND_FROM_EMAIL;
+    
+    console.log('📦 RESEND_API_KEY loaded:', !!resendApiKey);
+    console.log('📦 RESEND_FROM_EMAIL loaded:', fromEmail);
+
+    if (resendApiKey && fromEmail) {
+      try {
+        const resend = new Resend(resendApiKey);
+        const result = await resend.emails.send({
+          from: fromEmail,
+          to: email,
+          subject: 'Welcome to ExamNotes!',
+          html: `
+            <p>Hi ${name},</p>
+            <p>Thanks for signing up for <strong>ExamNotes</strong> 🎓</p>
+            <p>You can now access short notes, previews, and more!</p>
+            ${role === 'admin' ? '<p>Your account has been created with administrator privileges.</p>' : ''}
+            <p>Good luck in your studies!</p>
+            <p>– The ExamNotes Team</p>
+          `,
+        });
+        console.log('✅ Welcome email sent to', email);
+        console.log('EMAIL RESULT:', result);
+      } catch (emailErr) {
+        console.error('❌ Failed to send welcome email:', JSON.stringify(emailErr, null, 2));
+      }
+    } else {
+      console.warn('❗ RESEND API Key or FROM email not configured. Skipping welcome email.');
+    }
+    
     return NextResponse.json({ message: 'User created successfully' }, { status: 201 });
 
   } catch (error) {
-    console.error('Signup error:', error);
+    console.error('❌ Signup API Error:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }
