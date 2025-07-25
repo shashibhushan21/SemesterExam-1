@@ -122,7 +122,9 @@ export default function AdminPage() {
                 <div className="text-2xl font-bold">{stats?.totalUsers}</div>
             )}
             <p className="text-xs text-muted-foreground">Total registered users</p>
-            <Button variant="outline" size="sm" className="mt-4">View Users</Button>
+            <Link href="/admin/users" passHref>
+                <Button variant="outline" size="sm" className="mt-4">View Users</Button>
+            </Link>
           </CardContent>
         </Card>
 
@@ -141,7 +143,9 @@ export default function AdminPage() {
              <Link href="/upload">
                 <Button variant="outline" size="sm" className="mt-4 mr-2">Upload Note</Button>
              </Link>
-             <Button variant="outline" size="sm" className="mt-4">View Notes</Button>
+             <Link href="/admin/notes" passHref>
+                <Button variant="outline" size="sm" className="mt-4">View Notes</Button>
+            </Link>
           </CardContent>
         </Card>
 
@@ -157,7 +161,9 @@ export default function AdminPage() {
                 <div className="text-2xl font-bold">+{stats?.newUsersThisMonth}</div>
             )}
             <p className="text-xs text-muted-foreground">New users this month</p>
-            <Button variant="outline" size="sm" className="mt-4">View Analytics</Button>
+            <Link href="/admin/analytics" passHref>
+                <Button variant="outline" size="sm" className="mt-4">View Analytics</Button>
+            </Link>
           </CardContent>
         </Card>
       </div>
