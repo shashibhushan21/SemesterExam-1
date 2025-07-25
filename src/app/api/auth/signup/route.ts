@@ -39,9 +39,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check if this is the first user. If so, make them an admin.
-    const userCount = await User.countDocuments();
-    const role = userCount === 0 ? 'admin' : 'user';
+    // Determine role based on email matching the one in .env
+    const role = (email === process.env.ADMIN_EMAIL) ? 'admin' : 'user';
 
     const hashedPassword = await bcryptjs.hash(password, 12);
 

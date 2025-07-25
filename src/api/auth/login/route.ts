@@ -16,22 +16,6 @@ export async function POST(req: NextRequest) {
     if (!email || !password) {
       return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });
     }
-
-    // Check if the default admin from .env exists, if not, create it on first login attempt
-    if (email === process.env.ADMIN_EMAIL) {
-      const adminExists = await User.findOne({ email: process.env.ADMIN_EMAIL });
-      if (!adminExists && password === process.env.ADMIN_PASSWORD) {
-        const hashedPassword = await bcryptjs.hash(process.env.ADMIN_PASSWORD, 12);
-        const newAdmin = new User({
-          name: 'Admin',
-          email: process.env.ADMIN_EMAIL,
-          password: hashedPassword,
-          role: 'admin',
-        });
-        await newAdmin.save();
-        console.log('Default admin user created from .env credentials.');
-      }
-    }
     
     const user = await User.findOne({ email }).select('+password');
 
