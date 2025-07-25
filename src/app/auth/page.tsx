@@ -1,5 +1,7 @@
+
 import { AuthForm } from './components/auth-form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ClientOnly } from '@/components/client-only';
 
 export default function AuthPage() {
   return (
@@ -10,7 +12,9 @@ export default function AuthPage() {
           <CardDescription>Sign in to your account or create a new one to get started.</CardDescription>
         </CardHeader>
         <CardContent>
-          <AuthForm />
+          <ClientOnly>
+            <AuthForm />
+          </ClientOnly>
         </CardContent>
       </Card>
     </div>
