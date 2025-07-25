@@ -1,10 +1,10 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Shield, Users, FileText, BarChart, Edit, KeyRound } from 'lucide-react';
@@ -13,9 +13,17 @@ import { Button } from '@/components/ui/button';
 import { EditProfileDialog } from '../profile/components/edit-profile-dialog';
 import { ChangePasswordDialog } from '../profile/components/change-password-dialog';
 
+interface AdminStats {
+  totalUsers: number;
+  totalNotes: number;
+  newUsersThisMonth: number;
+}
+
 export default function AdminPage() {
   const { user, loading, updateUser } = useAuth();
   const router = useRouter();
+  const [stats, setStats] = useState<AdminStats | null>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
 
   useEffect(() => {
     if (!loading && (!user || user.role !== 'admin')) {
@@ -23,6 +31,27 @@ export default function AdminPage() {
     }
   }, [user, loading, router]);
   
+  useEffect(() => {
+      const fetchStats = async () => {
+          if (user && user.role === 'admin') {
+              try {
+                  const res = await fetch('/api/admin/stats');
+                  if (!res.ok) throw new Error('Failed to fetch stats');
+                  const data = await res.json();
+                  setStats(data);
+              } catch (error) {
+                  console.error("Error fetching admin stats:", error);
+              } finally {
+                  setStatsLoading(false);
+              }
+          }
+      };
+      
+      if (!loading && user) {
+          fetchStats();
+      }
+  }, [user, loading]);
+
   const handleProfileUpdate = (updatedUser: any) => {
     updateUser(updatedUser);
   };
@@ -30,7 +59,16 @@ export default function AdminPage() {
   if (loading || !user) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-10 w-1/3" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <div className="space-y-2">
+                <Skeleton className="h-10 w-72" />
+                <Skeleton className="h-6 w-96" />
+            </div>
+            <div className="flex gap-2">
+                <Skeleton className="h-10 w-32" />
+                <Skeleton className="h-10 w-40" />
+            </div>
+        </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <Skeleton className="h-36 w-full" />
           <Skeleton className="h-36 w-full" />
@@ -78,7 +116,11 @@ export default function AdminPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1,204</div>
+            {statsLoading ? (
+                 <Skeleton className="h-8 w-1/2 mt-1" />
+            ) : (
+                <div className="text-2xl font-bold">{stats?.totalUsers}</div>
+            )}
             <p className="text-xs text-muted-foreground">Total registered users</p>
             <Button variant="outline" size="sm" className="mt-4">View Users</Button>
           </CardContent>
@@ -90,7 +132,11 @@ export default function AdminPage() {
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">245</div>
+            {statsLoading ? (
+                 <Skeleton className="h-8 w-1/2 mt-1" />
+            ) : (
+                <div className="text-2xl font-bold">{stats?.totalNotes}</div>
+            )}
             <p className="text-xs text-muted-foreground">Total notes uploaded</p>
              <Link href="/upload">
                 <Button variant="outline" size="sm" className="mt-4 mr-2">Upload Note</Button>
@@ -105,7 +151,11 @@ export default function AdminPage() {
             <BarChart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+573</div>
+            {statsLoading ? (
+                 <Skeleton className="h-8 w-1/2 mt-1" />
+            ) : (
+                <div className="text-2xl font-bold">+{stats?.newUsersThisMonth}</div>
+            )}
             <p className="text-xs text-muted-foreground">New users this month</p>
             <Button variant="outline" size="sm" className="mt-4">View Analytics</Button>
           </CardContent>
