@@ -10,11 +10,45 @@ interface DecodedToken {
   role: string;
 }
 
-const updateRoleSchema = z.object({
-  role: z.enum(['user', 'admin']),
-});
+const updateUserSchema = z.object({
+  role: z.enum(['user', 'admin']).optional(),
+  status: z.enum(['active', 'blocked']).optional(),
+  name: z.string().min(2, 'Name must be at least 2 characters').optional(),
+  phone: z.string().optional(),
+  college: z.string().optional(),
+  branch: z.string().optional(),
+  semester: z.string().optional(),
+}).strict(); // Ensure no extra properties are passed
 
-// UPDATE a user's role (Admin only)
+// GET a specific user's details (Admin only)
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+    try {
+        const token = req.cookies.get('token')?.value;
+        if (!token) {
+            return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
+        if (decoded.role !== 'admin') {
+            return NextResponse.json({ message: 'Forbidden: Admins only' }, { status: 403 });
+        }
+
+        await connectToDatabase();
+        
+        const user = await User.findById(params.id).select('-password');
+        if (!user) {
+            return NextResponse.json({ message: 'User not found' }, { status: 404 });
+        }
+
+        return NextResponse.json({ user }, { status: 200 });
+    } catch (error) {
+        console.error('GET /api/admin/users/[id] Error:', error);
+        return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    }
+}
+
+
+// UPDATE a user's role or status (Admin only)
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
     try {
         const token = req.cookies.get('token')?.value;
@@ -28,7 +62,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         }
 
         const body = await req.json();
-        const validation = updateRoleSchema.safeParse(body);
+        const validation = updateUserSchema.safeParse(body);
         if (!validation.success) {
             return NextResponse.json({ message: 'Invalid input', errors: validation.error.errors }, { status: 400 });
         }
@@ -36,13 +70,13 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         await connectToDatabase();
         
         const userIdToUpdate = params.id;
-        const updatedUser = await User.findByIdAndUpdate(userIdToUpdate, { role: validation.data.role }, { new: true });
+        const updatedUser = await User.findByIdAndUpdate(userIdToUpdate, validation.data, { new: true });
 
         if (!updatedUser) {
             return NextResponse.json({ message: 'User not found' }, { status: 404 });
         }
 
-        return NextResponse.json({ message: 'User role updated successfully', user: updatedUser }, { status: 200 });
+        return NextResponse.json({ message: 'User updated successfully', user: updatedUser }, { status: 200 });
     } catch (error) {
         console.error('PATCH /api/admin/users/[id] Error:', error);
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });

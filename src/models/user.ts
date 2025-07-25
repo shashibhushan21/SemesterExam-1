@@ -1,3 +1,4 @@
+
 import mongoose, { Schema, Document, models, Model } from 'mongoose';
 
 export interface IUser extends Document {
@@ -12,6 +13,7 @@ export interface IUser extends Document {
   branch?: string;
   semester?: string;
   role: 'user' | 'admin';
+  status: 'active' | 'blocked';
 }
 
 const UserSchema: Schema = new Schema({
@@ -26,6 +28,7 @@ const UserSchema: Schema = new Schema({
   branch: { type: String },
   semester: { type: String },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  status: { type: String, enum: ['active', 'blocked'], default: 'active' },
 }, { timestamps: true });
 
 const User: Model<IUser> = models.User || mongoose.model<IUser>('User', UserSchema);
