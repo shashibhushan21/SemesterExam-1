@@ -3,6 +3,11 @@ import jwt from 'jsonwebtoken';
 import User from '@/models/user';
 import { connectToDatabase } from '@/lib/db';
 
+interface DecodedToken {
+  id: string;
+  role: string;
+}
+
 export async function GET(req: NextRequest) {
   try {
     await connectToDatabase();
@@ -12,7 +17,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
 
     const user = await User.findById(decoded.id).select('-password'); // fetch full user data
 
@@ -30,6 +35,7 @@ export async function GET(req: NextRequest) {
         college: user.college || null,
         branch: user.branch || null,
         semester: user.semester || null,
+        role: user.role || 'user',
       },
     }, { status: 200 });
 
