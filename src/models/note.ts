@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document, models, Model } from 'mongoose';
+import './user'; // Import to ensure User model is registered before being used in populate
 
 export interface INote extends Document {
   title: string;
