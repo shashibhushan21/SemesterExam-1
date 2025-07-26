@@ -2,6 +2,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import * as LucideIcons from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button, buttonVariants } from '@/components/ui/button';
@@ -18,6 +19,26 @@ import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import type { Note, University as UniversityType } from '@/lib/types';
 
+interface Feature {
+  _id: string;
+  icon: string;
+  title: string;
+  description: string;
+  color: string;
+}
+
+interface Testimonial {
+    _id: string;
+    quote: string;
+    author: string;
+}
+
+interface Faq {
+    _id: string;
+    question: string;
+    answer: string;
+}
+
 const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -29,98 +50,55 @@ const getInitials = (name: string) => {
 
 
 export default function Home() {
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [isMounted, setIsMounted] = useState(false);
   const [notes, setNotes] = useState<Note[]>([]);
   const [universities, setUniversities] = useState<UniversityType[]>([]);
-  const [notesLoading, setNotesLoading] = useState(true);
-  const [universitiesLoading, setUniversitiesLoading] = useState(true);
+  const [features, setFeatures] = useState<Feature[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [faqs, setFaqs] = useState<Faq[]>([]);
+
+  const [contentLoading, setContentLoading] = useState(true);
 
   useEffect(() => {
     setIsMounted(true);
     
-    const fetchNotes = async () => {
-      try {
-        const res = await fetch('/api/notes');
-        const data = await res.json();
-        setNotes(data.notes);
-      } catch (error) {
-        console.error("Failed to fetch notes", error);
-      } finally {
-        setNotesLoading(false);
-      }
-    }
-
-    const fetchUniversities = async () => {
+    const fetchAllData = async () => {
         try {
-            const res = await fetch('/api/admin/settings/universities');
-            const data = await res.json();
-            setUniversities(data.universities);
+            setContentLoading(true);
+            const [notesRes, uniRes, featuresRes, testimonialsRes, faqsRes] = await Promise.all([
+                fetch('/api/notes'),
+                fetch('/api/admin/settings/universities'),
+                fetch('/api/admin/homepage/features'),
+                fetch('/api/admin/homepage/testimonials'),
+                fetch('/api/admin/homepage/faqs'),
+            ]);
+
+            const notesData = await notesRes.json();
+            const uniData = await uniRes.json();
+            const featuresData = await featuresRes.json();
+            const testimonialsData = await testimonialsRes.json();
+            const faqsData = await faqsRes.json();
+
+            setNotes(notesData.notes || []);
+            setUniversities(uniData.universities || []);
+            setFeatures(featuresData.features || []);
+            setTestimonials(testimonialsData.testimonials || []);
+            setFaqs(faqsData.faqs || []);
+
         } catch (error) {
-            console.error("Failed to fetch universities", error);
+            console.error("Failed to fetch homepage data", error);
         } finally {
-            setUniversitiesLoading(false);
+            setContentLoading(false);
         }
     }
 
-    fetchNotes();
-    fetchUniversities();
+    fetchAllData();
   }, []);
 
   const availableUniversities = [...new Set(notes.map((note) => note.university))];
   const semesters = [...new Set(notes.map((note) => note.semester))];
   const subjects = [...new Set(notes.map((note) => note.subject))];
-
-  const features = [
-    {
-      icon: BookOpen,
-      title: 'All Semesters',
-      description: 'From 1st to 8th semester – find notes sorted by semester and subject.',
-      color: 'from-blue-500 to-purple-600',
-    },
-    {
-      icon: University,
-      title: 'University-Wise',
-      description: 'Tailored to your syllabus, based on your university’s official curriculum.',
-      color: 'from-purple-600 to-pink-600',
-    },
-    {
-      icon: RefreshCw,
-      title: 'Free & Regular Updates',
-      description: '100% free and updated often to reflect the most current content.',
-      color: 'from-pink-600 to-orange-500',
-    },
-  ];
-  
-  const testimonials = [
-    {
-      quote: "Best platform for quick exam prep!",
-      author: "B.Tech Student",
-    },
-    {
-      quote: "Notes are clean and to the point.",
-      author: "B.Tech Student",
-    },
-    {
-      quote: "It saved my semester!",
-      author: "B.Tech Student",
-    },
-  ];
-
-  const faqs = [
-    {
-      question: "Is this platform really free?",
-      answer: "Yes, it's 100% free for all students."
-    },
-    {
-      question: "Can I upload my own notes?",
-      answer: "Absolutely! We encourage students to contribute their study materials to help the community. Just head over to the 'Upload' page."
-    },
-    {
-      question: "How often are the notes updated?",
-      answer: "Notes are updated regularly by our community of students and educators. We strive to provide the most current and relevant content."
-    }
-  ];
 
   return (
     <>
@@ -176,7 +154,7 @@ export default function Home() {
           <div className="mt-8 p-4 bg-white/10 backdrop-blur-sm rounded-lg w-full max-w-4xl">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               
-              {isMounted && !notesLoading ? (
+              {isMounted && !contentLoading ? (
                 <>
                   <Select>
                     <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
@@ -245,14 +223,14 @@ export default function Home() {
           <h2 className="text-3xl sm:text-4xl font-bold text-center text-white mb-12 animate-fade-in-up">
             Top Universities
           </h2>
-          {universitiesLoading ? (
+          {contentLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-56 w-full rounded-xl" />)}
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {universities.map((uni, index) => (
-                <UniversityCard key={index} {...uni} initials={getInitials(uni.name)} />
+                {universities.slice(0, 3).map((uni, index) => (
+                    <UniversityCard key={index} {...uni} initials={getInitials(uni.name)} />
                 ))}
             </div>
           )}
@@ -268,9 +246,14 @@ export default function Home() {
             Curated notes for every subject, categorized by semester and university, built to save your time and boost your exam preparation.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <FeatureCard key={index} {...feature} />
-            ))}
+            {contentLoading ? (
+                [...Array(3)].map((_, i) => <Skeleton key={i} className="h-56 w-full rounded-xl" />)
+            ) : (
+                features.map((feature, index) => {
+                    const Icon = (LucideIcons as any)[feature.icon] || BookOpen;
+                    return <FeatureCard key={index} {...feature} icon={Icon} />;
+                })
+            )}
           </div>
         </div>
       </section>
@@ -282,16 +265,16 @@ export default function Home() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             
-            {isMounted ? (
-              testimonials.map((testimonial, index) => (
-                <TestimonialCard key={index} {...testimonial} />
-              ))
-            ) : (
+            {contentLoading ? (
                 <>
                     <Skeleton className="h-48 w-full rounded-2xl" />
                     <Skeleton className="h-48 w-full rounded-2xl" />
                     <Skeleton className="h-48 w-full rounded-2xl" />
                 </>
+            ) : (
+              testimonials.map((testimonial, index) => (
+                <TestimonialCard key={index} {...testimonial} />
+              ))
             )}
             
           </div>
@@ -305,7 +288,13 @@ export default function Home() {
           </h2>
           <div className="max-w-3xl mx-auto">
             
-             {isMounted ? (
+             {contentLoading ? (
+                <div className="space-y-4">
+                    <Skeleton className="h-20 w-full rounded-xl" />
+                    <Skeleton className="h-20 w-full rounded-xl" />
+                    <Skeleton className="h-20 w-full rounded-xl" />
+                </div>
+             ) : (
                 <Accordion type="single" collapsible className="w-full space-y-4">
                 {faqs.map((faq, index) => (
                     <AccordionItem key={index} value={`item-${index}`} className="bg-gradient-to-r from-blue-800/20 via-purple-700/20 to-pink-600/20 border-white/10 rounded-xl shadow-lg transition-all duration-300 hover:bg-white/5">
@@ -321,12 +310,6 @@ export default function Home() {
                     </AccordionItem>
                 ))}
                 </Accordion>
-             ) : (
-                <div className="space-y-4">
-                    <Skeleton className="h-20 w-full rounded-xl" />
-                    <Skeleton className="h-20 w-full rounded-xl" />
-                    <Skeleton className="h-20 w-full rounded-xl" />
-                </div>
              )}
             
           </div>
@@ -339,7 +322,7 @@ export default function Home() {
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">Join 10,000+ students using SemesterExam.com!</h2>
             <p className="mt-4 text-base md:text-lg text-white/80">Stay updated, study smarter, and score better in your exams.</p>
             <div className="mt-8">
-              {loading ? (
+              {authLoading ? (
                  <Skeleton className="h-16 w-48 mx-auto rounded-full" />
               ) : user ? (
                  <Link href="/courses" className={cn(
@@ -363,5 +346,3 @@ export default function Home() {
     </>
   );
 }
-
-    

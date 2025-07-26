@@ -1,0 +1,113 @@
+
+'use client';
+
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+
+const formSchema = z.object({
+  icon: z.string().min(2, 'Icon name is required (e.g., BookOpen)'),
+  title: z.string().min(3, 'Title is required'),
+  description: z.string().min(10, 'Description is required'),
+  color: z.string().min(3, 'Color is required (e.g., from-blue-500 to-purple-600)'),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
+interface FeatureFormDialogProps {
+    children: React.ReactNode;
+    item?: FormValues & { _id: string };
+    onFinished: () => void;
+}
+
+export function FeatureFormDialog({ children, item, onFinished }: FeatureFormDialogProps) {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      icon: item?.icon || '',
+      title: item?.title || '',
+      description: item?.description || '',
+      color: item?.color || '',
+    },
+  });
+
+  const onSubmit = async (data: FormValues) => {
+    setIsSubmitting(true);
+    try {
+      const url = item ? `/api/admin/homepage/features/${item._id}` : '/api/admin/homepage/features';
+      const method = item ? 'PATCH' : 'POST';
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.message || 'Something went wrong');
+      
+      toast({ title: 'Success!', description: `Feature successfully ${item ? 'updated' : 'added'}.` });
+      onFinished();
+      setOpen(false);
+
+    } catch (error: any) {
+      toast({ title: 'Failed', description: error.message, variant: 'destructive' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>{item ? 'Edit' : 'Add'} Feature</DialogTitle>
+          <DialogDescription>
+            Fill out the form to {item ? 'update the' : 'add a new'} feature.
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-2">
+                <Label htmlFor="icon">Lucide Icon Name</Label>
+                <Input id="icon" {...form.register('icon')} placeholder="e.g., BookOpen" />
+                {form.formState.errors.icon && <p className="text-sm text-destructive">{form.formState.errors.icon.message}</p>}
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="title">Title</Label>
+                <Input id="title" {...form.register('title')} />
+                {form.formState.errors.title && <p className="text-sm text-destructive">{form.formState.errors.title.message}</p>}
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea id="description" {...form.register('description')} />
+                {form.formState.errors.description && <p className="text-sm text-destructive">{form.formState.errors.description.message}</p>}
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="color">Tailwind Gradient Classes</Label>
+                <Input id="color" {...form.register('color')} placeholder="e.g., from-blue-500 to-purple-600" />
+                {form.formState.errors.color && <p className="text-sm text-destructive">{form.formState.errors.color.message}</p>}
+            </div>
+            <DialogFooter>
+                <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Save
+                </Button>
+            </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}

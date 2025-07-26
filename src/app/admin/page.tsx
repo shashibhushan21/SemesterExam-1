@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Shield, Users, FileText, BarChart, Edit, KeyRound, Settings } from 'lucide-react';
+import { Shield, Users, FileText, BarChart, Edit, KeyRound, Settings, Home } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { EditProfileDialog } from '../profile/components/edit-profile-dialog';
@@ -148,25 +148,20 @@ export default function AdminPage() {
             </Link>
           </CardContent>
         </Card>
-
+        
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Site Analytics</CardTitle>
-            <BarChart className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Homepage Settings</CardTitle>
+            <Home className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {statsLoading ? (
-                 <Skeleton className="h-8 w-1/2 mt-1" />
-            ) : (
-                <div className="text-2xl font-bold">+{stats?.newUsersThisMonth}</div>
-            )}
-            <p className="text-xs text-muted-foreground">New users this month</p>
-            <Link href="/admin/analytics" passHref>
-                <Button variant="outline" size="sm" className="mt-4">View Analytics</Button>
+            <p className="text-xs text-muted-foreground mt-1">Manage homepage sections like features, FAQs etc.</p>
+            <Link href="/admin/settings/homepage" passHref>
+                <Button variant="outline" size="sm" className="mt-4">Go to Settings</Button>
             </Link>
           </CardContent>
         </Card>
-        
+
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Site Settings</CardTitle>

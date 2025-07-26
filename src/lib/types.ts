@@ -26,3 +26,23 @@ export type University = {
   description: string;
   bannerUrl: string;
 }
+
+export type Feature = {
+  _id: string;
+  icon: any;
+  title: string;
+  description: string;
+  color: string;
+};
+
+export type Testimonial = {
+  _id: string;
+  quote: string;
+  author: string;
+};
+
+export type Faq = {
+  _id: string;
+  question: string;
+  answer: string;
+};
