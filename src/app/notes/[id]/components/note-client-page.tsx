@@ -16,7 +16,17 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
-import { PdfViewer } from './pdf-viewer';
+import dynamic from 'next/dynamic';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const PdfViewer = dynamic(() => import('./pdf-viewer').then(mod => mod.PdfViewer), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center h-full">
+        <Loader2 className="h-8 w-8 animate-spin text-white" />
+    </div>
+  ),
+});
 
 export function NoteClientPage({ note, formattedDate }: { note: Note, formattedDate: string }) {
   const [summary, setSummary] = useState('');
