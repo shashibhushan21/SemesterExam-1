@@ -68,7 +68,7 @@ export default function Home() {
             setContentLoading(true);
             const [notesRes, uniRes, featuresRes, testimonialsRes, faqsRes] = await Promise.all([
                 fetch('/api/notes'),
-                fetch('/api/admin/settings/universities'),
+                fetch('/api/universities'),
                 fetch('/api/admin/homepage/features'),
                 fetch('/api/admin/homepage/testimonials'),
                 fetch('/api/admin/homepage/faqs'),

@@ -20,7 +20,7 @@ const getInitials = (name: string) => {
 };
 
 async function getUniversities(): Promise<University[]> {
-    const res = await fetch('/api/admin/settings/universities', { cache: 'no-store' });
+    const res = await fetch('/api/universities', { cache: 'no-store' });
     if (!res.ok) {
         throw new Error('Failed to fetch universities');
     }
