@@ -19,7 +19,7 @@ const uploadNoteSchema = z.object({
   title: z.string().min(5),
   university: z.string().min(3),
   subject: z.string().min(3),
-  semester: z.string().min(3),
+  semester: z.string().min(1),
   branch: z.string().min(1),
   noteContent: z.string().optional(),
 });
@@ -65,11 +65,11 @@ export async function POST(req: NextRequest) {
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
         
-        if (decoded.role !== 'admin') {
-            return NextResponse.json({ message: 'Forbidden: Admins only' }, { status: 403 });
-        }
-        
         const userId = decoded.id;
+        
+        if (decoded.role !== 'admin') {
+             return NextResponse.json({ message: 'Forbidden: Admins only' }, { status: 403 });
+        }
 
         const formData = await req.formData();
         const file = formData.get('file') as File | null;
@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
         
         const uploadResult = await uploadToCloudinary(file);
         
-        const thumbnailUrl = `https://placehold.co/400x300.png`;
+        const thumbnailUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/v${uploadResult.version}/${uploadResult.public_id}.jpg`;
 
         const newNote = new Note({
             title,
