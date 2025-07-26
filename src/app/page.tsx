@@ -1,43 +1,27 @@
 
-'use client';
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import * as LucideIcons from 'lucide-react';
-import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Search, MoveRight } from 'lucide-react';
-import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
-import Autoplay from "embla-carousel-autoplay";
 import { UniversityCard } from '@/components/university-card';
 import { FeatureCard } from '@/components/feature-card';
-import { BookOpen, University, RefreshCw, HelpCircle } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { TestimonialCard } from '@/components/testimonial-card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
-import type { Note, University as UniversityType } from '@/lib/types';
+import type { Note, University, Feature, Testimonial, Faq } from '@/lib/types';
+import { connectToDatabase } from '@/lib/db';
+import NoteModel from '@/models/note';
+import UniversityModel from '@/models/university';
+import FeatureModel from '@/models/feature';
+import TestimonialModel from '@/models/testimonial';
+import FaqModel from '@/models/faq';
+import { AuthButton } from '@/components/auth-button';
+import { ClientOnly } from '@/components/client-only';
+import { HeroCarousel } from '@/components/hero-carousel';
 
-interface Feature {
-  _id: string;
-  icon: string;
-  title: string;
-  description: string;
-  color: string;
-}
-
-interface Testimonial {
-    _id: string;
-    quote: string;
-    author: string;
-}
-
-interface Faq {
-    _id: string;
-    question: string;
-    answer: string;
-}
 
 const getInitials = (name: string) => {
     return name
@@ -48,113 +32,48 @@ const getInitials = (name: string) => {
       .toUpperCase();
 };
 
+async function getHomepageData() {
+    try {
+        await connectToDatabase();
+        const [notes, universities, features, testimonials, faqs] = await Promise.all([
+            NoteModel.find({}).sort({ createdAt: -1 }).limit(10).lean(),
+            UniversityModel.find({}).limit(3).lean(),
+            FeatureModel.find({}).lean(),
+            TestimonialModel.find({}).lean(),
+            FaqModel.find({}).lean(),
+        ]);
 
-export default function Home() {
-  const { user, loading: authLoading } = useAuth();
-  const [isMounted, setIsMounted] = useState(false);
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [universities, setUniversities] = useState<UniversityType[]>([]);
-  const [features, setFeatures] = useState<Feature[]>([]);
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [faqs, setFaqs] = useState<Faq[]>([]);
-
-  const [contentLoading, setContentLoading] = useState(true);
-
-  useEffect(() => {
-    setIsMounted(true);
-    
-    const fetchAllData = async () => {
-        try {
-            setContentLoading(true);
-            const [notesRes, uniRes, featuresRes, testimonialsRes, faqsRes] = await Promise.all([
-                fetch('/api/notes'),
-                fetch('/api/universities'),
-                fetch('/api/admin/homepage/features'),
-                fetch('/api/admin/homepage/testimonials'),
-                fetch('/api/admin/homepage/faqs'),
-            ]);
-
-            const notesData = await notesRes.json();
-            const uniData = await uniRes.json();
-            const featuresData = await featuresRes.json();
-            const testimonialsData = await testimonialsRes.json();
-            const faqsData = await faqsRes.json();
-
-            setNotes(notesData.notes || []);
-            setUniversities(uniData.universities || []);
-            setFeatures(featuresData.features || []);
-            setTestimonials(testimonialsData.testimonials || []);
-            setFaqs(faqsData.faqs || []);
-
-        } catch (error) {
-            console.error("Failed to fetch homepage data", error);
-        } finally {
-            setContentLoading(false);
-        }
+        return {
+            notes: JSON.parse(JSON.stringify(notes)),
+            universities: JSON.parse(JSON.stringify(universities)),
+            features: JSON.parse(JSON.stringify(features)),
+            testimonials: JSON.parse(JSON.stringify(testimonials)),
+            faqs: JSON.parse(JSON.stringify(faqs)),
+        };
+    } catch (error) {
+        console.error("Failed to fetch homepage data", error);
+        return { notes: [], universities: [], features: [], testimonials: [], faqs: [] };
     }
+}
 
-    fetchAllData();
-  }, []);
 
-  const availableUniversities = [...new Set(notes.map((note) => note.university))];
-  const semesters = [...new Set(notes.map((note) => note.semester))];
-  const subjects = [...new Set(notes.map((note) => note.subject))];
+export default async function Home() {
+  const { notes, universities, features, testimonials, faqs } = await getHomepageData();
+
+  const availableUniversities = [...new Set(notes.map((note: Note) => note.university))];
+  const semesters = [...new Set(notes.map((note: Note) => note.semester))];
+  const subjects = [...new Set(notes.map((note: Note) => note.subject))];
 
   return (
     <>
       <section className="relative w-full h-auto min-h-[calc(100vh-10rem)] flex items-center justify-center py-10 md:py-0">
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4 w-full">
           
-           {isMounted ? (
-            <Carousel
-              plugins={[Autoplay({ delay: 5000, stopOnInteraction: true })]}
-              className="w-full max-w-5xl"
-              opts={{ loop: true }}
-            >
-              <CarouselContent>
-                <CarouselItem>
-                  <div className="flex flex-col items-center justify-center p-4">
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-down">
-                      Find Notes by Semester & Subject
-                    </h1>
-                    <p className="mt-4 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl animate-fade-in-up">
-                      Access organized PDFs with smart filters and fast downloads.
-                    </p>
-                  </div>
-                </CarouselItem>
-                <CarouselItem>
-                  <div className="flex flex-col items-center justify-center p-4">
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-down">
-                      Thousands of Notes from Top Universities
-                    </h1>
-                    <p className="mt-4 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl animate-fade-in-up">
-                      Contributed by students just like you.
-                    </p>
-                  </div>
-                </CarouselItem>
-                <CarouselItem>
-                  <div className="flex flex-col items-center justify-center p-4">
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-down">
-                      Upload and Share
-                    </h1>
-                    <p className="mt-4 text-base sm:text-lg md:text-xl text-white/80 max-w-2xl animate-fade-in-up">
-                      Help other students by sharing your study materials.
-                    </p>
-                  </div>
-                </CarouselItem>
-              </CarouselContent>
-            </Carousel>
-          ) : (
-            <div className="w-full max-w-5xl p-4">
-                <Skeleton className="h-[120px] w-full" />
-            </div>
-          )}
+           <HeroCarousel />
           
-
           <div className="mt-8 p-4 bg-white/10 backdrop-blur-sm rounded-lg w-full max-w-4xl">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               
-              {isMounted && !contentLoading ? (
                 <>
                   <Select>
                     <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
@@ -191,14 +110,6 @@ export default function Home() {
                     Search
                   </Button>
                 </>
-              ) : (
-                <>
-                  <Skeleton className="h-12 w-full" />
-                  <Skeleton className="h-12 w-full" />
-                  <Skeleton className="h-12 w-full" />
-                  <Skeleton className="h-12 w-full" />
-                </>
-              )}
               
             </div>
           </div>
@@ -223,17 +134,11 @@ export default function Home() {
           <h2 className="text-3xl sm:text-4xl font-bold text-center text-white mb-12 animate-fade-in-up">
             Top Universities
           </h2>
-          {contentLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-56 w-full rounded-xl" />)}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {universities.slice(0, 3).map((uni, index) => (
-                    <UniversityCard key={index} {...uni} initials={getInitials(uni.name)} />
-                ))}
-            </div>
-          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {universities.map((uni, index) => (
+                  <UniversityCard key={index} {...uni} initials={getInitials(uni.name)} />
+              ))}
+          </div>
         </div>
       </section>
 
@@ -246,14 +151,10 @@ export default function Home() {
             Curated notes for every subject, categorized by semester and university, built to save your time and boost your exam preparation.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {contentLoading ? (
-                [...Array(3)].map((_, i) => <Skeleton key={i} className="h-56 w-full rounded-xl" />)
-            ) : (
-                features.map((feature, index) => {
-                    const Icon = (LucideIcons as any)[feature.icon] || BookOpen;
-                    return <FeatureCard key={index} {...feature} icon={Icon} />;
-                })
-            )}
+            {features.map((feature: Feature, index) => {
+                const Icon = (LucideIcons as any)[feature.icon] || BookOpen;
+                return <FeatureCard key={index} {...feature} icon={Icon} />;
+            })}
           </div>
         </div>
       </section>
@@ -264,19 +165,9 @@ export default function Home() {
             What Students Say
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            
-            {contentLoading ? (
-                <>
-                    <Skeleton className="h-48 w-full rounded-2xl" />
-                    <Skeleton className="h-48 w-full rounded-2xl" />
-                    <Skeleton className="h-48 w-full rounded-2xl" />
-                </>
-            ) : (
-              testimonials.map((testimonial, index) => (
-                <TestimonialCard key={index} {...testimonial} />
-              ))
-            )}
-            
+            {testimonials.map((testimonial: Testimonial, index) => (
+              <TestimonialCard key={index} {...testimonial} />
+            ))}
           </div>
         </div>
       </section>
@@ -287,31 +178,20 @@ export default function Home() {
             Frequently Asked Questions
           </h2>
           <div className="max-w-3xl mx-auto">
-            
-             {contentLoading ? (
-                <div className="space-y-4">
-                    <Skeleton className="h-20 w-full rounded-xl" />
-                    <Skeleton className="h-20 w-full rounded-xl" />
-                    <Skeleton className="h-20 w-full rounded-xl" />
-                </div>
-             ) : (
-                <Accordion type="single" collapsible className="w-full space-y-4">
-                {faqs.map((faq, index) => (
-                    <AccordionItem key={index} value={`item-${index}`} className="bg-gradient-to-r from-blue-800/20 via-purple-700/20 to-pink-600/20 border-white/10 rounded-xl shadow-lg transition-all duration-300 hover:bg-white/5">
-                    <AccordionTrigger className="p-6 text-lg font-semibold text-white text-left hover:no-underline">
-                        <div className="flex items-center gap-4">
-                        <HelpCircle className="w-6 h-6 text-white/80" />
-                        <span>{faq.question}</span>
-                        </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="px-6 pb-6 text-white/80">
-                        {faq.answer}
-                    </AccordionContent>
-                    </AccordionItem>
-                ))}
-                </Accordion>
-             )}
-            
+            <Accordion type="single" collapsible className="w-full space-y-4">
+            {faqs.map((faq: Faq, index) => (
+                <AccordionItem key={index} value={`item-${index}`} className="bg-gradient-to-r from-blue-800/20 via-purple-700/20 to-pink-600/20 border-white/10 rounded-xl shadow-lg transition-all duration-300 hover:bg-white/5">
+                <AccordionTrigger className="p-6 text-lg font-semibold text-white text-left hover:no-underline">
+                    <div className="flex items-center gap-4">
+                      <span>{faq.question}</span>
+                    </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-6 text-white/80">
+                    {faq.answer}
+                </AccordionContent>
+                </AccordionItem>
+            ))}
+            </Accordion>
           </div>
         </div>
       </section>
@@ -322,23 +202,9 @@ export default function Home() {
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">Join 10,000+ students using SemesterExam.com!</h2>
             <p className="mt-4 text-base md:text-lg text-white/80">Stay updated, study smarter, and score better in your exams.</p>
             <div className="mt-8">
-              {authLoading ? (
-                 <Skeleton className="h-16 w-48 mx-auto rounded-full" />
-              ) : user ? (
-                 <Link href="/courses" className={cn(
-                    buttonVariants({ size: 'lg' }),
-                    'bg-white text-primary hover:bg-gray-200 rounded-full px-8 py-6 text-lg transition-all duration-300 transform hover:scale-105'
-                  )}>
-                    Explore Courses
-                </Link>
-              ) : (
-                <Link href="/auth" className={cn(
-                    buttonVariants({ size: 'lg' }),
-                    'bg-white text-primary hover:bg-gray-200 rounded-full px-8 py-6 text-lg transition-all duration-300 transform hover:scale-105'
-                  )}>
-                    Get Started Now
-                </Link>
-              )}
+              <ClientOnly>
+                <AuthButton />
+              </ClientOnly>
             </div>
           </div>
         </div>

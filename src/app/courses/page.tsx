@@ -3,16 +3,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import type { Note } from '@/lib/types';
-import { GET as getAllNotes } from '../api/notes/route';
+import { connectToDatabase } from '@/lib/db';
+import NoteModel from '@/models/note';
 
-async function getNotes() {
-    // Directly call the API route handler logic
-    const response = await getAllNotes();
-    if (!response.ok) {
-        throw new Error('Failed to fetch notes');
+async function getNotes(): Promise<Note[]> {
+    try {
+        await connectToDatabase();
+        const notes = await NoteModel.find({}).populate('author', 'name avatar').lean();
+        return JSON.parse(JSON.stringify(notes));
+    } catch (error) {
+        console.error("Failed to fetch notes:", error);
+        return [];
     }
-    const data = await response.json();
-    return data.notes as Note[];
 }
 
 
