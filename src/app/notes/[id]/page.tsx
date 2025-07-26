@@ -22,7 +22,7 @@ async function getNote(id: string): Promise<Note | null> {
         return JSON.parse(JSON.stringify(note)) as Note;
     } catch (error) {
         console.error("Failed to fetch note:", error);
-        throw new Error('Failed to fetch note');
+        return null;
     }
 }
 
@@ -33,6 +33,12 @@ export default async function NotePage({ params }: { params: { id: string } }) {
   if (!note) {
     notFound();
   }
+  
+  const formattedDate = new Date(note.createdAt).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
 
-  return <NoteClientPage note={note} />;
+  return <NoteClientPage note={note} formattedDate={formattedDate} />;
 }

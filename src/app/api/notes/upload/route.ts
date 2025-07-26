@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
         
         const uploadResult = await cloudinary.uploader.upload(fileUri, {
             folder: "examnotes_notes",
-            resource_type: 'auto'
+            resource_type: 'image'
         });
 
         // For simplicity, using a placeholder thumbnail.

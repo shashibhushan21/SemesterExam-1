@@ -2,7 +2,7 @@
 'use client';
 
 import type { Note } from '@/lib/types';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -18,25 +18,14 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
 import { PdfViewer } from './pdf-viewer';
 
-export function NoteClientPage({ note }: { note: Note }) {
+export function NoteClientPage({ note, formattedDate }: { note: Note, formattedDate: string }) {
   const [summary, setSummary] = useState('');
   const [isSummarizing, setIsSummarizing] = useState(false);
-  const [formattedDate, setFormattedDate] = useState('');
 
   const { toast } = useToast();
   const router = useRouter();
   const pathname = usePathname();
   const { user } = useAuth();
-
-  useEffect(() => {
-    if (note) {
-      setFormattedDate(new Date(note.createdAt).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      }));
-    }
-  }, [note]);
 
   const handleSummarize = async () => {
     setIsSummarizing(true);
