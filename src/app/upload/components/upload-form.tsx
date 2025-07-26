@@ -13,6 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { suggestTags } from '@/ai/flows/suggest-tags';
 import { Wand2, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const uploadSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters'),
@@ -38,6 +39,7 @@ interface UploadFormProps {
 
 export function UploadForm({ settings }: UploadFormProps) {
   const { toast } = useToast();
+  const router = useRouter();
   const [isSuggesting, setIsSuggesting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -103,6 +105,7 @@ export function UploadForm({ settings }: UploadFormProps) {
         description: 'Your note has been uploaded and is now available.',
       });
       reset();
+      router.push(`/notes/${result.note._id}`);
     } catch (error: any) {
        toast({
         title: 'Upload Failed',
