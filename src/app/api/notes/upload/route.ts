@@ -2,11 +2,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 import { connectToDatabase } from '@/lib/db';
-import User from '@/models/user';
 import Note from '@/models/note';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import mongoose from 'mongoose';
+import { Readable } from 'stream';
 
 cloudinary.config({ 
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
@@ -28,6 +28,30 @@ interface DecodedToken {
   id: string;
   role: string;
 }
+
+const uploadToCloudinary = (file: File): Promise<any> => {
+    return new Promise(async (resolve, reject) => {
+        const fileBuffer = await file.arrayBuffer();
+        const stream = cloudinary.uploader.upload_stream(
+            {
+                folder: 'examnotes_notes',
+                resource_type: 'raw',
+            },
+            (error, result) => {
+                if (error) {
+                    return reject(error);
+                }
+                resolve(result);
+            }
+        );
+
+        const readableStream = new Readable();
+        readableStream.push(Buffer.from(fileBuffer));
+        readableStream.push(null);
+        
+        readableStream.pipe(stream);
+    });
+};
 
 export async function POST(req: NextRequest) {
     try {
@@ -68,17 +92,8 @@ export async function POST(req: NextRequest) {
 
         const { title, university, subject, semester, branch, noteContent } = validation.data;
         
-        const fileBuffer = await file.arrayBuffer();
-        const mime = file.type; 
-        const encoding = 'base64'; 
-        const base64Data = Buffer.from(fileBuffer).toString('base64');
-        const fileUri = 'data:' + mime + ';' + encoding + ',' + base64Data;
+        const uploadResult = await uploadToCloudinary(file);
         
-        const uploadResult = await cloudinary.uploader.upload(fileUri, {
-            folder: "examnotes_notes",
-            resource_type: 'raw'
-        });
-
         // For simplicity, using a placeholder thumbnail.
         // In a real app, you might generate a thumbnail from the PDF's first page.
         const thumbnailUrl = `https://placehold.co/400x300.png`;
