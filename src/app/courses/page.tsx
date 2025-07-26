@@ -1,10 +1,22 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { allNotes } from '@/lib/mock-data';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import type { Note } from '@/lib/types';
 
-export default function CoursesPage() {
-    const subjects = [...new Set(allNotes.map((note) => note.subject))];
+async function getNotes() {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/notes`, { cache: 'no-store' });
+    if (!res.ok) {
+        throw new Error('Failed to fetch notes');
+    }
+    const data = await res.json();
+    return data.notes as Note[];
+}
+
+
+export default async function CoursesPage() {
+    const notes = await getNotes();
+    const subjects = [...new Set(notes.map((note) => note.subject))];
+
   return (
     <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">

@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -13,7 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { suggestTags } from '@/ai/flows/suggest-tags';
 import { Wand2, Loader2 } from 'lucide-react';
-import { allNotes } from '@/lib/mock-data';
+import { Note } from '@/lib/types';
 
 const uploadSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters'),
@@ -27,14 +27,33 @@ const uploadSchema = z.object({
 
 type UploadFormValues = z.infer<typeof uploadSchema>;
 
-const universities = [...new Set(allNotes.map((note) => note.university))];
-const subjects = [...new Set(allNotes.map((note) => note.subject))];
-const branches = [...new Set(allNotes.map(note => note.branch).filter(b => b !== 'All Branches'))];
-
 export function UploadForm() {
   const { toast } = useToast();
   const [isSuggesting, setIsSuggesting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchNotes() {
+      try {
+        const res = await fetch('/api/notes');
+        const data = await res.json();
+        setNotes(data.notes);
+      } catch (error) {
+        console.error("Failed to fetch notes for form", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchNotes();
+  }, []);
+
+  const universities = [...new Set(notes.map((note) => note.university))];
+  const subjects = [...new Set(notes.map((note) => note.subject))];
+  const branches = [...new Set(notes.map(note => note.branch).filter(b => b !== 'All Branches'))];
+
 
   const { register, handleSubmit, control, watch, setValue, reset, formState: { errors } } = useForm<UploadFormValues>({
     resolver: zodResolver(uploadSchema),
@@ -148,7 +167,7 @@ export function UploadForm() {
             control={control}
             name="university"
             render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value} disabled={isUploading}>
+              <Select onValueChange={field.onChange} value={field.value} disabled={isUploading || loading}>
                 <SelectTrigger><SelectValue placeholder="Select University" /></SelectTrigger>
                 <SelectContent>
                   {universities.map(u => <SelectItem key={u} value={u}>{u}</SelectItem>)}
@@ -164,7 +183,7 @@ export function UploadForm() {
             control={control}
             name="subject"
             render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value} disabled={isUploading}>
+              <Select onValueChange={field.onChange} value={field.value} disabled={isUploading || loading}>
                 <SelectTrigger><SelectValue placeholder="Select Subject" /></SelectTrigger>
                 <SelectContent>
                    {subjects.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
@@ -180,7 +199,7 @@ export function UploadForm() {
             control={control}
             name="branch"
             render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value} disabled={isUploading}>
+              <Select onValueChange={field.onChange} value={field.value} disabled={isUploading || loading}>
                 <SelectTrigger><SelectValue placeholder="Select Branch" /></SelectTrigger>
                 <SelectContent>
                    {branches.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
@@ -198,8 +217,8 @@ export function UploadForm() {
       </div>
 
       <div className="flex justify-end pt-4">
-        <Button type="submit" size="lg" disabled={isUploading}>
-          {isUploading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        <Button type="submit" size="lg" disabled={isUploading || loading}>
+          {(isUploading || loading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Upload Note
         </Button>
       </div>

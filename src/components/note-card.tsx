@@ -35,10 +35,10 @@ export function NoteCard({ note }: NoteCardProps) {
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={note.authorAvatar} alt={note.author} />
-              <AvatarFallback>{note.author.charAt(0)}</AvatarFallback>
+              <AvatarImage src={note.author.avatar} alt={note.author.name} />
+              <AvatarFallback>{note.author.name.charAt(0)}</AvatarFallback>
             </Avatar>
-            <span className="text-sm text-white/70">{note.author}</span>
+            <span className="text-sm text-white/70">{note.author.name}</span>
           </div>
           <div className="flex items-center gap-1">
             <Star className="w-4 h-4 text-yellow-500 fill-yellow-400" />

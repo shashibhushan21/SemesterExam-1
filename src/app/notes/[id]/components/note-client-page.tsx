@@ -30,7 +30,7 @@ export function NoteClientPage({ note }: { note: Note }) {
 
   useEffect(() => {
     if (note) {
-      setFormattedDate(new Date(note.uploadDate).toLocaleDateString('en-US', {
+      setFormattedDate(new Date(note.createdAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
@@ -171,11 +171,11 @@ export function NoteClientPage({ note }: { note: Note }) {
             </CardHeader>
             <CardContent className="flex items-center gap-4">
               <Avatar className="h-16 w-16">
-                <AvatarImage src={note.authorAvatar} alt={note.author} />
-                <AvatarFallback>{note.author.charAt(0)}</AvatarFallback>
+                <AvatarImage src={note.author.avatar} alt={note.author.name} />
+                <AvatarFallback>{note.author.name.charAt(0)}</AvatarFallback>
               </Avatar>
               <div>
-                <p className="font-semibold text-lg">{note.author}</p>
+                <p className="font-semibold text-lg">{note.author.name}</p>
                 {formattedDate && (
                    <p className="text-muted-foreground">Uploaded on {formattedDate}</p>
                 )}

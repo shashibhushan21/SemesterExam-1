@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Search, MoveRight } from 'lucide-react';
-import { allNotes, allUniversities } from '@/lib/mock-data';
+import { allUniversities } from '@/lib/mock-data';
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { UniversityCard } from '@/components/university-card';
@@ -17,6 +17,7 @@ import { TestimonialCard } from '@/components/testimonial-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
+import type { Note } from '@/lib/types';
 
 const getInitials = (name: string) => {
     return name
@@ -31,14 +32,28 @@ const getInitials = (name: string) => {
 export default function Home() {
   const { user, loading } = useAuth();
   const [isMounted, setIsMounted] = useState(false);
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [notesLoading, setNotesLoading] = useState(true);
 
   useEffect(() => {
     setIsMounted(true);
+    const fetchNotes = async () => {
+      try {
+        const res = await fetch('/api/notes');
+        const data = await res.json();
+        setNotes(data.notes);
+      } catch (error) {
+        console.error("Failed to fetch notes", error);
+      } finally {
+        setNotesLoading(false);
+      }
+    }
+    fetchNotes();
   }, []);
 
-  const universities = [...new Set(allNotes.map((note) => note.university))];
-  const semesters = [...new Set(allNotes.map((note) => note.semester))];
-  const subjects = [...new Set(allNotes.map((note) => note.subject))];
+  const universities = [...new Set(notes.map((note) => note.university))];
+  const semesters = [...new Set(notes.map((note) => note.semester))];
+  const subjects = [...new Set(notes.map((note) => note.subject))];
 
   const features = [
     {
@@ -145,7 +160,7 @@ export default function Home() {
           <div className="mt-8 p-4 bg-white/10 backdrop-blur-sm rounded-lg w-full max-w-4xl">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               
-              {isMounted ? (
+              {isMounted && !notesLoading ? (
                 <>
                   <Select>
                     <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">

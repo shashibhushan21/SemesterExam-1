@@ -53,7 +53,7 @@ export function UniversityNotesClient({ notes, semesters, branches }: University
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-16">
         {filteredNotes.map((note: Note) => (
-          <Link key={note.id} href={`/notes/${note.id}`} passHref>
+          <Link key={note._id} href={`/notes/${note._id}`} passHref>
               <NoteCard note={note} />
           </Link>
         ))}

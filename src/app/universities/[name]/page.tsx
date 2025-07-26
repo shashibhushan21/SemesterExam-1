@@ -1,5 +1,5 @@
 
-import { allNotes, allUniversities } from '@/lib/mock-data';
+import { allUniversities } from '@/lib/mock-data';
 import { notFound } from 'next/navigation';
 import { UniversityNotesClient } from './components/university-notes-client';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,7 +9,16 @@ import { Note, University } from '@/lib/types';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
-export default function UniversityDetailPage({ params }: { params: { name: string } }) {
+async function getNotes() {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/notes`, { cache: 'no-store' });
+    if (!res.ok) {
+        throw new Error('Failed to fetch notes');
+    }
+    const data = await res.json();
+    return data.notes as Note[];
+}
+
+export default async function UniversityDetailPage({ params }: { params: { name: string } }) {
   const universityName = decodeURIComponent(params.name);
 
   const universityDetails = allUniversities.find(
@@ -20,6 +29,7 @@ export default function UniversityDetailPage({ params }: { params: { name: strin
     notFound();
   }
   
+  const allNotes = await getNotes();
   const universityNotes: Note[] = allNotes.filter(
     (note) => note.university.toLowerCase() === universityName.toLowerCase()
   );

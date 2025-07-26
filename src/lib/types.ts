@@ -1,12 +1,15 @@
 export type Note = {
-  id: string;
+  _id: string;
   title: string;
   university: string;
   subject: string;
   semester: string;
-  author: string;
-  authorAvatar: string;
-  uploadDate: string;
+  author: {
+    _id: string;
+    name: string;
+    avatar?: string;
+  };
+  createdAt: string;
   summary: string;
   rating: number;
   thumbnailUrl: string;
