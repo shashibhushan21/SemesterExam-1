@@ -36,8 +36,8 @@ export default async function UniversityDetailPage({ params }: { params: { name:
     (note) => note.university.toLowerCase() === universityName.toLowerCase()
   );
 
-  const semesters = ['all', ...new Set(universityNotes.map((note) => note.semester))];
-  const branches = ['all', ...new Set(universityNotes.map((note) => note.branch))];
+  const semesters = ['all', ...Array.from(new Set(universityNotes.map((note) => note.semester)))];
+  const branches = ['all', ...Array.from(new Set(universityNotes.map((note) => note.branch)))];
 
   return (
     <div className="text-white">

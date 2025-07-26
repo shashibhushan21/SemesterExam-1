@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { suggestTags } from '@/ai/flows/suggest-tags';
 import { Wand2, Loader2 } from 'lucide-react';
 import { Note } from '@/lib/types';
+import { allUniversities } from '@/lib/mock-data';
 
 const uploadSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters'),
@@ -50,7 +51,6 @@ export function UploadForm() {
     fetchNotes();
   }, []);
 
-  const universities = [...new Set(notes.map((note) => note.university))];
   const subjects = [...new Set(notes.map((note) => note.subject))];
   const branches = [...new Set(notes.map(note => note.branch).filter(b => b !== 'All Branches'))];
 
@@ -170,7 +170,7 @@ export function UploadForm() {
               <Select onValueChange={field.onChange} value={field.value} disabled={isUploading || loading}>
                 <SelectTrigger><SelectValue placeholder="Select University" /></SelectTrigger>
                 <SelectContent>
-                  {universities.map(u => <SelectItem key={u} value={u}>{u}</SelectItem>)}
+                  {allUniversities.map(u => <SelectItem key={u.name} value={u.name}>{u.name}</SelectItem>)}
                 </SelectContent>
               </Select>
             )}
