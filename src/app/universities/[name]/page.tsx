@@ -8,13 +8,15 @@ import { University as UniversityIcon, ArrowLeft } from 'lucide-react';
 import { Note, University } from '@/lib/types';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { GET as getAllNotes } from '../../api/notes/route';
 
 async function getNotes() {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/notes`, { cache: 'no-store' });
-    if (!res.ok) {
+    // Directly call the API route handler logic
+    const response = await getAllNotes();
+    if (!response.ok) {
         throw new Error('Failed to fetch notes');
     }
-    const data = await res.json();
+    const data = await response.json();
     return data.notes as Note[];
 }
 
