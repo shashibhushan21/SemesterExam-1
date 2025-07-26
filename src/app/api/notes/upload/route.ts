@@ -35,10 +35,11 @@ const uploadToCloudinary = (file: File): Promise<any> => {
         const stream = cloudinary.uploader.upload_stream(
             {
                 folder: 'examnotes_notes',
-                resource_type: 'raw', // Explicitly set resource type to raw for PDFs
+                resource_type: 'raw',
             },
             (error, result) => {
                 if (error) {
+                    console.error('Cloudinary Upload Error:', error);
                     return reject(error);
                 }
                 resolve(result);
@@ -94,8 +95,6 @@ export async function POST(req: NextRequest) {
         
         const uploadResult = await uploadToCloudinary(file);
         
-        // For simplicity, using a placeholder thumbnail.
-        // In a real app, you might generate a thumbnail from the PDF's first page.
         const thumbnailUrl = `https://placehold.co/400x300.png`;
 
         const newNote = new Note({

@@ -9,8 +9,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit",
-    "postinstall": "patch-package"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.13.0",
@@ -50,7 +49,6 @@
     "lucide-react": "^0.475.0",
     "mongoose": "^8.6.0",
     "next": "15.3.3",
-    "patch-package": "^8.0.0",
     "pdfjs-dist": "4.5.136",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
@@ -73,5 +71,10 @@
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
+  },
+  "overrides": {
+    "react-pdf": {
+      "pdfjs-dist": "$pdfjs-dist"
+    }
   }
 }
