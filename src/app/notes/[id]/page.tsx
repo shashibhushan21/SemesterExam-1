@@ -2,15 +2,28 @@
 import { notFound } from 'next/navigation';
 import { NoteClientPage } from './components/note-client-page';
 import type { Note } from '@/lib/types';
+import { connectToDatabase } from '@/lib/db';
+import NoteModel from '@/models/note';
+import mongoose from 'mongoose';
 
 async function getNote(id: string): Promise<Note | null> {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/notes/${id}`, { cache: 'no-store' });
-    if (!res.ok) {
-        if (res.status === 404) return null;
+    try {
+        await connectToDatabase();
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return null;
+        }
+
+        const note = await NoteModel.findById(id).populate('author', 'name avatar').lean();
+        if (!note) {
+            return null;
+        }
+        // Convert mongoose document to plain object and ensure _id is a string
+        return JSON.parse(JSON.stringify(note)) as Note;
+    } catch (error) {
+        console.error("Failed to fetch note:", error);
         throw new Error('Failed to fetch note');
     }
-    const data = await res.json();
-    return data.note;
 }
 
 
