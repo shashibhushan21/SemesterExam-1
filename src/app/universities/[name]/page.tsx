@@ -25,12 +25,13 @@ async function getUniversityByName(name: string): Promise<University | null> {
         return null;
     }
     const data = await res.json();
-    const university = data.universities.find((uni: University) => uni.name.toLowerCase() === name.toLowerCase());
+    const decodedName = decodeURIComponent(name).toLowerCase();
+    const university = data.universities.find((uni: University) => uni.name.toLowerCase() === decodedName);
     return university || null;
 }
 
 export default async function UniversityDetailPage({ params }: { params: { name: string } }) {
-  const universityName = decodeURIComponent(params.name);
+  const universityName = params.name;
 
   const universityDetails = await getUniversityByName(universityName);
 
@@ -40,7 +41,7 @@ export default async function UniversityDetailPage({ params }: { params: { name:
   
   const allNotes = await getNotes();
   const universityNotes: Note[] = allNotes.filter(
-    (note) => note.university.toLowerCase() === universityName.toLowerCase()
+    (note) => note.university.toLowerCase() === universityDetails.name.toLowerCase()
   );
 
   const semesters = ['all', ...Array.from(new Set(universityNotes.map((note) => note.semester)))];
