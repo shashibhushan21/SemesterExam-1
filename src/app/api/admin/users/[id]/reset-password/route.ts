@@ -4,22 +4,12 @@ import { connectToDatabase } from '@/lib/db';
 import User from '@/models/user';
 import crypto from 'crypto';
 import { Resend } from 'resend';
-import jwt from 'jsonwebtoken';
-
-interface DecodedToken {
-  id: string;
-  role: string;
-}
+import { checkAdmin } from '@/lib/auth';
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    // Admin Authentication Check
-    const token = req.cookies.get('token')?.value;
-    if (!token) {
-        return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
-    }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
-    if (decoded.role !== 'admin') {
+    const isAdmin = await checkAdmin(req);
+    if (!isAdmin) {
         return NextResponse.json({ message: 'Forbidden: Admins only' }, { status: 403 });
     }
 
@@ -66,7 +56,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
                <p><a href="${resetUrl}" target="_blank">Reset Your Password</a></p>
                <p>If you did not request this, please contact our support team immediately.</p>`,
       });
-      console.log(`Password reset email sent to: ${user.email} by admin ${decoded.id}`);
+      console.log(`Password reset email sent to: ${user.email}`);
     } catch (emailError) {
       console.error('❌ Failed to send admin-initiated password reset email:', JSON.stringify(emailError, null, 2));
       // Don't leak email sending errors to the client

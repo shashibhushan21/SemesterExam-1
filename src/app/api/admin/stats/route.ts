@@ -3,26 +3,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import User from '@/models/user';
 import Note from '@/models/note';
-import jwt from 'jsonwebtoken';
-
-interface DecodedToken {
-  id: string;
-  role: string;
-}
+import { checkAdmin } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
     try {
-        await connectToDatabase();
-        
-        const token = req.cookies.get('token')?.value;
-        if (!token) {
-            return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
-        }
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
-        if (decoded.role !== 'admin') {
+        const isAdmin = await checkAdmin(req);
+        if (!isAdmin) {
             return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
         }
+
+        await connectToDatabase();
 
         const totalUsers = await User.countDocuments();
         const totalNotes = await Note.countDocuments();
@@ -43,9 +33,6 @@ export async function GET(req: NextRequest) {
 
     } catch (error) {
         console.error('Admin Stats Error:', error);
-        if (error instanceof jwt.JsonWebTokenError) {
-          return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
-        }
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 }

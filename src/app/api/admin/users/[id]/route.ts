@@ -4,11 +4,8 @@ import { connectToDatabase } from '@/lib/db';
 import User from '@/models/user';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
+import { checkAdmin } from '@/lib/auth';
 
-interface DecodedToken {
-  id: string;
-  role: string;
-}
 
 const updateUserSchema = z.object({
   role: z.enum(['user', 'admin']).optional(),
@@ -23,13 +20,8 @@ const updateUserSchema = z.object({
 // GET a specific user's details (Admin only)
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
     try {
-        const token = req.cookies.get('token')?.value;
-        if (!token) {
-            return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
-        }
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
-        if (decoded.role !== 'admin') {
+        const isAdmin = await checkAdmin(req);
+        if (!isAdmin) {
             return NextResponse.json({ message: 'Forbidden: Admins only' }, { status: 403 });
         }
 
@@ -51,13 +43,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 // UPDATE a user's role or status (Admin only)
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
     try {
-        const token = req.cookies.get('token')?.value;
-        if (!token) {
-            return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
-        }
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
-        if (decoded.role !== 'admin') {
+        const isAdmin = await checkAdmin(req);
+        if (!isAdmin) {
             return NextResponse.json({ message: 'Forbidden: Admins only' }, { status: 403 });
         }
 
@@ -92,8 +79,9 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
             return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
-        if (decoded.role !== 'admin') {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
+        const isAdmin = await checkAdmin(req);
+        if (!isAdmin) {
             return NextResponse.json({ message: 'Forbidden: Admins only' }, { status: 403 });
         }
 

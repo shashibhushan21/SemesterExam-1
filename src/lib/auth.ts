@@ -1,10 +1,11 @@
 
 import { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
+import { connectToDatabase } from './db';
+import User from '@/models/user';
 
 interface DecodedToken {
   id: string;
-  role: string;
 }
 
 export async function checkAdmin(req: NextRequest): Promise<boolean> {
@@ -15,7 +16,15 @@ export async function checkAdmin(req: NextRequest): Promise<boolean> {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
-    return decoded.role === 'admin';
+    
+    await connectToDatabase();
+    const user = await User.findById(decoded.id);
+
+    if (!user || user.role !== 'admin') {
+      return false;
+    }
+
+    return true;
   } catch (error) {
     return false;
   }

@@ -2,24 +2,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import User from '@/models/user';
-import jwt from 'jsonwebtoken';
-
-interface DecodedToken {
-  id: string;
-  role: string;
-}
+import { checkAdmin } from '@/lib/auth';
 
 // GET all users (Admin only)
 export async function GET(req: NextRequest) {
     try {
-        const token = req.cookies.get('token')?.value;
-        if (!token) {
-            return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
-        }
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
-        if (decoded.role !== 'admin') {
-            return NextResponse.json({ message: 'Forbidden: Admins only' }, { status: 403 });
+        const isAdmin = await checkAdmin(req);
+        if (!isAdmin) {
+            return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
         }
 
         await connectToDatabase();
