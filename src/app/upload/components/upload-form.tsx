@@ -13,14 +13,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { suggestTags } from '@/ai/flows/suggest-tags';
 import { Wand2, Loader2 } from 'lucide-react';
-import { Note } from '@/lib/types';
-import { allUniversities } from '@/lib/mock-data';
 
 const uploadSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters'),
   university: z.string().min(3, 'University is required'),
   subject: z.string().min(3, 'Subject is required'),
-  semester: z.string().min(3, 'Semester is required'),
+  semester: z.string().min(1, 'Semester is required'),
   branch: z.string().min(1, 'Branch is required'),
   noteContent: z.string().optional(),
   file: z.any().refine((files) => files?.length === 1, 'File is required.'),
@@ -28,32 +26,45 @@ const uploadSchema = z.object({
 
 type UploadFormValues = z.infer<typeof uploadSchema>;
 
+interface SettingsData {
+  universities: { _id: string; name: string }[];
+  subjects: { _id: string; name: string }[];
+  branches: { _id: string; name: string }[];
+}
+
 export function UploadForm() {
   const { toast } = useToast();
   const [isSuggesting, setIsSuggesting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  
-  const [notes, setNotes] = useState<Note[]>([]);
+  const [settings, setSettings] = useState<SettingsData>({ universities: [], subjects: [], branches: [] });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchNotes() {
+    async function fetchSettings() {
       try {
-        const res = await fetch('/api/notes');
-        const data = await res.json();
-        setNotes(data.notes);
+        const [uniRes, subRes, branchRes] = await Promise.all([
+          fetch('/api/admin/settings/universities'),
+          fetch('/api/admin/settings/subjects'),
+          fetch('/api/admin/settings/branches'),
+        ]);
+        const uniData = await uniRes.json();
+        const subData = await subRes.json();
+        const branchData = await branchRes.json();
+        
+        setSettings({
+          universities: uniData.universities || [],
+          subjects: subData.subjects || [],
+          branches: branchData.branches || [],
+        });
       } catch (error) {
-        console.error("Failed to fetch notes for form", error);
+        console.error("Failed to fetch settings for form", error);
+        toast({ title: "Error", description: "Could not load form data. Please refresh.", variant: "destructive" });
       } finally {
         setLoading(false);
       }
     }
-    fetchNotes();
+    fetchSettings();
   }, []);
-
-  const subjects = [...new Set(notes.map((note) => note.subject))];
-  const branches = [...new Set(notes.map(note => note.branch).filter(b => b !== 'All Branches'))];
-
 
   const { register, handleSubmit, control, watch, setValue, reset, formState: { errors } } = useForm<UploadFormValues>({
     resolver: zodResolver(uploadSchema),
@@ -170,7 +181,7 @@ export function UploadForm() {
               <Select onValueChange={field.onChange} value={field.value} disabled={isUploading || loading}>
                 <SelectTrigger><SelectValue placeholder="Select University" /></SelectTrigger>
                 <SelectContent>
-                  {allUniversities.map(u => <SelectItem key={u.name} value={u.name}>{u.name}</SelectItem>)}
+                  {settings.universities.map(u => <SelectItem key={u._id} value={u.name}>{u.name}</SelectItem>)}
                 </SelectContent>
               </Select>
             )}
@@ -186,7 +197,7 @@ export function UploadForm() {
               <Select onValueChange={field.onChange} value={field.value} disabled={isUploading || loading}>
                 <SelectTrigger><SelectValue placeholder="Select Subject" /></SelectTrigger>
                 <SelectContent>
-                   {subjects.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                   {settings.subjects.map(s => <SelectItem key={s._id} value={s.name}>{s.name}</SelectItem>)}
                 </SelectContent>
               </Select>
             )}
@@ -202,7 +213,7 @@ export function UploadForm() {
               <Select onValueChange={field.onChange} value={field.value} disabled={isUploading || loading}>
                 <SelectTrigger><SelectValue placeholder="Select Branch" /></SelectTrigger>
                 <SelectContent>
-                   {branches.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                   {settings.branches.map(b => <SelectItem key={b._id} value={b.name}>{b.name}</SelectItem>)}
                 </SelectContent>
               </Select>
             )}
@@ -210,8 +221,19 @@ export function UploadForm() {
           {errors.branch && <p className="text-sm text-destructive">{errors.branch.message}</p>}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="semester">Semester</Label>
-          <Input id="semester" {...register('semester')} placeholder="e.g., 5th Semester" disabled={isUploading} />
+          <Label>Semester</Label>
+          <Controller
+            control={control}
+            name="semester"
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} value={field.value} disabled={isUploading || loading}>
+                <SelectTrigger><SelectValue placeholder="Select Semester" /></SelectTrigger>
+                <SelectContent>
+                   {['1st Semester', '2nd Semester', '3rd Semester', '4th Semester', '5th Semester', '6th Semester', '7th Semester', '8th Semester'].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            )}
+          />
           {errors.semester && <p className="text-sm text-destructive">{errors.semester.message}</p>}
         </div>
       </div>

@@ -1,14 +1,14 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
-import { allUniversities } from '@/lib/mock-data';
+import { useState, useMemo, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
-import Link from 'next/link';
 import { UniversityCard } from '@/components/university-card';
 import { University } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 const getInitials = (name: string) => {
     return name
@@ -19,17 +19,38 @@ const getInitials = (name: string) => {
       .toUpperCase();
 };
 
+async function getUniversities(): Promise<University[]> {
+    const res = await fetch('/api/admin/settings/universities', { cache: 'no-store' });
+    if (!res.ok) {
+        throw new Error('Failed to fetch universities');
+    }
+    const data = await res.json();
+    return data.universities;
+}
+
 export default function UniversitiesPage() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [universities, setUniversities] = useState<University[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getUniversities().then(data => {
+      setUniversities(data);
+      setLoading(false);
+    }).catch(err => {
+      console.error(err);
+      setLoading(false);
+    });
+  }, []);
 
   const filteredUniversities = useMemo(() => {
      if (!searchTerm) {
-      return allUniversities;
+      return universities;
     }
-    return allUniversities.filter((uni) =>
+    return universities.filter((uni) =>
       uni.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [searchTerm]);
+  }, [searchTerm, universities]);
 
 
   return (
@@ -54,23 +75,32 @@ export default function UniversitiesPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-        {filteredUniversities.map((uni: University) => (
-          <UniversityCard
-            key={uni.name}
-            initials={getInitials(uni.name)}
-            name={uni.name}
-            description={uni.description}
-          />
-        ))}
-      </div>
-      
-      {filteredUniversities.length === 0 && (
-        <div className="text-center py-16">
-            <p className="text-2xl font-semibold">No universities found for &quot;{searchTerm}&quot;</p>
-            <p className="text-white/70 mt-2">Try a different search term.</p>
+       {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-64 w-full rounded-xl" />)}
         </div>
-      )}
+       ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                {filteredUniversities.map((uni: University) => (
+                <UniversityCard
+                    key={uni.name}
+                    initials={getInitials(uni.name)}
+                    name={uni.name}
+                    description={uni.description}
+                />
+                ))}
+            </div>
+            
+            {filteredUniversities.length === 0 && (
+                <div className="text-center py-16">
+                    <p className="text-2xl font-semibold">No universities found for &quot;{searchTerm}&quot;</p>
+                    <p className="text-white/70 mt-2">Try a different search term.</p>
+                </div>
+            )}
+          </>
+       )}
+
 
       <div className="text-center bg-slate-900/50 backdrop-blur-sm rounded-2xl p-8 md:p-12 animate-fade-in-up">
         <h2 className="text-3xl font-bold">Can&apos;t find your university?</h2>

@@ -1,3 +1,4 @@
+
 export type Note = {
   _id: string;
   title: string;
@@ -19,6 +20,7 @@ export type Note = {
 };
 
 export type University = {
+  _id: string;
   name: string;
   location: string;
   description: string;

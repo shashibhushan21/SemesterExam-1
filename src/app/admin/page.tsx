@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Shield, Users, FileText, BarChart, Edit, KeyRound } from 'lucide-react';
+import { Shield, Users, FileText, BarChart, Edit, KeyRound, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { EditProfileDialog } from '../profile/components/edit-profile-dialog';
@@ -109,7 +109,7 @@ export default function AdminPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Manage Users</CardTitle>
@@ -166,6 +166,20 @@ export default function AdminPage() {
             </Link>
           </CardContent>
         </Card>
+        
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Site Settings</CardTitle>
+            <Settings className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-muted-foreground mt-1">Manage universities, subjects, branches and more.</p>
+            <Link href="/admin/settings" passHref>
+                <Button variant="outline" size="sm" className="mt-4">Go to Settings</Button>
+            </Link>
+          </CardContent>
+        </Card>
+
       </div>
     </div>
   );

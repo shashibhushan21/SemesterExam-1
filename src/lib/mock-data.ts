@@ -1,6 +1,9 @@
+
 import type { University } from './types';
 
-export const allUniversities: University[] = [
+// This data is now managed in the database and fetched via API.
+// This file can be removed or kept for reference, but is no longer used by the application.
+export const allUniversities: Partial<University>[] = [
   {
     name: 'West Bengal University of Technology',
     location: 'West Bengal, India',
