@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Search, MoveRight } from 'lucide-react';
-import { allUniversities } from '@/lib/mock-data';
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { UniversityCard } from '@/components/university-card';
@@ -17,7 +16,7 @@ import { TestimonialCard } from '@/components/testimonial-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
-import type { Note } from '@/lib/types';
+import type { Note, University as UniversityType } from '@/lib/types';
 
 const getInitials = (name: string) => {
     return name
@@ -33,10 +32,13 @@ export default function Home() {
   const { user, loading } = useAuth();
   const [isMounted, setIsMounted] = useState(false);
   const [notes, setNotes] = useState<Note[]>([]);
+  const [universities, setUniversities] = useState<UniversityType[]>([]);
   const [notesLoading, setNotesLoading] = useState(true);
+  const [universitiesLoading, setUniversitiesLoading] = useState(true);
 
   useEffect(() => {
     setIsMounted(true);
+    
     const fetchNotes = async () => {
       try {
         const res = await fetch('/api/notes');
@@ -48,10 +50,24 @@ export default function Home() {
         setNotesLoading(false);
       }
     }
+
+    const fetchUniversities = async () => {
+        try {
+            const res = await fetch('/api/admin/settings/universities');
+            const data = await res.json();
+            setUniversities(data.universities);
+        } catch (error) {
+            console.error("Failed to fetch universities", error);
+        } finally {
+            setUniversitiesLoading(false);
+        }
+    }
+
     fetchNotes();
+    fetchUniversities();
   }, []);
 
-  const universities = [...new Set(notes.map((note) => note.university))];
+  const availableUniversities = [...new Set(notes.map((note) => note.university))];
   const semesters = [...new Set(notes.map((note) => note.semester))];
   const subjects = [...new Set(notes.map((note) => note.subject))];
 
@@ -167,7 +183,7 @@ export default function Home() {
                       <SelectValue placeholder="Select University" />
                     </SelectTrigger>
                     <SelectContent>
-                      {universities.map((uni) => (
+                      {availableUniversities.map((uni) => (
                         <SelectItem key={uni} value={uni}>{uni}</SelectItem>
                       ))}
                     </SelectContent>
@@ -229,11 +245,17 @@ export default function Home() {
           <h2 className="text-3xl sm:text-4xl font-bold text-center text-white mb-12 animate-fade-in-up">
             Top Universities
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {allUniversities.map((uni, index) => (
-              <UniversityCard key={index} {...uni} initials={getInitials(uni.name)} />
-            ))}
-          </div>
+          {universitiesLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-56 w-full rounded-xl" />)}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {universities.map((uni, index) => (
+                <UniversityCard key={index} {...uni} initials={getInitials(uni.name)} />
+                ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -341,3 +363,5 @@ export default function Home() {
     </>
   );
 }
+
+    
