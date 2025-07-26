@@ -9,7 +9,6 @@ import { FeatureCard } from '@/components/feature-card';
 import { BookOpen } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { TestimonialCard } from '@/components/testimonial-card';
-import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import type { Note, University, Feature, Testimonial, Faq } from '@/lib/types';
 import { connectToDatabase } from '@/lib/db';

@@ -49,7 +49,6 @@
     "lucide-react": "^0.475.0",
     "mongoose": "^8.6.0",
     "next": "15.3.3",
-    "pdfjs-dist": "4.5.136",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",
@@ -74,7 +73,7 @@
   },
   "overrides": {
     "react-pdf": {
-      "pdfjs-dist": "$pdfjs-dist"
+      "pdfjs-dist": "4.5.136"
     }
   }
 }
