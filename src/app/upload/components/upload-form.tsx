@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -32,39 +32,14 @@ interface SettingsData {
   branches: { _id: string; name: string }[];
 }
 
-export function UploadForm() {
+interface UploadFormProps {
+  settings: SettingsData;
+}
+
+export function UploadForm({ settings }: UploadFormProps) {
   const { toast } = useToast();
   const [isSuggesting, setIsSuggesting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [settings, setSettings] = useState<SettingsData>({ universities: [], subjects: [], branches: [] });
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchSettings() {
-      try {
-        const [uniRes, subRes, branchRes] = await Promise.all([
-          fetch('/api/admin/settings/universities'),
-          fetch('/api/admin/settings/subjects'),
-          fetch('/api/admin/settings/branches'),
-        ]);
-        const uniData = await uniRes.json();
-        const subData = await subRes.json();
-        const branchData = await branchRes.json();
-        
-        setSettings({
-          universities: uniData.universities || [],
-          subjects: subData.subjects || [],
-          branches: branchData.branches || [],
-        });
-      } catch (error) {
-        console.error("Failed to fetch settings for form", error);
-        toast({ title: "Error", description: "Could not load form data. Please refresh.", variant: "destructive" });
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchSettings();
-  }, []);
 
   const { register, handleSubmit, control, watch, setValue, reset, formState: { errors } } = useForm<UploadFormValues>({
     resolver: zodResolver(uploadSchema),
@@ -138,6 +113,8 @@ export function UploadForm() {
       setIsUploading(false);
     }
   };
+
+  const loading = settings.universities.length === 0 && settings.subjects.length === 0;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -241,7 +218,7 @@ export function UploadForm() {
       <div className="flex justify-end pt-4">
         <Button type="submit" size="lg" disabled={isUploading || loading}>
           {(isUploading || loading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Upload Note
+          {loading ? 'Loading...' : 'Upload Note'}
         </Button>
       </div>
     </form>
