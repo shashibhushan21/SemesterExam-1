@@ -20,7 +20,7 @@ async function getNotes() {
 }
 
 async function getUniversityByName(name: string): Promise<University | null> {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/settings/universities`, { cache: 'no-store' });
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/universities`, { cache: 'no-store' });
     if (!res.ok) {
         return null;
     }
