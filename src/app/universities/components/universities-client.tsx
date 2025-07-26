@@ -50,38 +50,32 @@ export function UniversitiesClient({ universities }: UniversitiesClientProps) {
             </div>
         </div>
         
-        {universities.length > 0 ? (
-            <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-                    {filteredUniversities.map((uni: University) => (
-                    <UniversityCard
-                        key={uni._id}
-                        initials={getInitials(uni.name)}
-                        name={uni.name}
-                        description={uni.description}
-                    />
-                    ))}
-                </div>
-                
-                {filteredUniversities.length === 0 && (
-                    <div className="text-center py-16">
-                        <p className="text-2xl font-semibold">No universities found for &quot;{searchTerm}&quot;</p>
-                        <p className="text-white/70 mt-2">Try a different search term.</p>
-                    </div>
-                )}
-            </>
+        {filteredUniversities.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                {filteredUniversities.map((uni: University) => (
+                <UniversityCard
+                    key={uni._id}
+                    initials={getInitials(uni.name)}
+                    name={uni.name}
+                    description={uni.description}
+                />
+                ))}
+            </div>
         ) : (
-             <div className="text-center py-16">
-                <p className="text-2xl font-semibold">No universities have been added yet.</p>
-                <p className="text-white/70 mt-2">Check back later or contact us to add your university.</p>
+            <div className="text-center py-16">
+                <p className="text-2xl font-semibold">
+                    {searchTerm ? `No universities found for "${searchTerm}"` : "No universities have been added yet."}
+                </p>
+                <p className="text-white/70 mt-2">
+                    {searchTerm ? "Try a different search term." : "Check back later or contact us to add your university."}
+                </p>
             </div>
         )}
 
-
-      <div className="text-center bg-slate-900/50 backdrop-blur-sm rounded-2xl p-8 md:p-12 animate-fade-in-up">
-        <h2 className="text-3xl font-bold">Can&apos;t find your university?</h2>
+      <div className="text-center bg-slate-900/50 backdrop-blur-sm rounded-2xl p-8 md:p-12 animate-fade-in-up mt-16">
+        <h2 className="text-3xl font-bold">Can't find your university?</h2>
         <p className="mt-4 text-lg text-white/70 max-w-2xl mx-auto">
-          We&apos;re constantly adding more universities. Let us know and we&apos;ll prioritize adding it to our platform.
+          We're constantly adding more universities. Let us know and we'll prioritize adding it to our platform.
         </p>
         <div className="mt-8">
             <Link href="/contact">
