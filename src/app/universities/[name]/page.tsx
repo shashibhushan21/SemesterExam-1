@@ -8,6 +8,8 @@ import { Note, University } from '@/lib/types';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { GET as getAllNotes } from '../../api/notes/route';
+import { connectToDatabase } from '@/lib/db';
+import UniversityModel from '@/models/university';
 
 async function getNotes() {
     // Directly call the API route handler logic
@@ -20,14 +22,19 @@ async function getNotes() {
 }
 
 async function getUniversityByName(name: string): Promise<University | null> {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/universities`, { cache: 'no-store' });
-    if (!res.ok) {
+    try {
+        await connectToDatabase();
+        const decodedName = decodeURIComponent(name);
+        const university = await UniversityModel.findOne({ name: { $regex: new RegExp(`^${decodedName}$`, 'i') } }).lean();
+        if (!university) {
+            return null;
+        }
+        // Convert mongoose document to plain object and ensure _id is a string
+        return JSON.parse(JSON.stringify(university)) as University;
+    } catch (error) {
+        console.error("Failed to fetch university by name:", error);
         return null;
     }
-    const data = await res.json();
-    const decodedName = decodeURIComponent(name).toLowerCase();
-    const university = data.universities.find((uni: University) => uni.name.toLowerCase() === decodedName);
-    return university || null;
 }
 
 export default async function UniversityDetailPage({ params }: { params: { name: string } }) {
