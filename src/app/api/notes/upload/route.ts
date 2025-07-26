@@ -35,7 +35,7 @@ const uploadToCloudinary = (file: File): Promise<any> => {
         const stream = cloudinary.uploader.upload_stream(
             {
                 folder: 'examnotes_notes',
-                resource_type: 'raw', // Explicitly set to 'raw' for non-image files like PDF
+                resource_type: 'raw',
             },
             (error, result) => {
                 if (error) {
