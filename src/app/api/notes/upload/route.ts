@@ -1,3 +1,4 @@
+
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 import { connectToDatabase } from '@/lib/db';
@@ -75,7 +76,7 @@ export async function POST(req: NextRequest) {
         
         const uploadResult = await cloudinary.uploader.upload(fileUri, {
             folder: "examnotes_notes",
-            resource_type: 'image'
+            resource_type: 'raw'
         });
 
         // For simplicity, using a placeholder thumbnail.
