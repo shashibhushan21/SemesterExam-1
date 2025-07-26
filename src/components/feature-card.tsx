@@ -6,10 +6,10 @@ interface FeatureCardProps {
   icon: LucideIcon;
   title: string;
   description: string;
-  color: string;
 }
 
-export function FeatureCard({ icon: Icon, title, description, color }: FeatureCardProps) {
+export function FeatureCard({ icon: Icon, title, description }: FeatureCardProps) {
+  const color = "from-blue-500 to-purple-600";
   return (
     <div className="group relative rounded-xl transition-all duration-500 transform hover:-translate-y-2">
        <div className={cn(

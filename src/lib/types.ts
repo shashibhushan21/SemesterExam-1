@@ -32,7 +32,6 @@ export type Feature = {
   icon: any;
   title: string;
   description: string;
-  color: string;
 };
 
 export type Testimonial = {

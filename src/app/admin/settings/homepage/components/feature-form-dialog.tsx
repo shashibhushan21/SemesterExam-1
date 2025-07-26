@@ -17,7 +17,6 @@ const formSchema = z.object({
   icon: z.string().min(2, 'Icon name is required (e.g., BookOpen)'),
   title: z.string().min(3, 'Title is required'),
   description: z.string().min(10, 'Description is required'),
-  color: z.string().min(3, 'Color is required (e.g., from-blue-500 to-purple-600)'),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -39,7 +38,6 @@ export function FeatureFormDialog({ children, item, onFinished }: FeatureFormDia
       icon: item?.icon || '',
       title: item?.title || '',
       description: item?.description || '',
-      color: item?.color || '',
     },
   });
 
@@ -94,11 +92,6 @@ export function FeatureFormDialog({ children, item, onFinished }: FeatureFormDia
                 <Label htmlFor="description">Description</Label>
                 <Textarea id="description" {...form.register('description')} />
                 {form.formState.errors.description && <p className="text-sm text-destructive">{form.formState.errors.description.message}</p>}
-            </div>
-             <div className="space-y-2">
-                <Label htmlFor="color">Tailwind Gradient Classes</Label>
-                <Input id="color" {...form.register('color')} placeholder="e.g., from-blue-500 to-purple-600" />
-                {form.formState.errors.color && <p className="text-sm text-destructive">{form.formState.errors.color.message}</p>}
             </div>
             <DialogFooter>
                 <Button type="submit" disabled={isSubmitting}>
