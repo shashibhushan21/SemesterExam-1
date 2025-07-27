@@ -35,7 +35,9 @@ const uploadToCloudinary = (file: File): Promise<any> => {
         const stream = cloudinary.uploader.upload_stream(
             {
                 folder: 'examnotes_notes',
-                resource_type: 'raw', 
+                resource_type: 'auto',
+                pages: true, // This is crucial for PDF processing
+                access_mode: 'public', // This makes the file publicly accessible
             },
             (error, result) => {
                 if (error) {
