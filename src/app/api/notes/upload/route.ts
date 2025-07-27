@@ -35,7 +35,7 @@ const uploadToCloudinary = (file: File): Promise<any> => {
         const stream = cloudinary.uploader.upload_stream(
             {
                 folder: 'examnotes_notes',
-                resource_type: 'raw', // Upload as a raw file
+                resource_type: 'raw',
                 access_mode: 'public',
             },
             (error, result) => {
@@ -96,7 +96,8 @@ export async function POST(req: NextRequest) {
         const uploadResult = await uploadToCloudinary(file);
         
         const pdfUrl = uploadResult.secure_url;
-        const thumbnailUrl = `https://placehold.co/400x200.png`; // Stable placeholder
+        // Using a stable placeholder for thumbnail to ensure stability
+        const thumbnailUrl = `https://placehold.co/400x200.png`; 
         
         const newNote = new Note({
             title,
