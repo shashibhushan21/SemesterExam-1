@@ -35,10 +35,9 @@ const uploadToCloudinary = (file: File): Promise<any> => {
         const stream = cloudinary.uploader.upload_stream(
             {
                 folder: 'examnotes_notes',
-                resource_type: 'raw',
+                resource_type: 'raw', // Upload as raw file for PDF viewer
                 use_filename: true,
                 format: 'pdf',
-                type: 'upload',
             },
             (error, result) => {
                 if (error) {
@@ -101,11 +100,18 @@ export async function POST(req: NextRequest) {
             throw new Error('Cloudinary upload failed to return a public_id.');
         }
         
-        // This is the critical fix: Remove query parameters from the URL
-        const cleanPdfUrl = uploadResult.secure_url.split('?')[0];
-
-        // Use a placeholder for the thumbnail URL as generating it from a raw file is complex.
-        const thumbnailUrl = 'https://placehold.co/400x200.png';
+        // Correct PDF URL from the raw upload
+        const pdfUrl = uploadResult.secure_url;
+        
+        // Correct Thumbnail URL generated from the raw upload's public_id
+        const thumbnailUrl = cloudinary.url(uploadResult.public_id, {
+            resource_type: 'image',
+            page: 1,
+            format: 'jpg',
+            width: 400,
+            height: 200,
+            crop: 'fill',
+        });
         
         const newNote = new Note({
             title,
@@ -113,8 +119,8 @@ export async function POST(req: NextRequest) {
             subject,
             semester,
             branch,
-            pdfUrl: cleanPdfUrl, // Use the cleaned URL
-            thumbnailUrl,
+            pdfUrl, // Use the direct raw URL
+            thumbnailUrl, // Use the correctly transformed image URL
             author: new mongoose.Types.ObjectId(userId),
             summary: noteContent || 'No summary provided.',
             content: noteContent || '',
