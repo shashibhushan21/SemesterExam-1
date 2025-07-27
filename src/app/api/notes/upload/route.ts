@@ -35,8 +35,7 @@ const uploadToCloudinary = (file: File): Promise<any> => {
         const stream = cloudinary.uploader.upload_stream(
             {
                 folder: 'examnotes_notes',
-                resource_type: 'auto', // Use 'auto' to let Cloudinary detect it's a PDF and allow page transformations
-                pages: true, // Process pages for thumbnail generation
+                resource_type: 'raw', 
             },
             (error, result) => {
                 if (error) {
@@ -99,15 +98,8 @@ export async function POST(req: NextRequest) {
             throw new Error('Cloudinary upload failed to return a public_id.');
         }
         
-        // ** THE FIX **
-        // Generate two separate, correct URLs from the same public_id.
+        const pdfUrl = uploadResult.secure_url;
 
-        // 1. PDF URL (for the viewer): Point to the 'raw' version of the asset.
-        const pdfUrl = cloudinary.url(uploadResult.public_id, {
-            resource_type: 'raw',
-        });
-
-        // 2. Thumbnail URL (for the card): Point to the 'image' version, transformed.
         const thumbnailUrl = cloudinary.url(uploadResult.public_id, {
             resource_type: 'image',
             page: 1,
@@ -123,8 +115,8 @@ export async function POST(req: NextRequest) {
             subject,
             semester,
             branch,
-            pdfUrl, // Use the correct raw URL
-            thumbnailUrl, // Use the correct transformed image URL
+            pdfUrl,
+            thumbnailUrl,
             author: new mongoose.Types.ObjectId(userId),
             summary: noteContent || 'No summary provided.',
             content: noteContent || '',
