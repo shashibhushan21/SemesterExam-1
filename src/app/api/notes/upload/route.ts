@@ -96,14 +96,12 @@ export async function POST(req: NextRequest) {
         
         const uploadResult = await uploadToCloudinary(file);
         
-        // ** THE FIX **
-        // The upload result for a PDF with `resource_type: 'auto'` gives an 'image' url.
-        // We need to manually construct the 'raw' url for the PDF viewer.
-        const pdfUrl = uploadResult.secure_url.replace('/image/upload/', '/raw/upload/');
+        const pdfUrl = cloudinary.url(uploadResult.public_id, {
+            resource_type: 'image',
+        }) + ".pdf";
         
-        // Create a separate URL for the thumbnail image transformation
         const thumbnailUrl = cloudinary.url(uploadResult.public_id, {
-            resource_type: 'image', // The thumbnail is an image
+            resource_type: 'image',
             page: 1,
             format: 'jpg',
             quality: 'auto',
@@ -116,8 +114,8 @@ export async function POST(req: NextRequest) {
             subject,
             semester,
             branch,
-            pdfUrl, // The correct RAW url for the viewer
-            thumbnailUrl, // The correct IMAGE url for the thumbnail
+            pdfUrl,
+            thumbnailUrl,
             author: new mongoose.Types.ObjectId(userId),
             summary: noteContent || 'No summary provided.',
             content: noteContent || '',
