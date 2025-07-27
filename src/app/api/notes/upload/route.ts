@@ -35,8 +35,7 @@ const uploadToCloudinary = (file: File): Promise<any> => {
         const stream = cloudinary.uploader.upload_stream(
             {
                 folder: 'examnotes_notes',
-                resource_type: 'image', // Upload as image to allow page transformations
-                pages: true,
+                resource_type: 'raw', // Upload as a raw file
                 access_mode: 'public',
             },
             (error, result) => {
@@ -96,17 +95,8 @@ export async function POST(req: NextRequest) {
         
         const uploadResult = await uploadToCloudinary(file);
         
-        // Correct URL for the PDF viewer
-        const pdfUrl = uploadResult.secure_url.replace(/\.[^/.]+$/, ".pdf");
-        
-        // Correct URL for the thumbnail
-        const thumbnailUrl = cloudinary.url(uploadResult.public_id, {
-            resource_type: 'image',
-            page: 1,
-            format: 'jpg',
-            quality: 'auto',
-            fetch_format: 'auto',
-        });
+        const pdfUrl = uploadResult.secure_url;
+        const thumbnailUrl = `https://placehold.co/400x200.png`; // Stable placeholder
         
         const newNote = new Note({
             title,
