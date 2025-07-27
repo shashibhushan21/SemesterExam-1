@@ -35,8 +35,8 @@ const uploadToCloudinary = (file: File): Promise<any> => {
         const stream = cloudinary.uploader.upload_stream(
             {
                 folder: 'examnotes_notes',
-                resource_type: 'auto', // Use 'auto' to let Cloudinary detect and process PDF
-                pages: true, // Process all pages to enable thumbnail generation
+                resource_type: 'auto',
+                pages: true,
             },
             (error, result) => {
                 if (error) {
@@ -99,7 +99,8 @@ export async function POST(req: NextRequest) {
             throw new Error('Cloudinary upload failed to return a public_id.');
         }
         
-        const pdfUrl = uploadResult.secure_url;
+        // This is the critical fix: Remove query parameters from the URL
+        const cleanPdfUrl = uploadResult.secure_url.split('?')[0];
 
         // Correctly generate thumbnail URL from the processed image
         const thumbnailUrl = cloudinary.url(uploadResult.public_id, {
@@ -116,7 +117,7 @@ export async function POST(req: NextRequest) {
             subject,
             semester,
             branch,
-            pdfUrl,
+            pdfUrl: cleanPdfUrl, // Use the cleaned URL
             thumbnailUrl,
             author: new mongoose.Types.ObjectId(userId),
             summary: noteContent || 'No summary provided.',
