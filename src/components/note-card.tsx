@@ -6,26 +6,36 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Star } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 interface NoteCardProps {
   note: Note;
 }
 
+const getThumbnailUrl = (pdfUrl: string) => {
+    if (!pdfUrl || !pdfUrl.includes('cloudinary')) return 'https://placehold.co/400x200.png';
+    const parts = pdfUrl.split('/upload/');
+    if (parts.length !== 2) return 'https://placehold.co/400x200.png';
+    const thumbnailUrl = `${parts[0]}/upload/pg_1,f_jpg/${parts[1]}`;
+    return thumbnailUrl;
+};
+
+
 export function NoteCard({ note }: NoteCardProps) {
-    const thumbnailUrl = note.thumbnailUrl || 'https://placehold.co/400x200.png';
+    const [imgSrc, setImgSrc] = useState(getThumbnailUrl(note.pdfUrl));
 
     return (
         <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-slate-900/50 backdrop-blur-sm text-white border-white/10">
         <CardHeader className="p-0 relative">
             <Image
-            src={thumbnailUrl}
+            src={imgSrc}
             alt={note.title}
             width={400}
             height={200}
             className="object-cover w-full h-40"
             data-ai-hint="note document"
-            onError={(e) => {
-              e.currentTarget.src = 'https://placehold.co/400x200.png';
+            onError={() => {
+              setImgSrc('https://placehold.co/400x200.png');
             }}
             />
         </CardHeader>
