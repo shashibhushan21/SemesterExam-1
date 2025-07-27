@@ -35,8 +35,8 @@ const uploadToCloudinary = (file: File): Promise<any> => {
         const stream = cloudinary.uploader.upload_stream(
             {
                 folder: 'examnotes_notes',
-                resource_type: 'auto', // Use 'auto' to let Cloudinary detect it's a PDF and enable page transformations
-                pages: true,           // Critical for generating thumbnails from pages
+                resource_type: 'auto',
+                pages: true,
                 access_mode: 'public',
             },
             (error, result) => {
