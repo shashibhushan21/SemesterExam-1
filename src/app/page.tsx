@@ -1,9 +1,8 @@
 
 import Link from 'next/link';
 import * as LucideIcons from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { Search, MoveRight } from 'lucide-react';
+import { MoveRight } from 'lucide-react';
 import { UniversityCard } from '@/components/university-card';
 import { FeatureCard } from '@/components/feature-card';
 import { BookOpen } from 'lucide-react';
@@ -20,6 +19,7 @@ import FaqModel from '@/models/faq';
 import { AuthButton } from '@/components/auth-button';
 import { ClientOnly } from '@/components/client-only';
 import { HeroCarousel } from '@/components/hero-carousel';
+import { HeroSearch } from '@/app/components/hero-search';
 
 
 const getInitials = (name: string) => {
@@ -70,48 +70,11 @@ export default async function Home() {
           
            <HeroCarousel />
           
-          <div className="mt-8 p-4 bg-white/10 backdrop-blur-sm rounded-lg w-full max-w-4xl">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              
-                <ClientOnly>
-                  <Select>
-                    <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
-                      <SelectValue placeholder="Select University" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableUniversities.map((uni) => (
-                        <SelectItem key={uni} value={uni}>{uni}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select>
-                    <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
-                      <SelectValue placeholder="Select Semester" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {semesters.map((sem) => (
-                        <SelectItem key={sem} value={sem}>{sem}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select>
-                    <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
-                      <SelectValue placeholder="Select Subject" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {subjects.map((sub) => (
-                        <SelectItem key={sub} value={sub}>{sub}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button size="lg" className="h-12 bg-white text-primary hover:bg-gray-200 transition-all duration-300 transform hover:scale-105">
-                    <Search className="mr-2 h-5 w-5" />
-                    Search
-                  </Button>
-                </ClientOnly>
-              
-            </div>
-          </div>
+           <HeroSearch 
+              universities={availableUniversities}
+              semesters={semesters}
+              subjects={subjects}
+            />
 
           <div className="mt-8">
              <Link
