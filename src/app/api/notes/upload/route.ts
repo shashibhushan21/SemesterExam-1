@@ -35,7 +35,7 @@ const uploadToCloudinary = (file: File): Promise<any> => {
         const stream = cloudinary.uploader.upload_stream(
             {
                 folder: 'examnotes_notes',
-                resource_type: 'raw', // Upload as a raw file
+                resource_type: 'raw', // Explicitly set to 'raw' for PDFs
             },
             (error, result) => {
                 if (error) {
@@ -64,7 +64,6 @@ export async function POST(req: NextRequest) {
         }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
-        
         const userId = decoded.id;
         
         if (decoded.role !== 'admin') {
@@ -95,12 +94,14 @@ export async function POST(req: NextRequest) {
         
         const uploadResult = await uploadToCloudinary(file);
         
-        // Construct the correct thumbnail URL from the public_id
-        // This URL transforms the first page of the PDF into a JPG image
+        // This is the correct, permanent URL to the raw PDF file.
+        const pdfUrl = uploadResult.secure_url;
+        
+        // This generates a correct URL for an image preview of the first page.
         const thumbnailUrl = cloudinary.url(uploadResult.public_id, {
-            resource_type: 'image', // We are requesting an image transformation
-            page: 1,
+            resource_type: 'image',
             format: 'jpg',
+            page: 1,
             quality: 'auto',
             fetch_format: 'auto',
         });
@@ -111,8 +112,8 @@ export async function POST(req: NextRequest) {
             subject,
             semester,
             branch,
-            pdfUrl: uploadResult.secure_url, // This will be the URL to the raw PDF file
-            thumbnailUrl: thumbnailUrl, // This is the URL to the generated image preview
+            pdfUrl: pdfUrl,
+            thumbnailUrl: thumbnailUrl,
             author: new mongoose.Types.ObjectId(userId),
             summary: noteContent || 'No summary provided.',
             content: noteContent || '',
