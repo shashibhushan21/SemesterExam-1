@@ -7,33 +7,38 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Star } from 'lucide-react';
-import Link from 'next/link';
 import { useState } from 'react';
 
 interface NoteCardProps {
   note: Note;
 }
 
+const getThumbnailUrl = (pdfUrl: string): string => {
+  if (!pdfUrl || typeof pdfUrl !== 'string') {
+    return 'https://placehold.co/400x200.png';
+  }
+  // This transformation creates a URL that tells Cloudinary to convert the first page of the PDF to a JPG.
+  return pdfUrl.replace(/\.pdf$/, '.jpg');
+};
+
 export function NoteCard({ note }: NoteCardProps) {
-    const [imgSrc, setImgSrc] = useState(note.thumbnailUrl || 'https://placehold.co/400x200.png');
+    const [imgSrc, setImgSrc] = useState(getThumbnailUrl(note.pdfUrl));
 
     return (
         <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-slate-900/50 backdrop-blur-sm text-white border-white/10">
         <CardHeader className="p-0 relative">
             <Image
-            src={imgSrc}
-            alt={note.title}
-            width={400}
-            height={200}
-            className="object-cover w-full h-40"
-            data-ai-hint="note document"
-            onError={() => {
-              // If the thumbnail URL from the DB fails, fall back to a placeholder.
-              // This prevents an infinite loop if the stored URL is somehow invalid.
-              if (imgSrc !== 'https://placehold.co/400x200.png') {
-                 setImgSrc('https://placehold.co/400x200.png');
-              }
-            }}
+                src={imgSrc}
+                alt={note.title}
+                width={400}
+                height={200}
+                className="object-cover w-full h-40"
+                data-ai-hint="note document"
+                onError={() => {
+                  if (imgSrc !== 'https://placehold.co/400x200.png') {
+                     setImgSrc('https://placehold.co/400x200.png');
+                  }
+                }}
             />
         </CardHeader>
         <CardContent className="p-4 flex-grow flex flex-col">

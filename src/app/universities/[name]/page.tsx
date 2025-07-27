@@ -35,7 +35,9 @@ async function getUniversityData(name: string) {
 }
 
 export default async function UniversityDetailPage({ params }: { params: { name: string } }) {
-  const { university, notes } = await getUniversityData(params.name);
+  // Directly awaiting the params as suggested by Next.js for dynamic routes.
+  const name = params.name;
+  const { university, notes } = await getUniversityData(name);
 
   if (!university) {
     notFound();
