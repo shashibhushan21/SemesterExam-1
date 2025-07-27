@@ -96,8 +96,6 @@ export async function POST(req: NextRequest) {
         const { title, university, subject, semester, branch, noteContent } = validation.data;
         
         const uploadResult = await uploadToCloudinary(file);
-        
-        const thumbnailUrl = '';
 
         const newNote = new Note({
             title,
@@ -106,7 +104,6 @@ export async function POST(req: NextRequest) {
             semester,
             branch,
             pdfUrl: uploadResult.secure_url,
-            thumbnailUrl,
             author: new mongoose.Types.ObjectId(userId),
             summary: noteContent || 'No summary provided.',
             content: noteContent || '',
