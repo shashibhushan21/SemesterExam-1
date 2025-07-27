@@ -27,9 +27,7 @@ export function NoteCard({ note }: NoteCardProps) {
                 className="object-cover w-full h-40"
                 data-ai-hint="note document"
                 onError={() => {
-                  if (imgSrc !== 'https://placehold.co/400x200.png') {
                      setImgSrc('https://placehold.co/400x200.png');
-                  }
                 }}
             />
         </CardHeader>
