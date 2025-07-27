@@ -110,8 +110,8 @@ export async function POST(req: NextRequest) {
             subject,
             semester,
             branch,
-            pdfUrl: pdfUrl,
-            thumbnailUrl: thumbnailUrl,
+            pdfUrl, // The raw URL from uploadResult
+            thumbnailUrl, // The transformed image URL
             author: new mongoose.Types.ObjectId(userId),
             summary: noteContent || 'No summary provided.',
             content: noteContent || '',
