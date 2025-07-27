@@ -35,7 +35,7 @@ const uploadToCloudinary = (file: File): Promise<any> => {
         const stream = cloudinary.uploader.upload_stream(
             {
                 folder: 'examnotes_notes',
-                resource_type: 'auto',
+                resource_type: 'image', // Upload as image to allow page transformations
                 pages: true,
                 access_mode: 'public',
             },
@@ -96,10 +96,10 @@ export async function POST(req: NextRequest) {
         
         const uploadResult = await uploadToCloudinary(file);
         
-        const pdfUrl = cloudinary.url(uploadResult.public_id, {
-            resource_type: 'image',
-        }) + ".pdf";
+        // Correct URL for the PDF viewer
+        const pdfUrl = uploadResult.secure_url.replace(/\.[^/.]+$/, ".pdf");
         
+        // Correct URL for the thumbnail
         const thumbnailUrl = cloudinary.url(uploadResult.public_id, {
             resource_type: 'image',
             page: 1,
