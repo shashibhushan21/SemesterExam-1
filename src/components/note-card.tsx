@@ -12,16 +12,37 @@ interface NoteCardProps {
 }
 
 export function NoteCard({ note }: NoteCardProps) {
+    const getThumbnailUrl = (pdfUrl: string) => {
+        if (!pdfUrl) return 'https://placehold.co/400x200.png';
+        
+        // Correctly construct the Cloudinary URL for a PDF preview
+        // Example URL: https://res.cloudinary.com/cloud_name/image/upload/v12345/folder/public_id.pdf
+        // We need to change it to: https://res.cloudinary.com/cloud_name/image/upload/pg_1,f_jpg/v12345/folder/public_id.jpg
+        
+        // This is a more robust way to replace the URL parts
+        const url = new URL(pdfUrl);
+        // The path will be /v<version>/<public_id>.pdf, we need the public id part
+        const publicIdWithFolder = url.pathname.split('/').slice(4).join('/').replace('.pdf', '');
+
+        return `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'bhushancloud'}/image/upload/pg_1,f_jpg/${publicIdWithFolder}.jpg`;
+    };
+
+    const thumbnailUrl = getThumbnailUrl(note.pdfUrl);
+
     return (
         <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-slate-900/50 backdrop-blur-sm text-white border-white/10">
         <CardHeader className="p-0 relative">
             <Image
-            src={note.thumbnailUrl}
+            src={thumbnailUrl}
             alt={note.title}
             width={400}
             height={200}
             className="object-cover w-full h-40"
             data-ai-hint="note document"
+            onError={(e) => {
+              // Fallback in case of an error
+              e.currentTarget.src = 'https://placehold.co/400x200.png';
+            }}
             />
         </CardHeader>
         <CardContent className="p-4 flex-grow flex flex-col">

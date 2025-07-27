@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
         
         const uploadResult = await uploadToCloudinary(file);
         
-        const thumbnailUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/v${uploadResult.version}/${uploadResult.public_id}.jpg`;
+        const thumbnailUrl = ''; // No longer needed as it's generated on the fly
 
         const newNote = new Note({
             title,
