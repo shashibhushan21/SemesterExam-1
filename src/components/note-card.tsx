@@ -1,4 +1,6 @@
 
+'use client';
+
 import Image from 'next/image';
 import type { Note } from '@/lib/types';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
@@ -14,15 +16,21 @@ interface NoteCardProps {
 
 const getThumbnailUrl = (pdfUrl: string) => {
     if (!pdfUrl || !pdfUrl.includes('cloudinary')) return 'https://placehold.co/400x200.png';
-    const parts = pdfUrl.split('/upload/');
+    
+    // Correctly replace /raw/upload with /image/upload for transformation
+    // and construct the URL to get the first page as a JPG.
+    const imageUrl = pdfUrl.replace('/raw/upload/', '/image/upload/').replace(/\.pdf$/, '.jpg');
+    const parts = imageUrl.split('/upload/');
+    
     if (parts.length !== 2) return 'https://placehold.co/400x200.png';
+
     const thumbnailUrl = `${parts[0]}/upload/pg_1,f_jpg/${parts[1]}`;
     return thumbnailUrl;
 };
 
 
 export function NoteCard({ note }: NoteCardProps) {
-    const [imgSrc, setImgSrc] = useState(getThumbnailUrl(note.pdfUrl));
+    const [imgSrc, setImgSrc] = useState(note.pdfUrl ? getThumbnailUrl(note.pdfUrl) : 'https://placehold.co/400x200.png');
 
     return (
         <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-slate-900/50 backdrop-blur-sm text-white border-white/10">
