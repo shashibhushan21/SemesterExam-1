@@ -29,16 +29,10 @@ interface DecodedToken {
   role: string;
 }
 
-const uploadToCloudinary = (file: File): Promise<any> => {
-    return new Promise(async (resolve, reject) => {
-        const fileBuffer = await file.arrayBuffer();
+const uploadToCloudinary = (fileBuffer: Buffer, options: any): Promise<any> => {
+    return new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
-            {
-                folder: 'examnotes_notes',
-                resource_type: 'raw',
-                access_mode: 'public', // Ensure the raw file is public
-                format: 'pdf',
-            },
+            options,
             (error, result) => {
                 if (error) {
                     console.error('Cloudinary Upload Error:', error);
@@ -49,9 +43,8 @@ const uploadToCloudinary = (file: File): Promise<any> => {
         );
 
         const readableStream = new Readable();
-        readableStream.push(Buffer.from(fileBuffer));
+        readableStream.push(fileBuffer);
         readableStream.push(null);
-        
         readableStream.pipe(stream);
     });
 };
@@ -95,18 +88,30 @@ export async function POST(req: NextRequest) {
 
         const { title, university, subject, semester, branch, noteContent } = validation.data;
         
-        const uploadResult = await uploadToCloudinary(file);
+        const fileBuffer = Buffer.from(await file.arrayBuffer());
 
-        if (!uploadResult || !uploadResult.public_id) {
-            throw new Error('Cloudinary upload failed to return a public_id.');
+        // 1. Upload as 'raw' for the PDF viewer URL
+        const rawUploadResult = await uploadToCloudinary(fileBuffer, {
+            folder: 'examnotes_notes_raw',
+            resource_type: 'raw',
+        });
+        if (!rawUploadResult || !rawUploadResult.secure_url) {
+            throw new Error('Cloudinary raw upload failed.');
+        }
+        const pdfUrl = rawUploadResult.secure_url.split('?')[0];
+
+        // 2. Upload as 'auto' for thumbnail generation
+        const autoUploadResult = await uploadToCloudinary(fileBuffer, {
+            folder: 'examnotes_notes_auto',
+            resource_type: 'auto',
+        });
+        if (!autoUploadResult || !autoUploadResult.public_id) {
+            throw new Error('Cloudinary auto upload for thumbnailing failed.');
         }
         
-        // Use the direct, clean URL for the raw PDF
-        const pdfUrl = uploadResult.secure_url.split('?')[0];
-        
-        // Correctly generate thumbnail URL from the raw upload's public_id
-        const thumbnailUrl = cloudinary.url(uploadResult.public_id, {
-            resource_type: 'image', // Specify image for transformation
+        // Generate thumbnail from the 'auto' upload's public_id
+        const thumbnailUrl = cloudinary.url(autoUploadResult.public_id, {
+            resource_type: 'image',
             page: 1,
             format: 'jpg',
             width: 400,
@@ -120,8 +125,8 @@ export async function POST(req: NextRequest) {
             subject,
             semester,
             branch,
-            pdfUrl,
-            thumbnailUrl,
+            pdfUrl, // From raw upload
+            thumbnailUrl, // From auto upload
             author: new mongoose.Types.ObjectId(userId),
             summary: noteContent || 'No summary provided.',
             content: noteContent || '',
