@@ -93,9 +93,11 @@ export async function POST(req: NextRequest) {
         const { title, university, subject, semester, branch, noteContent } = validation.data;
         
         const uploadResult = await uploadToCloudinary(file);
-        
+
+        // The raw URL for the PDF viewer
         const pdfUrl = uploadResult.secure_url;
-        
+
+        // The image URL for the thumbnail
         const thumbnailUrl = cloudinary.url(uploadResult.public_id, {
             resource_type: 'image',
             format: 'jpg',
@@ -110,8 +112,8 @@ export async function POST(req: NextRequest) {
             subject,
             semester,
             branch,
-            pdfUrl, // The raw URL from uploadResult
-            thumbnailUrl, // The transformed image URL
+            pdfUrl,
+            thumbnailUrl,
             author: new mongoose.Types.ObjectId(userId),
             summary: noteContent || 'No summary provided.',
             content: noteContent || '',
