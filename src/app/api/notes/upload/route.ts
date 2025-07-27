@@ -35,8 +35,8 @@ const uploadToCloudinary = (file: File): Promise<any> => {
         const stream = cloudinary.uploader.upload_stream(
             {
                 folder: 'examnotes_notes',
-                resource_type: 'raw', // This is crucial for non-image files like PDFs
-                use_filename: true, // Recommended for raw files
+                resource_type: 'raw',
+                use_filename: true,
                 unique_filename: false,
             },
             (error, result) => {
@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
         
         const uploadResult = await uploadToCloudinary(file);
         
-        const thumbnailUrl = ''; // No longer needed as it's generated on the fly
+        const thumbnailUrl = '';
 
         const newNote = new Note({
             title,

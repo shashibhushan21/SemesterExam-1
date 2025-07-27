@@ -17,20 +17,16 @@ export function NoteCard({ note }: NoteCardProps) {
             return 'https://placehold.co/400x200.png';
         }
         
-        // This function now correctly assumes the input `pdfUrl` is a direct link to the raw PDF
-        // e.g., https://res.cloudinary.com/<cloud_name>/raw/upload/v<version>/<folder>/<public_id>.pdf
-        // and transforms it into a thumbnail URL.
         const url = pdfUrl
-            .replace('/raw/upload/', '/image/upload/') // Switch from raw to image transformations
-            .replace(/\.pdf$/, '.jpg'); // Change extension to jpg
+            .replace('/raw/upload/', '/image/upload/')
+            .replace(/\.pdf$/, '.jpg');
 
-        // Add the page-specific transformation `pg_1`
         const parts = url.split('/upload/');
         if (parts.length === 2) {
             return `${parts[0]}/upload/pg_1,f_jpg/${parts[1]}`;
         }
         
-        return url; // Fallback just in case
+        return url;
     };
 
     const thumbnailUrl = getThumbnailUrl(note.pdfUrl);
@@ -46,7 +42,6 @@ export function NoteCard({ note }: NoteCardProps) {
             className="object-cover w-full h-40"
             data-ai-hint="note document"
             onError={(e) => {
-              // Fallback in case of an error
               e.currentTarget.src = 'https://placehold.co/400x200.png';
             }}
             />
