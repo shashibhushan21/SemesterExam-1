@@ -14,7 +14,7 @@ interface NoteCardProps {
 }
 
 export function NoteCard({ note }: NoteCardProps) {
-    const [imgSrc, setImgSrc] = useState(note.thumbnailUrl);
+    const [imgSrc, setImgSrc] = useState(note.thumbnailUrl || 'https://placehold.co/400x200.png');
 
     return (
         <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-slate-900/50 backdrop-blur-sm text-white border-white/10">
