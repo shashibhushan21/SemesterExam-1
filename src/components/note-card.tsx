@@ -17,16 +17,16 @@ export function NoteCard({ note }: NoteCardProps) {
             return 'https://placehold.co/400x200.png';
         }
         
-        const url = pdfUrl
-            .replace('/raw/upload/', '/image/upload/')
-            .replace(/\.pdf$/, '.jpg');
-
-        const parts = url.split('/upload/');
+        // Correctly handle the transformation for raw PDF uploads to get an image preview
+        const parts = pdfUrl.split('/upload/');
         if (parts.length === 2) {
-            return `${parts[0]}/upload/pg_1,f_jpg/${parts[1]}`;
+            const baseUrl = parts[0].replace('/raw/', '/image/');
+            const versionAndPath = parts[1];
+            return `${baseUrl}/upload/pg_1,f_jpg/${versionAndPath}`;
         }
         
-        return url;
+        // Fallback for any unexpected URL format
+        return 'https://placehold.co/400x200.png';
     };
 
     const thumbnailUrl = getThumbnailUrl(note.pdfUrl);
