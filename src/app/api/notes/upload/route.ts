@@ -35,8 +35,8 @@ const uploadToCloudinary = (file: File): Promise<any> => {
         const stream = cloudinary.uploader.upload_stream(
             {
                 folder: 'examnotes_notes',
-                resource_type: 'auto', // Let Cloudinary detect the file type
-                pages: true, // This is crucial to process PDF pages
+                resource_type: 'auto',
+                pages: true,
             },
             (error, result) => {
                 if (error) {
@@ -96,13 +96,12 @@ export async function POST(req: NextRequest) {
         
         const uploadResult = await uploadToCloudinary(file);
         
-        // Generate the thumbnail URL from the first page of the PDF
         const thumbnailUrl = cloudinary.url(uploadResult.public_id, {
-            resource_type: 'image',
             page: 1,
             format: 'jpg',
             quality: 'auto',
             fetch_format: 'auto',
+            resource_type: 'image'
         });
         
         const newNote = new Note({
