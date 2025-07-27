@@ -32,12 +32,13 @@ interface DecodedToken {
 const uploadToCloudinary = (file: File): Promise<any> => {
     return new Promise(async (resolve, reject) => {
         const fileBuffer = await file.arrayBuffer();
+        // Use upload_stream with resource_type: 'auto' which is better for various file types including PDFs
+        // and add `pages: true` to ensure Cloudinary processes the pages for thumbnail generation.
         const stream = cloudinary.uploader.upload_stream(
             {
                 folder: 'examnotes_notes',
-                resource_type: 'raw',
-                use_filename: true,
-                unique_filename: false,
+                resource_type: 'auto', 
+                pages: true // Important for PDF page processing
             },
             (error, result) => {
                 if (error) {
@@ -96,6 +97,15 @@ export async function POST(req: NextRequest) {
         const { title, university, subject, semester, branch, noteContent } = validation.data;
         
         const uploadResult = await uploadToCloudinary(file);
+        
+        // Generate the thumbnail URL from the public_id of the uploaded file
+        const thumbnailUrl = cloudinary.url(uploadResult.public_id, {
+            page: 1,
+            format: 'jpg',
+            crop: 'fill',
+            width: 400,
+            height: 200,
+        });
 
         const newNote = new Note({
             title,
@@ -104,6 +114,7 @@ export async function POST(req: NextRequest) {
             semester,
             branch,
             pdfUrl: uploadResult.secure_url,
+            thumbnailUrl: thumbnailUrl,
             author: new mongoose.Types.ObjectId(userId),
             summary: noteContent || 'No summary provided.',
             content: noteContent || '',

@@ -12,24 +12,7 @@ interface NoteCardProps {
 }
 
 export function NoteCard({ note }: NoteCardProps) {
-    const getThumbnailUrl = (pdfUrl: string) => {
-        if (!pdfUrl || !pdfUrl.includes('res.cloudinary.com')) {
-            return 'https://placehold.co/400x200.png';
-        }
-        
-        // Correctly handle the transformation for raw PDF uploads to get an image preview
-        const parts = pdfUrl.split('/upload/');
-        if (parts.length === 2) {
-            const baseUrl = parts[0].replace('/raw/', '/image/');
-            const versionAndPath = parts[1];
-            return `${baseUrl}/upload/pg_1,f_jpg/${versionAndPath}`;
-        }
-        
-        // Fallback for any unexpected URL format
-        return 'https://placehold.co/400x200.png';
-    };
-
-    const thumbnailUrl = getThumbnailUrl(note.pdfUrl);
+    const thumbnailUrl = note.thumbnailUrl || 'https://placehold.co/400x200.png';
 
     return (
         <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-slate-900/50 backdrop-blur-sm text-white border-white/10">
