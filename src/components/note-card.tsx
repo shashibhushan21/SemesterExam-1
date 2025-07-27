@@ -13,14 +13,21 @@ interface NoteCardProps {
 
 export function NoteCard({ note }: NoteCardProps) {
     const getCloudinaryThumbnail = (pdfUrl: string) => {
-        if (!pdfUrl) return 'https://placehold.co/400x200.png';
+        if (!pdfUrl || !pdfUrl.includes('res.cloudinary.com')) {
+          return 'https://placehold.co/400x200.png';
+        }
         
         // Transforms a Cloudinary PDF URL to a JPG thumbnail URL for the first page
         // e.g., https://res.cloudinary.com/.../raw/upload/v123/folder/file.pdf
         // becomes https://res.cloudinary.com/.../image/upload/f_jpg,pg_1/v123/folder/file.pdf
-        return pdfUrl
-          .replace('/raw/upload/', '/image/upload/f_jpg,pg_1/')
-          .replace(/\.pdf$/, '');
+        // A more robust way to do this is to split the URL and insert the transformation
+        const parts = pdfUrl.split('/upload/');
+        if (parts.length !== 2) {
+             return 'https://placehold.co/400x200.png';
+        }
+
+        const [baseUrl, assetPath] = parts;
+        return `${baseUrl}/upload/f_jpg,pg_1/${assetPath}`;
     };
     
     const thumbnailUrl = getCloudinaryThumbnail(note.pdfUrl);
