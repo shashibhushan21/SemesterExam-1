@@ -10,7 +10,7 @@ export interface INote extends Document {
   summary: string;
   content: string;
   pdfUrl: string;
-  thumbnailUrl?: string;
+  thumbnailUrl: string;
   author: mongoose.Schema.Types.ObjectId;
   rating: number;
   branch: string;
@@ -24,7 +24,7 @@ const NoteSchema: Schema = new Schema({
   summary: { type: String, required: true },
   content: { type: String },
   pdfUrl: { type: String, required: true },
-  thumbnailUrl: { type: String, required: false },
+  thumbnailUrl: { type: String, required: true },
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   rating: { type: Number, default: 0 },
   branch: { type: String, required: true },
