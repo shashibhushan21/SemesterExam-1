@@ -35,9 +35,8 @@ const uploadToCloudinary = (file: File): Promise<any> => {
         const stream = cloudinary.uploader.upload_stream(
             {
                 folder: 'examnotes_notes',
-                resource_type: 'auto',
-                pages: true, // This is crucial for PDF processing
-                access_mode: 'public', // This makes the file publicly accessible
+                resource_type: 'raw',
+                access_mode: 'public',
             },
             (error, result) => {
                 if (error) {
@@ -96,10 +95,8 @@ export async function POST(req: NextRequest) {
         
         const uploadResult = await uploadToCloudinary(file);
 
-        // The raw URL for the PDF viewer
         const pdfUrl = uploadResult.secure_url;
-
-        // The image URL for the thumbnail
+        
         const thumbnailUrl = cloudinary.url(uploadResult.public_id, {
             resource_type: 'image',
             format: 'jpg',
