@@ -7,52 +7,42 @@ import { University as UniversityIcon, ArrowLeft } from 'lucide-react';
 import { Note, University } from '@/lib/types';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { GET as getAllNotes } from '../../api/notes/route';
 import { connectToDatabase } from '@/lib/db';
 import UniversityModel from '@/models/university';
+import NoteModel from '@/models/note';
 
-async function getNotes() {
-    // Directly call the API route handler logic
-    const response = await getAllNotes();
-    if (!response.ok) {
-        throw new Error('Failed to fetch notes');
-    }
-    const data = await response.json();
-    return data.notes as Note[];
-}
-
-async function getUniversityByName(name: string): Promise<University | null> {
+async function getUniversityData(name: string) {
     try {
         await connectToDatabase();
         const decodedName = decodeURIComponent(name);
+
         const university = await UniversityModel.findOne({ name: { $regex: new RegExp(`^${decodedName}$`, 'i') } }).lean();
+        
         if (!university) {
-            return null;
+            return { university: null, notes: [] };
         }
-        // Convert mongoose document to plain object and ensure _id is a string
-        return JSON.parse(JSON.stringify(university)) as University;
+
+        const notes = await NoteModel.find({ university: university.name }).populate('author', 'name avatar').sort({ createdAt: -1 }).lean();
+
+        return {
+            university: JSON.parse(JSON.stringify(university)),
+            notes: JSON.parse(JSON.stringify(notes)),
+        };
     } catch (error) {
-        console.error("Failed to fetch university by name:", error);
-        return null;
+        console.error("Failed to fetch university data:", error);
+        return { university: null, notes: [] };
     }
 }
 
 export default async function UniversityDetailPage({ params }: { params: { name: string } }) {
-  const universityName = params.name;
+  const { university, notes } = await getUniversityData(params.name);
 
-  const universityDetails = await getUniversityByName(universityName);
-
-  if (!universityDetails) {
+  if (!university) {
     notFound();
   }
   
-  const allNotes = await getNotes();
-  const universityNotes: Note[] = allNotes.filter(
-    (note) => note.university.toLowerCase() === universityDetails.name.toLowerCase()
-  );
-
-  const semesters = ['all', ...Array.from(new Set(universityNotes.map((note) => note.semester)))];
-  const branches = ['all', ...Array.from(new Set(universityNotes.map((note) => note.branch)))];
+  const semesters = ['all', ...Array.from(new Set(notes.map((note: Note) => note.semester)))];
+  const branches = ['all', ...Array.from(new Set(notes.map((note: Note) => note.branch)))];
 
   return (
     <div className="text-white">
@@ -66,7 +56,7 @@ export default async function UniversityDetailPage({ params }: { params: { name:
         </div>
       <Card className="mb-12 bg-slate-900/50 backdrop-blur-sm border-white/10 overflow-hidden">
         <div className="relative h-48 w-full">
-            <Image src={universityDetails.bannerUrl} alt={`${universityDetails.name} banner`} fill className="object-cover" data-ai-hint="university campus" />
+            <Image src={university.bannerUrl} alt={`${university.name} banner`} fill className="object-cover" data-ai-hint="university campus" />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent" />
         </div>
         <CardContent className="p-6">
@@ -75,18 +65,18 @@ export default async function UniversityDetailPage({ params }: { params: { name:
                     <UniversityIcon className="w-8 h-8 text-primary" />
                 </div>
                 <div>
-                    <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{universityDetails.name}</h1>
-                    <p className="mt-1 text-white/70">{universityDetails.location}</p>
+                    <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{university.name}</h1>
+                    <p className="mt-1 text-white/70">{university.location}</p>
                 </div>
             </div>
              <p className="mt-4 text-lg text-white/80 max-w-4xl">
-                {universityDetails.description}
+                {university.description}
             </p>
         </CardContent>
       </Card>
       
       <UniversityNotesClient
-        notes={universityNotes}
+        notes={notes}
         semesters={semesters}
         branches={branches}
       />
