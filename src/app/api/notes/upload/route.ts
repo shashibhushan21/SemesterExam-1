@@ -35,7 +35,7 @@ const uploadToCloudinary = (file: File): Promise<any> => {
         const stream = cloudinary.uploader.upload_stream(
             {
                 folder: 'examnotes_notes',
-                resource_type: 'raw', // Explicitly set to 'raw' for PDFs
+                resource_type: 'raw', 
             },
             (error, result) => {
                 if (error) {
@@ -94,10 +94,8 @@ export async function POST(req: NextRequest) {
         
         const uploadResult = await uploadToCloudinary(file);
         
-        // This is the correct, permanent URL to the raw PDF file.
         const pdfUrl = uploadResult.secure_url;
         
-        // This generates a correct URL for an image preview of the first page.
         const thumbnailUrl = cloudinary.url(uploadResult.public_id, {
             resource_type: 'image',
             format: 'jpg',
