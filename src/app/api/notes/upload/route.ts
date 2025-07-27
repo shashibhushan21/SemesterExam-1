@@ -35,8 +35,10 @@ const uploadToCloudinary = (file: File): Promise<any> => {
         const stream = cloudinary.uploader.upload_stream(
             {
                 folder: 'examnotes_notes',
-                resource_type: 'auto',
-                pages: true,
+                resource_type: 'raw',
+                use_filename: true,
+                format: 'pdf',
+                type: 'upload',
             },
             (error, result) => {
                 if (error) {
@@ -102,14 +104,8 @@ export async function POST(req: NextRequest) {
         // This is the critical fix: Remove query parameters from the URL
         const cleanPdfUrl = uploadResult.secure_url.split('?')[0];
 
-        // Correctly generate thumbnail URL from the processed image
-        const thumbnailUrl = cloudinary.url(uploadResult.public_id, {
-            format: 'jpg',
-            page: 1,
-            width: 400,
-            height: 200,
-            crop: 'fill',
-        });
+        // Use a placeholder for the thumbnail URL as generating it from a raw file is complex.
+        const thumbnailUrl = 'https://placehold.co/400x200.png';
         
         const newNote = new Note({
             title,
