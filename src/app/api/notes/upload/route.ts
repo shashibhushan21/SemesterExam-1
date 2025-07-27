@@ -35,8 +35,8 @@ const uploadToCloudinary = (file: File): Promise<any> => {
         const stream = cloudinary.uploader.upload_stream(
             {
                 folder: 'examnotes_notes',
-                resource_type: 'auto', // Let Cloudinary detect the file type
-                pages: true, // Important for PDF processing
+                resource_type: 'auto',
+                pages: true,
                 access_mode: 'public',
             },
             (error, result) => {
@@ -96,8 +96,10 @@ export async function POST(req: NextRequest) {
         
         const uploadResult = await uploadToCloudinary(file);
         
+        // Use the raw resource URL for the PDF viewer
         const pdfUrl = uploadResult.secure_url;
         
+        // Create a separate URL for the thumbnail image transformation
         const thumbnailUrl = cloudinary.url(uploadResult.public_id, {
             resource_type: 'image',
             format: 'jpg',
@@ -112,7 +114,7 @@ export async function POST(req: NextRequest) {
             subject,
             semester,
             branch,
-            pdfUrl,
+            pdfUrl: pdfUrl.replace('/image/upload/', '/raw/upload/'),
             thumbnailUrl,
             author: new mongoose.Types.ObjectId(userId),
             summary: noteContent || 'No summary provided.',
