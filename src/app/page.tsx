@@ -73,7 +73,7 @@ export default async function Home() {
           <div className="mt-8 p-4 bg-white/10 backdrop-blur-sm rounded-lg w-full max-w-4xl">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               
-                <>
+                <ClientOnly>
                   <Select>
                     <SelectTrigger className="h-12 bg-white text-black text-base transition-colors focus:bg-gray-200">
                       <SelectValue placeholder="Select University" />
@@ -108,7 +108,7 @@ export default async function Home() {
                     <Search className="mr-2 h-5 w-5" />
                     Search
                   </Button>
-                </>
+                </ClientOnly>
               
             </div>
           </div>

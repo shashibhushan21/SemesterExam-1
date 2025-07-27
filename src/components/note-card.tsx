@@ -13,18 +13,24 @@ interface NoteCardProps {
 
 export function NoteCard({ note }: NoteCardProps) {
     const getThumbnailUrl = (pdfUrl: string) => {
-        if (!pdfUrl) return 'https://placehold.co/400x200.png';
+        if (!pdfUrl || !pdfUrl.includes('res.cloudinary.com')) {
+            return 'https://placehold.co/400x200.png';
+        }
         
-        // Correctly construct the Cloudinary URL for a PDF preview
-        // Example URL: https://res.cloudinary.com/cloud_name/image/upload/v12345/folder/public_id.pdf
-        // We need to change it to: https://res.cloudinary.com/cloud_name/image/upload/pg_1,f_jpg/v12345/folder/public_id.jpg
-        
-        // This is a more robust way to replace the URL parts
-        const url = new URL(pdfUrl);
-        // The path will be /v<version>/<public_id>.pdf, we need the public id part
-        const publicIdWithFolder = url.pathname.split('/').slice(4).join('/').replace('.pdf', '');
+        // This function now correctly assumes the input `pdfUrl` is a direct link to the raw PDF
+        // e.g., https://res.cloudinary.com/<cloud_name>/raw/upload/v<version>/<folder>/<public_id>.pdf
+        // and transforms it into a thumbnail URL.
+        const url = pdfUrl
+            .replace('/raw/upload/', '/image/upload/') // Switch from raw to image transformations
+            .replace(/\.pdf$/, '.jpg'); // Change extension to jpg
 
-        return `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'bhushancloud'}/image/upload/pg_1,f_jpg/${publicIdWithFolder}.jpg`;
+        // Add the page-specific transformation `pg_1`
+        const parts = url.split('/upload/');
+        if (parts.length === 2) {
+            return `${parts[0]}/upload/pg_1,f_jpg/${parts[1]}`;
+        }
+        
+        return url; // Fallback just in case
     };
 
     const thumbnailUrl = getThumbnailUrl(note.pdfUrl);
