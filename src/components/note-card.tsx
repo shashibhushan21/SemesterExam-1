@@ -12,37 +12,16 @@ interface NoteCardProps {
 }
 
 export function NoteCard({ note }: NoteCardProps) {
-    const getCloudinaryThumbnail = (pdfUrl: string) => {
-        if (!pdfUrl || !pdfUrl.includes('res.cloudinary.com')) {
-          return 'https://placehold.co/400x200.png';
-        }
-        
-        // Transforms a Cloudinary PDF URL to a JPG thumbnail URL for the first page
-        // e.g., https://res.cloudinary.com/.../raw/upload/v123/folder/file.pdf
-        // becomes https://res.cloudinary.com/.../image/upload/f_jpg,pg_1/v123/folder/file.pdf
-        // A more robust way to do this is to split the URL and insert the transformation
-        const parts = pdfUrl.split('/upload/');
-        if (parts.length !== 2) {
-             return 'https://placehold.co/400x200.png';
-        }
-
-        const [baseUrl, assetPath] = parts;
-        return `${baseUrl}/upload/f_jpg,pg_1/${assetPath}`;
-    };
-    
-    const thumbnailUrl = getCloudinaryThumbnail(note.pdfUrl);
-
     return (
         <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-slate-900/50 backdrop-blur-sm text-white border-white/10">
         <CardHeader className="p-0 relative">
             <Image
-            src={thumbnailUrl}
+            src={note.thumbnailUrl}
             alt={note.title}
             width={400}
             height={200}
             className="object-cover w-full h-40"
             data-ai-hint="note document"
-            unoptimized
             />
         </CardHeader>
         <CardContent className="p-4 flex-grow flex flex-col">
