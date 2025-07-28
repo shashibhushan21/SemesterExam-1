@@ -24,29 +24,36 @@ const contactSchema = z.object({
 
 type ContactFormValues = z.infer<typeof contactSchema>;
 
-const contactDetails = [
-  {
-    icon: Mail,
-    text: 'info@semesterexam.com',
-  },
-  {
-    icon: Phone,
-    text: '+91 98765 43210',
-  },
-  {
-    icon: MapPin,
-    text: '4th Floor, Tech Tower, Sector V, Salt Lake, Kolkata, WB 700091',
-  },
-];
+interface ContactDetailsData {
+    email: string;
+    phone: string;
+    address: string;
+}
 
 export default function ContactPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [contactDetails, setContactDetails] = useState<ContactDetailsData | null>(null);
+  const [loadingDetails, setLoadingDetails] = useState(true);
 
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+    async function fetchContactDetails() {
+      try {
+        setLoadingDetails(true);
+        const res = await fetch('/api/admin/settings/contact');
+        if (!res.ok) throw new Error('Failed to load contact info.');
+        const data = await res.json();
+        setContactDetails(data.contactDetails);
+      } catch (error) {
+        toast({ title: 'Error', description: (error as Error).message, variant: 'destructive' });
+      } finally {
+        setLoadingDetails(false);
+      }
+    }
+    fetchContactDetails();
+  }, [toast]);
 
   const {
     register,
@@ -88,6 +95,12 @@ export default function ContactPage() {
     }
   };
 
+  const detailsList = [
+    { icon: Mail, text: contactDetails?.email },
+    { icon: Phone, text: contactDetails?.phone },
+    { icon: MapPin, text: contactDetails?.address },
+  ];
+
   return (
     <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
@@ -101,16 +114,24 @@ export default function ContactPage() {
         <CardContent className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="space-y-8">
-              <ul className="space-y-6">
-                {contactDetails.map((detail, index) => (
-                  <li key={index} className="flex items-start gap-4">
-                    <div className="p-2 bg-primary/20 border border-primary/30 rounded-lg">
-                      <detail.icon className="w-6 h-6 text-primary" />
+                {loadingDetails ? (
+                    <div className="space-y-6">
+                        <Skeleton className="h-12 w-3/4" />
+                        <Skeleton className="h-12 w-2/3" />
+                        <Skeleton className="h-12 w-full" />
                     </div>
-                    <span className="text-lg text-white/90 pt-1">{detail.text}</span>
-                  </li>
-                ))}
-              </ul>
+                ) : (
+                  <ul className="space-y-6">
+                    {detailsList.map((detail, index) => (
+                      <li key={index} className="flex items-start gap-4">
+                        <div className="p-2 bg-primary/20 border border-primary/30 rounded-lg">
+                          <detail.icon className="w-6 h-6 text-primary" />
+                        </div>
+                        <span className="text-lg text-white/90 pt-1">{detail.text}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               <div className="p-4 bg-white/10 rounded-lg flex items-start gap-4">
                 <Info className="w-5 h-5 text-white/80 mt-1 flex-shrink-0" />
                 <p className="text-white/70">
@@ -173,8 +194,8 @@ export default function ContactPage() {
                 <p className="text-white/70 mb-6 max-w-xl mx-auto">
                     We're open to working with universities, educators, and developers who share our passion for accessible education.
                 </p>
-                <Link href="mailto:collab@semesterexam.com" className="font-semibold text-primary hover:text-primary/80 transition-colors text-lg">
-                    collab@semesterexam.com
+                <Link href={`mailto:${contactDetails?.email || 'collab@semesterexam.com'}`} className="font-semibold text-primary hover:text-primary/80 transition-colors text-lg">
+                    {contactDetails?.email || 'collab@semesterexam.com'}
                 </Link>
             </CardContent>
         </Card>
