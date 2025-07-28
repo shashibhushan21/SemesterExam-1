@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { FileText, MoreHorizontal, Trash2, Edit } from 'lucide-react';
+import { FileText, MoreHorizontal, Trash2, Edit, Star } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -22,6 +22,7 @@ interface Note {
     branch: string;
     author: { name: string };
     createdAt: string;
+    rating: number;
 }
 
 export function NotesTable() {
@@ -73,6 +74,7 @@ export function NotesTable() {
                             <TableHead>Author</TableHead>
                             <TableHead>University</TableHead>
                             <TableHead>Subject</TableHead>
+                            <TableHead>Rating</TableHead>
                             <TableHead>Uploaded</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
@@ -84,6 +86,12 @@ export function NotesTable() {
                                 <TableCell>{note.author?.name || 'N/A'}</TableCell>
                                 <TableCell>{note.university}</TableCell>
                                 <TableCell><Badge variant="outline">{note.subject}</Badge></TableCell>
+                                 <TableCell>
+                                    <div className="flex items-center gap-1">
+                                        <Star className="w-4 h-4 text-yellow-500 fill-yellow-400" />
+                                        {note.rating.toFixed(1)}
+                                    </div>
+                                </TableCell>
                                 <TableCell>{new Date(note.createdAt).toLocaleDateString()}</TableCell>
                                 <TableCell className="text-right">
                                      <DropdownMenu>

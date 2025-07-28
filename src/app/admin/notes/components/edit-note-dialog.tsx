@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Star } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 const editNoteSchema = z.object({
@@ -19,6 +19,7 @@ const editNoteSchema = z.object({
   subject: z.string().min(3, 'Subject is required'),
   semester: z.string().min(1, 'Semester is required'),
   branch: z.string().min(1, 'Branch is required'),
+  rating: z.coerce.number().min(0, 'Rating must be at least 0').max(5, 'Rating cannot be more than 5'),
 });
 
 type EditNoteFormValues = z.infer<typeof editNoteSchema>;
@@ -36,6 +37,7 @@ interface Note {
     subject: string;
     semester: string;
     branch: string;
+    rating: number;
 }
 
 interface EditNoteDialogProps {
@@ -59,6 +61,7 @@ export function EditNoteDialog({ children, note, onNoteUpdate }: EditNoteDialogP
       subject: note.subject,
       semester: note.semester,
       branch: note.branch,
+      rating: note.rating,
     },
   });
   
@@ -202,6 +205,14 @@ export function EditNoteDialog({ children, note, onNoteUpdate }: EditNoteDialogP
                   />
                   {errors.semester && <p className="text-sm text-destructive">{errors.semester.message}</p>}
                 </div>
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="rating">Rating (0-5)</Label>
+                <div className="relative">
+                    <Input id="rating" type="number" step="0.1" {...register('rating')} />
+                    <Star className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                </div>
+                {errors.rating && <p className="text-sm text-destructive">{errors.rating.message}</p>}
             </div>
 
             <DialogFooter>
