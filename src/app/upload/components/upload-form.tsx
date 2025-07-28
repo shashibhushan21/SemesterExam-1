@@ -78,7 +78,7 @@ export function UploadForm({ settings }: UploadFormProps) {
     }
   };
 
-  const onSubmit = async (data: UploadFormValues) => {
+  const processForm = async (data: UploadFormValues) => {
     setIsUploading(true);
     try {
       const formData = new FormData();
@@ -120,7 +120,7 @@ export function UploadForm({ settings }: UploadFormProps) {
   const loading = settings.universities.length === 0 && settings.subjects.length === 0;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(processForm)} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label htmlFor="title">Note Title</Label>
