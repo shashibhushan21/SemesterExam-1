@@ -2,7 +2,7 @@
 'use client';
 
 import type { Note } from '@/lib/types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -17,7 +17,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
 import dynamic from 'next/dynamic';
-import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
+
 
 const PdfViewer = dynamic(() => import('./pdf-viewer').then(mod => mod.PdfViewer), {
   ssr: false,
@@ -28,16 +29,25 @@ const PdfViewer = dynamic(() => import('./pdf-viewer').then(mod => mod.PdfViewer
   ),
 });
 
-export function NoteClientPage({ note, formattedDate }: { note: Note, formattedDate: string }) {
+export function NoteClientPage({ note, formattedDate, initialUserRating }: { note: Note, formattedDate: string, initialUserRating: number | null }) {
   const [summary, setSummary] = useState('');
   const [isSummarizing, setIsSummarizing] = useState(false);
+  const [currentRating, setCurrentRating] = useState(note.rating);
+  const [userRating, setUserRating] = useState(initialUserRating);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [isSubmittingRating, setIsSubmittingRating] = useState(false);
 
   const { toast } = useToast();
   const router = useRouter();
   const pathname = usePathname();
   const { user } = useAuth();
+  
+  useEffect(() => {
+    setUserRating(initialUserRating);
+  }, [initialUserRating]);
 
   const handleSummarize = async () => {
+    if (!user) return handleProtectedAction('summarize');
     setIsSummarizing(true);
     try {
       const result = await summarizeNotes({ notesContent: note.content });
@@ -53,14 +63,40 @@ export function NoteClientPage({ note, formattedDate }: { note: Note, formattedD
     }
   };
 
-  const handleProtectedAction = (action: 'download' | 'report' | 'summarize') => {
-    if (!user) {
+  const handleProtectedAction = (action: 'download' | 'report' | 'summarize' | 'rate') => {
+     if (!user) {
         toast({
             title: 'Authentication Required',
             description: `You need to be logged in to ${action} this note.`,
             variant: 'destructive',
         });
         router.push(`/auth?redirect=${pathname}`);
+     }
+  };
+
+  const handleRatingSubmit = async (rating: number) => {
+    if (!user) return handleProtectedAction('rate');
+    if (isSubmittingRating) return;
+
+    setIsSubmittingRating(true);
+    try {
+        const res = await fetch(`/api/notes/${note._id}/rate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ rating }),
+        });
+
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.message || 'Failed to submit rating.');
+        
+        toast({ title: 'Success', description: 'Your rating has been submitted.' });
+        setCurrentRating(result.newAverageRating);
+        setUserRating(rating);
+
+    } catch (error: any) {
+        toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    } finally {
+        setIsSubmittingRating(false);
     }
   };
   
@@ -95,7 +131,7 @@ export function NoteClientPage({ note, formattedDate }: { note: Note, formattedD
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-2xl font-bold font-headline">AI Summary</CardTitle>
-              <Button onClick={() => user ? handleSummarize() : handleProtectedAction('summarize')} disabled={isSummarizing}>
+              <Button onClick={handleSummarize} disabled={isSummarizing}>
                 {isSummarizing ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
@@ -186,12 +222,41 @@ export function NoteClientPage({ note, formattedDate }: { note: Note, formattedD
               <CardTitle className="font-headline">Rating</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center gap-2">
-                <Star className="w-8 h-8 text-yellow-500 fill-yellow-400" />
-                <span className="text-3xl font-bold">{note.rating}</span>
-                <span className="text-muted-foreground">/ 5.0</span>
-              </div>
-              <p className="text-sm text-muted-foreground mt-2">Based on community feedback.</p>
+                <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2">
+                        <Star className="w-8 h-8 text-yellow-500 fill-yellow-400" />
+                        <span className="text-3xl font-bold">{currentRating.toFixed(1)}</span>
+                        <span className="text-muted-foreground">/ 5.0</span>
+                    </div>
+                </div>
+                {user ? (
+                    <div className="mt-4">
+                        <p className="text-sm text-muted-foreground mb-2">
+                            {userRating ? "Thanks for your rating!" : "Rate this note:"}
+                        </p>
+                        <div className="flex items-center gap-1" onMouseLeave={() => setHoverRating(0)}>
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <Star
+                                key={star}
+                                className={cn(
+                                    "w-7 h-7 cursor-pointer transition-colors",
+                                    (hoverRating || userRating || 0) >= star
+                                    ? "text-yellow-500 fill-yellow-400"
+                                    : "text-gray-400 fill-gray-600",
+                                    isSubmittingRating && "opacity-50 cursor-not-allowed"
+                                )}
+                                onMouseEnter={() => !isSubmittingRating && setHoverRating(star)}
+                                onClick={() => handleRatingSubmit(star)}
+                                />
+                            ))}
+                             {isSubmittingRating && <Loader2 className="h-5 w-5 animate-spin ml-2" />}
+                        </div>
+                    </div>
+                ) : (
+                    <p className="text-sm text-muted-foreground mt-2">
+                        <Link href={`/auth?redirect=${pathname}`} className="underline hover:text-primary">Log in</Link> to rate this note.
+                    </p>
+                )}
             </CardContent>
           </Card>
         </div>
