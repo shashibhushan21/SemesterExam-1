@@ -14,7 +14,7 @@ interface DecodedToken {
 }
 
 const rateNoteSchema = z.object({
-  rating: z.number().min(1).max(5),
+  rating: z.number().min(1, 'Please select a star rating.').max(5),
   review: z.string().min(10, 'Review must be at least 10 characters long.').max(500, 'Review must be less than 500 characters.'),
 });
 
@@ -28,8 +28,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
     const userId = decoded.id;
     
-    if (!userId) {
-        return NextResponse.json({ message: 'User ID not found in token' }, { status: 401 });
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+        return NextResponse.json({ message: 'Invalid user ID in token' }, { status: 401 });
     }
     
     await connectToDatabase();
@@ -83,3 +83,4 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }
+
