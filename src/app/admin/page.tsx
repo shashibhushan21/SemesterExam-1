@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Shield, Users, FileText, BarChart, Edit, KeyRound, Settings, Home, Palette } from 'lucide-react';
+import { Shield, Users, FileText, Home, Palette, Settings, Edit, KeyRound } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { EditProfileDialog } from '../profile/components/edit-profile-dialog';
@@ -26,37 +26,34 @@ export default function AdminPage() {
   const [statsLoading, setStatsLoading] = useState(true);
 
   useEffect(() => {
-    if (!loading && (!user || user.role !== 'admin')) {
+    if (loading) return;
+    if (!user || user.role !== 'admin') {
       router.push('/');
+      return;
     }
+
+    const fetchStats = async () => {
+      try {
+        setStatsLoading(true);
+        const res = await fetch('/api/admin/stats');
+        if (!res.ok) throw new Error('Failed to fetch stats');
+        const data = await res.json();
+        setStats(data);
+      } catch (error) {
+        console.error("Error fetching admin stats:", error);
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+    
+    fetchStats();
   }, [user, loading, router]);
   
-  useEffect(() => {
-      const fetchStats = async () => {
-          if (user && user.role === 'admin') {
-              try {
-                  const res = await fetch('/api/admin/stats');
-                  if (!res.ok) throw new Error('Failed to fetch stats');
-                  const data = await res.json();
-                  setStats(data);
-              } catch (error) {
-                  console.error("Error fetching admin stats:", error);
-              } finally {
-                  setStatsLoading(false);
-              }
-          }
-      };
-      
-      if (!loading && user) {
-          fetchStats();
-      }
-  }, [user, loading]);
-
   const handleProfileUpdate = (updatedUser: any) => {
     updateUser(updatedUser);
   };
 
-  if (loading || !user) {
+  if (loading) {
     return (
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
@@ -78,14 +75,14 @@ export default function AdminPage() {
     );
   }
   
-  if (user.role !== 'admin') {
+  if (!user || user.role !== 'admin') {
       return (
           <div className="flex items-center justify-center h-full">
             <Alert variant="destructive" className="max-w-lg">
                 <Shield className="h-4 w-4" />
                 <AlertTitle>Access Denied</AlertTitle>
                 <AlertDescription>
-                    You do not have permission to view this page.
+                    You do not have permission to view this page. Redirecting...
                 </AlertDescription>
             </Alert>
           </div>
