@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Shield, Users, FileText, Home, Palette, Settings, Edit, KeyRound } from 'lucide-react';
+import { Shield, Users, FileText, Home, Palette, Settings, Edit, KeyRound, Info } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { EditProfileDialog } from '../profile/components/edit-profile-dialog';
@@ -154,6 +154,19 @@ export default function AdminPage() {
           <CardContent>
             <p className="text-xs text-muted-foreground mt-1">Manage homepage sections like features, FAQs etc.</p>
             <Link href="/admin/settings/homepage" passHref>
+                <Button variant="outline" size="sm" className="mt-4">Go to Settings</Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">About Page Settings</CardTitle>
+            <Info className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-muted-foreground mt-1">Manage the content of the about page.</p>
+            <Link href="/admin/settings/about" passHref>
                 <Button variant="outline" size="sm" className="mt-4">Go to Settings</Button>
             </Link>
           </CardContent>
