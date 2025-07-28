@@ -18,6 +18,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
 import dynamic from 'next/dynamic';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 
 const PdfViewer = dynamic(() => import('./pdf-viewer').then(mod => mod.PdfViewer), {
