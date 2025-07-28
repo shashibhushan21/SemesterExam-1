@@ -1,15 +1,15 @@
 
 'use client';
 
-import type { Note } from '@/lib/types';
-import { useState, useEffect } from 'react';
+import type { Note, Rating } from '@/lib/types';
+import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Download, Flag, Star, Wand2, Loader2, ArrowLeft, Lock } from 'lucide-react';
+import { Download, Flag, Star, Wand2, Loader2, ArrowLeft, Lock, MessageSquare, Edit } from 'lucide-react';
 import { summarizeNotes } from '@/ai/flows/summarize-notes';
 import { useToast } from '@/hooks/use-toast';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
@@ -17,9 +17,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
 import dynamic from 'next/dynamic';
-import { cn } from '@/lib/utils';
 import Link from 'next/link';
-
+import { NoteReviewDialog } from './note-review-dialog';
 
 const PdfViewer = dynamic(() => import('./pdf-viewer').then(mod => mod.PdfViewer), {
   ssr: false,
@@ -30,25 +29,21 @@ const PdfViewer = dynamic(() => import('./pdf-viewer').then(mod => mod.PdfViewer
   ),
 });
 
-export function NoteClientPage({ note, formattedDate, initialUserRating }: { note: Note, formattedDate: string, initialUserRating: number | null }) {
+export function NoteClientPage({ note, formattedDate, initialUserRating, reviews: initialReviews }: { note: Note, formattedDate: string, initialUserRating: Rating | null, reviews: Rating[] }) {
   const [summary, setSummary] = useState('');
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [currentRating, setCurrentRating] = useState(note.rating);
+  const [reviews, setReviews] = useState(initialReviews);
   const [userRating, setUserRating] = useState(initialUserRating);
-  const [hoverRating, setHoverRating] = useState(0);
-  const [isSubmittingRating, setIsSubmittingRating] = useState(false);
+
 
   const { toast } = useToast();
   const router = useRouter();
   const pathname = usePathname();
   const { user } = useAuth();
   
-  useEffect(() => {
-    setUserRating(initialUserRating);
-  }, [initialUserRating]);
-
   const handleSummarize = async () => {
-    if (!user) return handleProtectedAction('summarize');
+    if (!user) return handleProtectedAction();
     setIsSummarizing(true);
     try {
       const result = await summarizeNotes({ notesContent: note.content });
@@ -64,42 +59,33 @@ export function NoteClientPage({ note, formattedDate, initialUserRating }: { not
     }
   };
 
-  const handleProtectedAction = (action: 'download' | 'report' | 'summarize' | 'rate') => {
+  const handleProtectedAction = () => {
      if (!user) {
         toast({
             title: 'Authentication Required',
-            description: `You need to be logged in to ${action} this note.`,
+            description: `You need to be logged in to perform this action.`,
             variant: 'destructive',
         });
         router.push(`/auth?redirect=${pathname}`);
      }
   };
-
-  const handleRatingSubmit = async (rating: number) => {
-    if (!user) return handleProtectedAction('rate');
-    if (isSubmittingRating) return;
-
-    setIsSubmittingRating(true);
-    try {
-        const res = await fetch(`/api/notes/${note._id}/rate`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ rating }),
-        });
-
-        const result = await res.json();
-        if (!res.ok) throw new Error(result.message || 'Failed to submit rating.');
+  
+  const refreshReviews = async () => {
+     try {
+        const res = await fetch(`/api/notes/${note._id}`);
+        const data = await res.json();
+        setCurrentRating(data.note.rating);
         
-        toast({ title: 'Success', description: 'Your rating has been submitted.' });
-        setCurrentRating(result.newAverageRating);
-        setUserRating(rating);
+        const reviewsRes = await fetch(`/api/notes/${note._id}/reviews`);
+        const reviewsData = await reviewsRes.json();
+        setReviews(reviewsData.reviews);
+        const currentUserReview = reviewsData.reviews.find((r: Rating) => r.user._id === user?.id);
+        setUserRating(currentUserReview || null);
 
-    } catch (error: any) {
-        toast({ title: 'Error', description: error.message, variant: 'destructive' });
-    } finally {
-        setIsSubmittingRating(false);
+    } catch (error) {
+        toast({ title: 'Error', description: 'Could not refresh reviews.', variant: 'destructive' });
     }
-  };
+  }
   
   return (
     <div className="max-w-6xl mx-auto">
@@ -161,6 +147,37 @@ export function NoteClientPage({ note, formattedDate, initialUserRating }: { not
             </CardContent>
           </Card>
 
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-2xl font-bold font-headline">Community Reviews</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    {reviews.length > 0 ? (
+                        reviews.map(review => (
+                            <div key={review._id} className="flex gap-4">
+                                <Avatar className="h-12 w-12">
+                                    <AvatarImage src={review.user.avatar} alt={review.user.name} />
+                                    <AvatarFallback>{review.user.name.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                                <div className="flex-1">
+                                    <div className="flex items-center justify-between">
+                                        <p className="font-semibold">{review.user.name}</p>
+                                        <div className="flex items-center gap-1">
+                                            {[...Array(5)].map((_, i) => (
+                                                <Star key={i} className={`h-4 w-4 ${review.rating > i ? 'text-yellow-500 fill-yellow-400' : 'text-gray-500'}`} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <p className="text-sm text-muted-foreground">{new Date(review.createdAt).toLocaleDateString()}</p>
+                                    <p className="mt-2 text-foreground/90">{review.review}</p>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p className="text-center text-muted-foreground py-4">No reviews yet. Be the first to leave one!</p>
+                    )}
+                </CardContent>
+            </Card>
         </div>
         <div className="lg:col-span-1 space-y-6">
           <Card>
@@ -172,13 +189,13 @@ export function NoteClientPage({ note, formattedDate, initialUserRating }: { not
                     </Button>
                   </a>
                ) : (
-                  <Button size="lg" className="w-full" onClick={() => handleProtectedAction('download')}>
+                  <Button size="lg" className="w-full" onClick={handleProtectedAction}>
                     <Lock className="mr-2 h-5 w-5" /> Login to Download
                   </Button>
                )}
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                   <Button variant="outline" className="w-full" onClick={user ? undefined : () => handleProtectedAction('report')} disabled={!user && false}>
+                   <Button variant="outline" className="w-full" onClick={user ? undefined : handleProtectedAction} disabled={!user && false}>
                     <Flag className="mr-2 h-5 w-5" /> Report Note
                   </Button>
                 </AlertDialogTrigger>
@@ -224,40 +241,25 @@ export function NoteClientPage({ note, formattedDate, initialUserRating }: { not
             </CardHeader>
             <CardContent>
                 <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-2">
-                        <Star className="w-8 h-8 text-yellow-500 fill-yellow-400" />
-                        <span className="text-3xl font-bold">{currentRating.toFixed(1)}</span>
-                        <span className="text-muted-foreground">/ 5.0</span>
-                    </div>
+                    <Star className="w-8 h-8 text-yellow-500 fill-yellow-400" />
+                    <span className="text-3xl font-bold">{currentRating.toFixed(1)}</span>
+                    <span className="text-muted-foreground">/ 5.0</span>
                 </div>
-                {user ? (
-                    <div className="mt-4">
-                        <p className="text-sm text-muted-foreground mb-2">
-                            {userRating ? "Thanks for your rating!" : "Rate this note:"}
-                        </p>
-                        <div className="flex items-center gap-1" onMouseLeave={() => setHoverRating(0)}>
-                            {[1, 2, 3, 4, 5].map((star) => (
-                                <Star
-                                key={star}
-                                className={cn(
-                                    "w-7 h-7 cursor-pointer transition-colors",
-                                    (hoverRating || userRating || 0) >= star
-                                    ? "text-yellow-500 fill-yellow-400"
-                                    : "text-gray-400 fill-gray-600",
-                                    isSubmittingRating && "opacity-50 cursor-not-allowed"
-                                )}
-                                onMouseEnter={() => !isSubmittingRating && setHoverRating(star)}
-                                onClick={() => handleRatingSubmit(star)}
-                                />
-                            ))}
-                             {isSubmittingRating && <Loader2 className="h-5 w-5 animate-spin ml-2" />}
-                        </div>
-                    </div>
-                ) : (
-                    <p className="text-sm text-muted-foreground mt-2">
-                        <Link href={`/auth?redirect=${pathname}`} className="underline hover:text-primary">Log in</Link> to rate this note.
-                    </p>
-                )}
+                 <div className="mt-4">
+                    {user ? (
+                       <NoteReviewDialog noteId={note._id} userRating={userRating} onReviewSubmit={refreshReviews}>
+                         <Button variant="outline" className="w-full">
+                            {userRating ? <Edit className="mr-2 h-4 w-4" /> : <MessageSquare className="mr-2 h-4 w-4" />}
+                            {userRating ? 'Edit Your Review' : 'Leave a Review'}
+                         </Button>
+                        </NoteReviewDialog>
+                    ) : (
+                         <Button variant="outline" className="w-full" onClick={handleProtectedAction}>
+                             <Lock className="mr-2 h-4 w-4" />
+                             Log in to review
+                         </Button>
+                    )}
+                </div>
             </CardContent>
           </Card>
         </div>

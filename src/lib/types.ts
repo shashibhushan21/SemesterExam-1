@@ -1,4 +1,5 @@
 
+
 export type Note = {
   _id: string;
   title: string;
@@ -45,3 +46,17 @@ export type Faq = {
   question: string;
   answer: string;
 };
+
+export type Rating = {
+  _id: string;
+  note: string;
+  user: {
+      _id: string;
+      name: string;
+      avatar?: string;
+  };
+  rating: number;
+  review: string;
+  createdAt: string;
+  updatedAt: string;
+}

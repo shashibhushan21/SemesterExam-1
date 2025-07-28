@@ -1,4 +1,5 @@
 
+
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import Note from '@/models/note';
@@ -14,6 +15,7 @@ interface DecodedToken {
 
 const rateNoteSchema = z.object({
   rating: z.number().min(1).max(5),
+  review: z.string().min(10, 'Review must be at least 10 characters long.').max(500, 'Review must be less than 500 characters.'),
 });
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
@@ -33,7 +35,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       return NextResponse.json({ message: 'Invalid input', errors: validation.error.errors }, { status: 400 });
     }
 
-    const { rating } = validation.data;
+    const { rating, review } = validation.data;
     const noteId = params.id;
 
     if (!mongoose.Types.ObjectId.isValid(noteId)) {
@@ -48,7 +50,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     // Use findOneAndUpdate with upsert to create or update the rating
     await Rating.findOneAndUpdate(
       { note: noteId, user: userId },
-      { rating },
+      { rating, review },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
     
