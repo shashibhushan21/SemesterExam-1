@@ -195,7 +195,7 @@ export function NoteClientPage({ note, formattedDate, initialUserRating, reviews
                )}
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                   <Button variant="outline" className="w-full" onClick={user ? undefined : handleProtectedAction} disabled={!user && false}>
+                   <Button variant="outline" className="w-full" onClick={user ? undefined : handleProtectedAction} disabled={!user}>
                     <Flag className="mr-2 h-5 w-5" /> Report Note
                   </Button>
                 </AlertDialogTrigger>

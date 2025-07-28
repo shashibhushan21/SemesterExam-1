@@ -24,8 +24,13 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     if (!token) {
       return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
     }
+    
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
     const userId = decoded.id;
+    
+    if (!userId) {
+        return NextResponse.json({ message: 'User ID not found in token' }, { status: 401 });
+    }
     
     await connectToDatabase();
     
