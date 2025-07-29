@@ -8,6 +8,7 @@ import RatingModel from '@/models/rating';
 import mongoose from 'mongoose';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
+import { ClientOnly } from '@/components/client-only';
 
 interface DecodedToken {
   id: string;
@@ -73,5 +74,9 @@ export default async function NotePage({ params }: { params: { id: string } }) {
     day: 'numeric',
   });
 
-  return <NoteClientPage note={note} formattedDate={formattedDate} initialUserRating={userRating} reviews={reviews} />;
+  return (
+    <ClientOnly>
+      <NoteClientPage note={note} formattedDate={formattedDate} initialUserRating={userRating} reviews={reviews} />
+    </ClientOnly>
+  );
 }

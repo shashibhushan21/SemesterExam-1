@@ -9,7 +9,7 @@ import { Facebook, Instagram, Mail, Send, Twitter } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export function Footer() {
-  const [year, setYear] = useState(new Date().getFullYear());
+  const [year, setYear] = useState<number | null>(null);
 
   useEffect(() => {
     setYear(new Date().getFullYear());
@@ -20,7 +20,7 @@ export function Footer() {
     { href: '/', label: 'Home' },
     { href: '/universities', label: 'Universities' },
     { href: '/courses', label: 'Courses' },
-    { href: '/about', label: 'About Us' },
+    { href: '/about', label: 'About' },
   ];
 
   const supportLinks = [
