@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Shield, Users, FileText, Home, Palette, Settings, Edit, KeyRound, Info, Mail, MessageSquare } from 'lucide-react';
+import { Shield, Users, FileText, Home, Palette, Settings, Edit, KeyRound, Info, Mail, MessageSquare, BarChart } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { EditProfileDialog } from '../profile/components/edit-profile-dialog';
@@ -163,6 +163,19 @@ export default function AdminPage() {
             <p className="text-xs text-muted-foreground">Total reviews submitted</p>
              <Link href="/admin/reviews" passHref>
                 <Button variant="outline" size="sm" className="mt-4">View Reviews</Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Analytics</CardTitle>
+            <BarChart className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-muted-foreground mt-1">View site usage and content statistics.</p>
+            <Link href="/admin/analytics" passHref>
+                <Button variant="outline" size="sm" className="mt-4">View Analytics</Button>
             </Link>
           </CardContent>
         </Card>
