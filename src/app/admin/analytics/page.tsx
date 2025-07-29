@@ -121,7 +121,7 @@ export default function AnalyticsPage() {
                 <CardTitle>Notes by University</CardTitle>
                 <CardDescription>Distribution of notes across different universities.</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="overflow-x-auto">
                 <UniversityDistributionChart data={data.universityDistribution} />
             </CardContent>
         </Card>
@@ -130,7 +130,7 @@ export default function AnalyticsPage() {
                 <CardTitle>Notes by Subject</CardTitle>
                 <CardDescription>Distribution of notes across different subjects.</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="overflow-x-auto">
                 <SubjectDistributionChart data={data.subjectDistribution} />
             </CardContent>
         </Card>

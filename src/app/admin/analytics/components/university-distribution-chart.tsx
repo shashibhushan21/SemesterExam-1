@@ -46,9 +46,9 @@ export function UniversityDistributionChart({ data }: DistributionChartProps) {
   }
 
   return (
-    <div className="h-[250px] w-full overflow-x-auto">
-      <ResponsiveContainer width="100%" height="100%">
-        <ChartContainer config={chartConfig} className="w-full h-full min-w-[250px]">
+    <div className="h-[250px] min-w-[250px]">
+      <ResponsiveContainer width="100%" height={250}>
+        <ChartContainer config={chartConfig} className="w-full h-full">
           <PieChart>
               <Tooltip
                   content={<ChartTooltipContent nameKey="name" hideLabel />}
@@ -64,11 +64,11 @@ export function UniversityDistributionChart({ data }: DistributionChartProps) {
                   labelLine={false}
                   label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
                       const RADIAN = Math.PI / 180;
-                      const radius = innerRadius + (outerRadius - innerRadius) * 1.1;
+                      const radius = innerRadius + (outerRadius - innerRadius) * 1.2;
                       const x = cx + radius * Math.cos(-midAngle * RADIAN);
                       const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-                      if (percent < 0.05) return null; // Don't render label for small slices
+                      if (percent < 0.05) return null;
 
                       return (
                           <text x={x} y={y} fill="hsl(var(--foreground))" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" className="text-xs">
@@ -83,4 +83,3 @@ export function UniversityDistributionChart({ data }: DistributionChartProps) {
     </div>
   );
 }
-
