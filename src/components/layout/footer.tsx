@@ -12,8 +12,8 @@ export function Footer() {
   const quickLinks = [
     { href: '/', label: 'Home' },
     { href: '/universities', label: 'Universities' },
-    { href: '/courses', label: 'Semesters' },
-    { href: '/upload', label: 'Updates' },
+    { href: '/courses', label: 'Courses' },
+    { href: '/about', label: 'About Us' },
   ];
 
   const supportLinks = [
