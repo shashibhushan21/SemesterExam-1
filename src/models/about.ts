@@ -23,3 +23,5 @@ AboutSchema.index({ /* a unique field if you want one, but we'll enforce singlet
 const About: Model<IAbout> = models.About || mongoose.model<IAbout>('About', AboutSchema);
 
 export default About;
+
+    
