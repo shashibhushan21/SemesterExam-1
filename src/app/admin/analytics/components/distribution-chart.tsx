@@ -46,8 +46,8 @@ export function DistributionChart({ data }: DistributionChartProps) {
   }
 
   return (
-    <div className="h-[250px] w-full">
-        <ChartContainer config={chartConfig} className="w-full h-full">
+    <div className="h-[250px] w-full overflow-x-auto">
+        <ChartContainer config={chartConfig} className="w-full h-full min-w-[250px]">
             <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                     <ChartTooltip
