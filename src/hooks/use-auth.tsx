@@ -2,6 +2,7 @@
 'use client';
 
 import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface User {
   id: string;
@@ -28,6 +29,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const fetchUser = useCallback(async () => {
     setLoading(true);
