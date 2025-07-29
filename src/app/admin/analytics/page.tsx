@@ -6,7 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Users, FileText, Star, BarChart3 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { OverviewChart } from './components/overview-chart';
-import { DistributionChart } from './components/distribution-chart';
+import { UniversityDistributionChart } from './components/university-distribution-chart';
+import { SubjectDistributionChart } from './components/subject-distribution-chart';
+
 
 interface AnalyticsData {
   totalUsers: number;
@@ -120,7 +122,7 @@ export default function AnalyticsPage() {
                 <CardDescription>Distribution of notes across different universities.</CardDescription>
             </CardHeader>
             <CardContent>
-                <DistributionChart data={data.universityDistribution} />
+                <UniversityDistributionChart data={data.universityDistribution} />
             </CardContent>
         </Card>
          <Card>
@@ -129,7 +131,7 @@ export default function AnalyticsPage() {
                 <CardDescription>Distribution of notes across different subjects.</CardDescription>
             </CardHeader>
             <CardContent>
-                <DistributionChart data={data.subjectDistribution} />
+                <SubjectDistributionChart data={data.subjectDistribution} />
             </CardContent>
         </Card>
       </div>
