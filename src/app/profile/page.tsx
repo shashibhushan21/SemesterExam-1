@@ -13,7 +13,7 @@ import { ChangePasswordDialog } from "./components/change-password-dialog";
 import { useEffect } from "react";
 
 export default function ProfilePage() {
-  const { user, loading, logout, updateUser } = useAuth();
+  const { user, loading, logout, fetchUser } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -29,8 +29,8 @@ export default function ProfilePage() {
     router.refresh();
   };
   
-  const handleProfileUpdate = (updatedUser: any) => {
-    updateUser(updatedUser);
+  const handleProfileUpdate = async () => {
+    await fetchUser();
   };
 
   if (loading || !user) {

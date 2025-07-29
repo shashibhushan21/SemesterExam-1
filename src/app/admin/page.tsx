@@ -20,7 +20,7 @@ interface AdminStats {
 }
 
 export default function AdminPage() {
-  const { user, loading, updateUser } = useAuth();
+  const { user, loading, fetchUser } = useAuth();
   const router = useRouter();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
@@ -32,7 +32,7 @@ export default function AdminPage() {
       return;
     }
 
-    const fetchStats = async () => {
+    async function fetchStats() {
       try {
         setStatsLoading(true);
         const res = await fetch('/api/admin/stats');
@@ -46,14 +46,16 @@ export default function AdminPage() {
       }
     };
     
-    fetchStats();
+    if (user && user.role === 'admin') {
+        fetchStats();
+    }
   }, [user, loading, router]);
   
-  const handleProfileUpdate = (updatedUser: any) => {
-    updateUser(updatedUser);
+  const handleProfileUpdate = async () => {
+    await fetchUser();
   };
 
-  if (loading) {
+  if (loading || !user) {
     return (
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
@@ -75,7 +77,7 @@ export default function AdminPage() {
     );
   }
   
-  if (!user || user.role !== 'admin') {
+  if (user.role !== 'admin') {
       return (
           <div className="flex items-center justify-center h-full">
             <Alert variant="destructive" className="max-w-lg">

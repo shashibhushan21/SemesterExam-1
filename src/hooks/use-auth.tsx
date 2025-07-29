@@ -21,7 +21,7 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
-  updateUser: (user: User | null) => void;
+  fetchUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   const fetchUser = useCallback(async () => {
-    setLoading(true);
+    // No need to setLoading(true) here to avoid UI flicker on re-fetch
     try {
       const res = await fetch('/api/auth/me');
       if (res.ok) {
@@ -44,9 +44,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       setUser(null);
     } finally {
-      setLoading(false);
+      // Only set loading to false on initial load
+      if (loading) setLoading(false);
     }
-  }, []);
+  }, [loading]);
 
   useEffect(() => {
     fetchUser();
@@ -78,12 +79,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(null);
     }
   };
-
-  const updateUser = (updatedUser: User | null) => {
-    setUser(updatedUser);
-  };
   
-  const value = { user, loading, login, logout, updateUser };
+  const value = { user, loading, login, logout, fetchUser };
 
   return (
     <AuthContext.Provider value={value}>
