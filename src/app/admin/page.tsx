@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -98,7 +99,7 @@ export default function AdminPage() {
           <h1 className="text-4xl font-bold font-headline">Admin Dashboard</h1>
           <p className="text-muted-foreground text-lg">Welcome, {user.name}. Manage your application here.</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
            <EditProfileDialog user={user} onProfileUpdate={handleProfileUpdate}>
               <Button variant="outline"><Edit className="mr-2 h-4 w-4" /> Edit Profile</Button>
            </EditProfileDialog>
