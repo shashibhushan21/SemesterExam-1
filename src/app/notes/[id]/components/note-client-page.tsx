@@ -246,7 +246,7 @@ export function NoteClientPage({ note, formattedDate, initialUserRating, reviews
                     <span className="text-muted-foreground">/ 5.0</span>
                 </div>
                  <div className="mt-4">
-                    {user ? (
+                    {user && user.role === 'user' ? (
                        <NoteReviewDialog noteId={note._id} userRating={userRating} onReviewSubmit={refreshReviews}>
                          <Button variant="outline" className="w-full">
                             {userRating ? <Edit className="mr-2 h-4 w-4" /> : <MessageSquare className="mr-2 h-4 w-4" />}
@@ -254,7 +254,7 @@ export function NoteClientPage({ note, formattedDate, initialUserRating, reviews
                          </Button>
                         </NoteReviewDialog>
                     ) : (
-                         <Button variant="outline" className="w-full" onClick={handleProtectedAction}>
+                         <Button variant="outline" className="w-full" onClick={handleProtectedAction} disabled={user?.role === 'admin'}>
                              <Lock className="mr-2 h-4 w-4" />
                              Log in to review
                          </Button>
@@ -266,4 +266,5 @@ export function NoteClientPage({ note, formattedDate, initialUserRating, reviews
       </div>
     </div>
   );
-}
+
+    
