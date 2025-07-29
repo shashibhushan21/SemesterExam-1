@@ -9,6 +9,13 @@ import { Facebook, Instagram, Mail, Send, Twitter } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export function Footer() {
+  const [year, setYear] = useState(new Date().getFullYear());
+
+  useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
+
+
   const quickLinks = [
     { href: '/', label: 'Home' },
     { href: '/universities', label: 'Universities' },
@@ -83,7 +90,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-12 border-t border-white/20 pt-8 text-center text-white/50">
-          <p>&copy; {new Date().getFullYear()} SemesterExam.com. All rights reserved.</p>
+          <p>&copy; {year} SemesterExam.com. All rights reserved.</p>
         </div>
       </div>
     </footer>
