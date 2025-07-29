@@ -8,6 +8,7 @@ import { Footer } from '@/components/layout/footer';
 import { AuthProvider } from '@/hooks/use-auth';
 import { connectToDatabase } from '@/lib/db';
 import Theme from '@/models/theme';
+import { ClientOnly } from '@/components/client-only';
 
 export const metadata: Metadata = {
   title: 'SemesterExam',

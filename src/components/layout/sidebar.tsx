@@ -1,13 +1,14 @@
+
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Book, GraduationCap, Info, Mail } from 'lucide-react';
+import { Home, Book, GraduationCap, Info, Mail, Search } from 'lucide-react';
 import { Logo } from '../logo';
 import { cn } from '@/lib/utils';
 
 const menuItems = [
   { href: '/', label: 'Home', icon: Home },
-  { href: '/courses', label: 'Courses', icon: Book },
+  { href: '/notes', label: 'All Notes', icon: Search },
   { href: '/universities', label: 'Universities', icon: GraduationCap },
   { href: '/about', label: 'About', icon: Info },
   { href: '/contact', label: 'Contact', icon: Mail },

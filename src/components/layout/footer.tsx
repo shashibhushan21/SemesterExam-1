@@ -19,7 +19,7 @@ export function Footer() {
   const quickLinks = [
     { href: '/', label: 'Home' },
     { href: '/universities', label: 'Universities' },
-    { href: '/courses', label: 'Courses' },
+    { href: '/notes', label: 'All Notes' },
     { href: '/about', label: 'About' },
   ];
 

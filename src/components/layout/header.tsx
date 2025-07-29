@@ -12,10 +12,11 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import React, { useState, useEffect } from 'react';
 import { Skeleton } from '../ui/skeleton';
+import { ClientOnly } from '../client-only';
 
 const navLinks = [
   { href: '/', label: 'Home' },
-  { href: '/courses', label: 'Courses' },
+  { href: '/notes', label: 'All Notes' },
   { href: '/universities', label: 'Universities' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
@@ -52,7 +53,7 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
-           {isMounted ? (
+           <ClientOnly>
             <>
               <div className="hidden md:block">
                 <AuthButton />
@@ -76,13 +77,7 @@ export function Header() {
                 </Sheet>
               </div>
             </>
-          ) : (
-             <div className="flex items-center gap-4">
-                <Skeleton className="h-10 w-24 hidden md:block" />
-                <Skeleton className="h-10 w-10 md:hidden" />
-                <Skeleton className="h-10 w-10 md:hidden" />
-              </div>
-          )}
+          </ClientOnly>
         </div>
       </div>
     </header>

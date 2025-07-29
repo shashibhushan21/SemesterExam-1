@@ -70,11 +70,13 @@ export default async function Home() {
           
            <HeroCarousel />
           
-           <HeroSearch 
-              universities={availableUniversities}
-              semesters={semesters}
-              subjects={subjects}
-            />
+           <ClientOnly>
+            <HeroSearch 
+                universities={availableUniversities}
+                semesters={semesters}
+                subjects={subjects}
+              />
+           </ClientOnly>
 
           <div className="mt-8">
              <Link
