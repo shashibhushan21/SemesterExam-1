@@ -35,6 +35,62 @@ const themeSchema = z.object({
 
 type FormValues = z.infer<typeof themeSchema>;
 
+function hslStringToHex(hslStr: string): string {
+    if (!hslStr) return '#000000';
+    const [h, s, l] = hslStr.split(' ').map(parseFloat);
+    const sDecimal = s / 100;
+    const lDecimal = l / 100;
+    const c = (1 - Math.abs(2 * lDecimal - 1)) * sDecimal;
+    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+    const m = lDecimal - c / 2;
+    let r = 0, g = 0, b = 0;
+
+    if (h >= 0 && h < 60) { [r, g, b] = [c, x, 0]; }
+    else if (h >= 60 && h < 120) { [r, g, b] = [x, c, 0]; }
+    else if (h >= 120 && h < 180) { [r, g, b] = [0, c, x]; }
+    else if (h >= 180 && h < 240) { [r, g, b] = [0, x, c]; }
+    else if (h >= 240 && h < 300) { [r, g, b] = [x, 0, c]; }
+    else if (h >= 300 && h < 360) { [r, g, b] = [c, 0, x]; }
+
+    const toHex = (c: number) => ('0' + Math.round(c * 255).toString(16)).slice(-2);
+    return `#${toHex(r + m)}${toHex(g + m)}${toHex(b + m)}`;
+}
+
+function hexToHslString(hex: string): string {
+    let r = 0, g = 0, b = 0;
+    if (hex.length === 4) {
+        r = parseInt(hex[1] + hex[1], 16);
+        g = parseInt(hex[2] + hex[2], 16);
+        b = parseInt(hex[3] + hex[3], 16);
+    } else if (hex.length === 7) {
+        r = parseInt(hex.substring(1, 3), 16);
+        g = parseInt(hex.substring(3, 5), 16);
+        b = parseInt(hex.substring(5, 7), 16);
+    }
+
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h = 0, s = 0, l = (max + min) / 2;
+
+    if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+    }
+    
+    h = Math.round(h * 360);
+    s = Math.round(s * 100);
+    l = Math.round(l * 100);
+
+    return `${h} ${s}% ${l}%`;
+}
+
+
 export default function ThemeSettingsPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -86,7 +142,17 @@ export default function ThemeSettingsPage() {
       <Label htmlFor={name}>{label}</Label>
       <div className="flex items-center gap-2">
         <Input id={name} {...form.register(name)} className="font-mono text-xs" />
-        <div className="w-8 h-8 rounded-md border" style={{ background: `hsl(${form.watch(name)})` }}></div>
+        <label htmlFor={`${name}-color-picker`} className="relative w-8 h-8 rounded-md border cursor-pointer" style={{ background: `hsl(${form.watch(name)})` }}>
+           <input
+                id={`${name}-color-picker`}
+                type="color"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                value={hslStringToHex(form.watch(name))}
+                onChange={(e) => {
+                    form.setValue(name, hexToHslString(e.target.value), { shouldDirty: true });
+                }}
+            />
+        </label>
       </div>
     </div>
   );
@@ -172,3 +238,4 @@ export default function ThemeSettingsPage() {
     </form>
   );
 }
+
