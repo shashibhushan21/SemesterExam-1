@@ -2,7 +2,7 @@
 'use client';
 
 import { Pie, PieChart, ResponsiveContainer, Tooltip, Cell } from 'recharts';
-import { ChartTooltipContent } from '@/components/ui/chart';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { useMemo } from 'react';
 
 interface DistributionChartProps {
@@ -25,6 +25,17 @@ export function DistributionChart({ data }: DistributionChartProps) {
             fill: COLORS[index % COLORS.length]
         }));
     }, [data]);
+
+    const chartConfig = useMemo(() => {
+        const config: any = {};
+        chartData.forEach(item => {
+            config[item.name] = {
+                label: item.name,
+                color: item.fill
+            }
+        });
+        return config;
+    }, [chartData]);
     
   if (chartData.length === 0) {
     return (
@@ -36,38 +47,40 @@ export function DistributionChart({ data }: DistributionChartProps) {
 
   return (
     <div className="h-[250px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-                <Tooltip
-                    content={<ChartTooltipContent hideLabel />}
-                    cursor={{ fill: 'hsl(var(--accent))' }}
-                />
-                <Pie
-                    data={chartData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={100}
-                    labelLine={false}
-                    label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
-                        const RADIAN = Math.PI / 180;
-                        const radius = innerRadius + (outerRadius - innerRadius) * 1.2;
-                        const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                        const y = cy + radius * Math.sin(-midAngle * RADIAN);
+        <ChartContainer config={chartConfig} className="w-full h-full">
+            <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                    <ChartTooltip
+                        content={<ChartTooltipContent nameKey="name" hideLabel />}
+                        cursor={{ fill: 'hsl(var(--accent))' }}
+                    />
+                    <Pie
+                        data={chartData}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={100}
+                        labelLine={false}
+                        label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+                            const RADIAN = Math.PI / 180;
+                            const radius = innerRadius + (outerRadius - innerRadius) * 1.2;
+                            const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                            const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-                        if (percent < 0.05) return null; // Don't render label for small slices
+                            if (percent < 0.05) return null; // Don't render label for small slices
 
-                        return (
-                            <text x={x} y={y} fill="hsl(var(--foreground))" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" className="text-xs">
-                                {`${chartData[index].name} (${(percent * 100).toFixed(0)}%)`}
-                            </text>
-                        );
-                    }}
-                >
-                </Pie>
-            </PieChart>
-        </ResponsiveContainer>
+                            return (
+                                <text x={x} y={y} fill="hsl(var(--foreground))" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" className="text-xs">
+                                    {`${chartData[index].name} (${(percent * 100).toFixed(0)}%)`}
+                                </text>
+                            );
+                        }}
+                    >
+                    </Pie>
+                </PieChart>
+            </ResponsiveContainer>
+        </ChartContainer>
     </div>
   );
 }
