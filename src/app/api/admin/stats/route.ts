@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import User from '@/models/user';
 import Note from '@/models/note';
+import Rating from '@/models/rating';
 import { checkAdmin } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
@@ -16,6 +17,7 @@ export async function GET(req: NextRequest) {
 
         const totalUsers = await User.countDocuments();
         const totalNotes = await Note.countDocuments();
+        const totalReviews = await Rating.countDocuments();
         
         const startOfMonth = new Date();
         startOfMonth.setDate(1);
@@ -28,6 +30,7 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({
             totalUsers,
             totalNotes,
+            totalReviews,
             newUsersThisMonth
         }, { status: 200 });
 

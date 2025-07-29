@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Shield, Users, FileText, Home, Palette, Settings, Edit, KeyRound, Info, Mail } from 'lucide-react';
+import { Shield, Users, FileText, Home, Palette, Settings, Edit, KeyRound, Info, Mail, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { EditProfileDialog } from '../profile/components/edit-profile-dialog';
@@ -16,6 +16,7 @@ import { ChangePasswordDialog } from '../profile/components/change-password-dial
 interface AdminStats {
   totalUsers: number;
   totalNotes: number;
+  totalReviews: number;
   newUsersThisMonth: number;
 }
 
@@ -148,6 +149,24 @@ export default function AdminPage() {
           </CardContent>
         </Card>
         
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Manage Reviews</CardTitle>
+            <MessageSquare className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            {statsLoading ? (
+                 <Skeleton className="h-8 w-1/2 mt-1" />
+            ) : (
+                <div className="text-2xl font-bold">{stats?.totalReviews}</div>
+            )}
+            <p className="text-xs text-muted-foreground">Total reviews submitted</p>
+             <Link href="/admin/reviews" passHref>
+                <Button variant="outline" size="sm" className="mt-4">View Reviews</Button>
+            </Link>
+          </CardContent>
+        </Card>
+
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Homepage Settings</CardTitle>
