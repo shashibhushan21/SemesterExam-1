@@ -60,11 +60,11 @@ export function DistributionChart({ data }: DistributionChartProps) {
                         nameKey="name"
                         cx="50%"
                         cy="50%"
-                        outerRadius={100}
+                        outerRadius={80}
                         labelLine={false}
                         label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
                             const RADIAN = Math.PI / 180;
-                            const radius = innerRadius + (outerRadius - innerRadius) * 1.2;
+                            const radius = innerRadius + (outerRadius - innerRadius) * 1.1;
                             const x = cx + radius * Math.cos(-midAngle * RADIAN);
                             const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
