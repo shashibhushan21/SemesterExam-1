@@ -1,8 +1,9 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import { UniversityCard } from '@/components/university-card';
@@ -23,7 +24,15 @@ interface UniversitiesClientProps {
 }
 
 export function UniversitiesClient({ universities }: UniversitiesClientProps) {
+  const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    const name = searchParams.get('name');
+    if (name) {
+      setSearchTerm(name);
+    }
+  }, [searchParams]);
 
   const filteredUniversities = useMemo(() => {
      if (!searchTerm) {

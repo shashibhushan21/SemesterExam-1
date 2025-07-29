@@ -1,8 +1,10 @@
 
+import { Suspense } from 'react';
 import { University } from '@/lib/types';
 import { connectToDatabase } from '@/lib/db';
 import UniversityModel from '@/models/university';
 import { UniversitiesClient } from './components/universities-client';
+import { Skeleton } from '@/components/ui/skeleton';
 
 async function getUniversities(): Promise<University[]> {
     try {
@@ -13,6 +15,20 @@ async function getUniversities(): Promise<University[]> {
         console.error("Failed to fetch universities:", error);
         return [];
     }
+}
+
+function UniversitiesLoading() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+      {[...Array(3)].map((_, i) => (
+        <Skeleton key={i} className="h-64 w-full" />
+      ))}
+    </div>
+  );
+}
+
+function PageContent({ universities }: { universities: University[] }) {
+  return <UniversitiesClient universities={universities} />;
 }
 
 export default async function UniversitiesPage() {
@@ -27,7 +43,9 @@ export default async function UniversitiesPage() {
         </p>
       </div>
 
-      <UniversitiesClient universities={universities} />
+      <Suspense fallback={<UniversitiesLoading />}>
+        <PageContent universities={universities} />
+      </Suspense>
 
     </div>
   );
