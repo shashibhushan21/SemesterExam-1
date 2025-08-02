@@ -79,7 +79,7 @@ export default function MyReportsPage() {
                                         <TableRow key={report._id}>
                                             <TableCell className="font-medium">
                                                 <Link href={`/notes/${report.note._id}`} className="hover:underline">
-                                                    {report.note.title}
+                                                    {report.note?.title || 'Note not found'}
                                                 </Link>
                                             </TableCell>
                                             <TableCell className="max-w-sm truncate" title={report.reason}>
