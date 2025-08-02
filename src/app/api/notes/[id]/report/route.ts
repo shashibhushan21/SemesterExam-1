@@ -6,6 +6,7 @@ import Note from '@/models/note';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
+import User from '@/models/user';
 
 interface DecodedToken {
   id: string;
@@ -24,8 +25,17 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
     const userId = decoded.id;
+
+    if (!userId) {
+       return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
+    }
     
     await connectToDatabase();
+
+    const user = await User.findById(userId);
+    if (!user) {
+        return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    }
     
     const body = await req.json();
     const validation = reportNoteSchema.safeParse(body);

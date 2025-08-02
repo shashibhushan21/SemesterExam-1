@@ -91,6 +91,10 @@ export function NoteClientPage({ note, formattedDate, initialUserRating, reviews
   }
 
   const handleReportSubmit = async () => {
+    if (!user) {
+        toast({ title: 'Not Authenticated', description: 'You must be logged in to report a note.', variant: 'destructive' });
+        return;
+    }
     if (!reportReason) {
         toast({ title: 'Reason required', description: 'Please provide a reason for your report.', variant: 'destructive' });
         return;
@@ -107,13 +111,11 @@ export function NoteClientPage({ note, formattedDate, initialUserRating, reviews
 
         toast({ title: 'Report Submitted', description: 'Thank you for your feedback. Our team will review this note.' });
         setReportReason(''); // Clear the textarea
+        document.getElementById('close-report-dialog')?.click();
     } catch (error: any) {
         toast({ title: 'Failed to Submit Report', description: error.message, variant: 'destructive' });
     } finally {
         setIsReporting(false);
-        // This is a bit of a hack to programmatically close the dialog.
-        // A better solution would involve controlling the open state from here.
-        document.getElementById('close-report-dialog')?.click();
     }
   };
   
@@ -300,5 +302,3 @@ export function NoteClientPage({ note, formattedDate, initialUserRating, reviews
       </div>
     </div>
   );
-
-    
