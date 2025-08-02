@@ -19,6 +19,7 @@ import { useAuth } from '@/hooks/use-auth';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { NoteReviewDialog } from './note-review-dialog';
+import { NoteQna } from './note-qna';
 
 const PdfViewer = dynamic(() => import('./pdf-viewer').then(mod => mod.PdfViewer), {
   ssr: false,
@@ -35,6 +36,8 @@ export function NoteClientPage({ note, formattedDate, initialUserRating, reviews
   const [currentRating, setCurrentRating] = useState(note.rating);
   const [reviews, setReviews] = useState(initialReviews);
   const [userRating, setUserRating] = useState(initialUserRating);
+  const [reportReason, setReportReason] = useState('');
+  const [isReporting, setIsReporting] = useState(false);
 
 
   const { toast } = useToast();
@@ -86,6 +89,33 @@ export function NoteClientPage({ note, formattedDate, initialUserRating, reviews
         toast({ title: 'Error', description: 'Could not refresh reviews.', variant: 'destructive' });
     }
   }
+
+  const handleReportSubmit = async () => {
+    if (!reportReason) {
+        toast({ title: 'Reason required', description: 'Please provide a reason for your report.', variant: 'destructive' });
+        return;
+    }
+    setIsReporting(true);
+    try {
+        const res = await fetch(`/api/notes/${note._id}/report`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reason: reportReason }),
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.message);
+
+        toast({ title: 'Report Submitted', description: 'Thank you for your feedback. Our team will review this note.' });
+        setReportReason(''); // Clear the textarea
+    } catch (error: any) {
+        toast({ title: 'Failed to Submit Report', description: error.message, variant: 'destructive' });
+    } finally {
+        setIsReporting(false);
+        // This is a bit of a hack to programmatically close the dialog.
+        // A better solution would involve controlling the open state from here.
+        document.getElementById('close-report-dialog')?.click();
+    }
+  };
   
   return (
     <div className="max-w-6xl mx-auto">
@@ -111,9 +141,10 @@ export function NoteClientPage({ note, formattedDate, initialUserRating, reviews
                <div className="relative w-full h-[75vh] rounded-lg overflow-hidden border bg-secondary">
                   <PdfViewer url={note.pdfUrl} />
                </div>
-               <p className="mt-6 text-foreground/80">{note.content}</p>
             </CardContent>
           </Card>
+          
+          <NoteQna noteContent={note.content} />
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
@@ -208,11 +239,14 @@ export function NoteClientPage({ note, formattedDate, initialUserRating, reviews
                   </AlertDialogHeader>
                   <div className="grid w-full gap-1.5">
                     <Label htmlFor="message">Reason for reporting</Label>
-                    <Textarea placeholder="Type your message here." id="message" />
+                    <Textarea placeholder="Type your message here." id="message" value={reportReason} onChange={(e) => setReportReason(e.target.value)} />
                   </div>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction>Submit Report</AlertDialogAction>
+                    <AlertDialogCancel id="close-report-dialog">Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleReportSubmit} disabled={isReporting}>
+                        {isReporting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Submit Report
+                    </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>

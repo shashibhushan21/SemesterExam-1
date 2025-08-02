@@ -4,6 +4,7 @@ import { connectToDatabase } from '@/lib/db';
 import User from '@/models/user';
 import Note from '@/models/note';
 import Rating from '@/models/rating';
+import Report from '@/models/report';
 import { checkAdmin } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
@@ -15,23 +16,19 @@ export async function GET(req: NextRequest) {
 
         await connectToDatabase();
 
-        const totalUsers = await User.countDocuments();
-        const totalNotes = await Note.countDocuments();
-        const totalReviews = await Rating.countDocuments();
+        const [totalUsers, totalNotes, totalReviews, totalReports] = await Promise.all([
+             User.countDocuments(),
+             Note.countDocuments(),
+             Rating.countDocuments(),
+             Report.countDocuments({ status: 'pending' })
+        ]);
         
-        const startOfMonth = new Date();
-        startOfMonth.setDate(1);
-        startOfMonth.setHours(0, 0, 0, 0);
-
-        const newUsersThisMonth = await User.countDocuments({
-            createdAt: { $gte: startOfMonth }
-        });
 
         return NextResponse.json({
             totalUsers,
             totalNotes,
             totalReviews,
-            newUsersThisMonth
+            totalReports
         }, { status: 200 });
 
     } catch (error) {
