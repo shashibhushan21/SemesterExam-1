@@ -101,7 +101,7 @@ export default async function RootLayout({
       </head>
       <body className={cn("font-body antialiased", "bg-background text-foreground")}>
         <AuthProvider>
-          <div className="relative flex min-h-screen flex-col">
+          <div className="relative flex min-h-screen flex-col bg-gradient-to-r from-blue-800 via-purple-700 to-pink-600">
             <Header />
             <main className="relative container mx-auto flex-grow px-4 sm:px-6 lg:px-8 py-8">{children}</main>
             <ClientOnly>
