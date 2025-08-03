@@ -140,9 +140,10 @@ export function NoteClientPage({ note, formattedDate, initialUserRating, reviews
               </div>
             </CardHeader>
             <CardContent>
-               <div className="relative w-full h-[75vh] rounded-lg overflow-hidden border bg-secondary">
-                  <PdfViewer url={note.pdfUrl} />
-               </div>
+                   <div className="relative w-full h-[75vh] rounded-lg overflow-hidden border bg-secondary">
+                      {/* Use the correct Cloudinary raw URL for PDF viewing */}
+                      <PdfViewer url={note.pdfUrl} />
+                   </div>
             </CardContent>
           </Card>
           
@@ -215,17 +216,21 @@ export function NoteClientPage({ note, formattedDate, initialUserRating, reviews
         <div className="lg:col-span-1 space-y-6">
           <Card>
             <CardContent className="p-6 flex flex-col items-center gap-4">
-               {user ? (
-                 <a href={note.pdfUrl} download className="w-full">
-                    <Button size="lg" className="w-full">
-                      <Download className="mr-2 h-5 w-5" /> Download Note
-                    </Button>
-                  </a>
-               ) : (
-                  <Button size="lg" className="w-full" onClick={handleProtectedAction}>
-                    <Lock className="mr-2 h-5 w-5" /> Login to Download
-                  </Button>
-               )}
+                   {user ? (
+                     <a
+                       href={`${note.pdfUrl.replace('/raw/upload/', '/raw/upload/fl_attachment:')}`}
+                       download={`${note.title || 'note'}.pdf`}
+                       className="w-full"
+                     >
+                        <Button size="lg" className="w-full">
+                          <Download className="mr-2 h-5 w-5" /> Download Note
+                        </Button>
+                      </a>
+                   ) : (
+                      <Button size="lg" className="w-full" onClick={handleProtectedAction}>
+                        <Lock className="mr-2 h-5 w-5" /> Login to Download
+                      </Button>
+                   )}
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                    <Button variant="outline" className="w-full" onClick={user ? undefined : handleProtectedAction} disabled={!user}>
@@ -302,3 +307,4 @@ export function NoteClientPage({ note, formattedDate, initialUserRating, reviews
       </div>
     </div>
   );
+}

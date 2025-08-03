@@ -94,6 +94,8 @@ export async function POST(req: NextRequest) {
         const rawUploadResult = await uploadToCloudinary(fileBuffer, {
             folder: 'examnotes_notes_raw',
             resource_type: 'raw',
+            public_id: `${title.replace(/\s+/g, "-").toLowerCase()}.pdf`,
+            type: 'upload',
         });
         if (!rawUploadResult || !rawUploadResult.secure_url) {
             throw new Error('Cloudinary raw upload failed.');
@@ -104,6 +106,7 @@ export async function POST(req: NextRequest) {
         const autoUploadResult = await uploadToCloudinary(fileBuffer, {
             folder: 'examnotes_notes_auto',
             resource_type: 'auto',
+            type: 'upload',
         });
         if (!autoUploadResult || !autoUploadResult.public_id) {
             throw new Error('Cloudinary auto upload for thumbnailing failed.');

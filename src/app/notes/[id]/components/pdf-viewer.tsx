@@ -22,6 +22,8 @@ const options = {
 interface PdfViewerProps {
   url: string;
 }
+// The PdfViewer component renders a PDF document with navigation and zoom controls
+// It uses react-pdf to handle PDF rendering and provides a user-friendly interface for viewing documents
 
 export function PdfViewer({ url }: PdfViewerProps) {
   const [numPages, setNumPages] = useState<number | null>(null);
